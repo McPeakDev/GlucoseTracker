@@ -11,7 +11,7 @@ namespace GluecoseTrackerApp
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new CodeButtonClickPage();
         }
 
         protected override void OnStart()
