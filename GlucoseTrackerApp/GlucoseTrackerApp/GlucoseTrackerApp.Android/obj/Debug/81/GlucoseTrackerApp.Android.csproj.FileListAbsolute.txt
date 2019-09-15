@@ -102,4 +102,6 @@ D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Andr
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Android\obj\Debug\81\android\assets\Xamarin.Forms.Core.pdb
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Android\obj\Debug\81\android\assets\Xamarin.Forms.Platform.Android.pdb
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Android\obj\Debug\81\android\assets\Xamarin.Forms.Xaml.pdb
+D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\bin\Debug\netstandard2.0\GlucoseTrackerApp.dll
+D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Android\bin\Debug\GlucoseTrackerApp.dll.mdb
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.Android\obj\Debug\81\linksrc\GlucoseTrackerApp.dll.mdb
