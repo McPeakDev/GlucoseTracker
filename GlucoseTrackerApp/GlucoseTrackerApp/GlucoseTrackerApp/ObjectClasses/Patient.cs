@@ -31,5 +31,6 @@ namespace GlucoseTrackerApp.ObjectClasses
             this.Email = EMail;
             this.ContactNumber = CNumb;
         }
+
     }
 }
