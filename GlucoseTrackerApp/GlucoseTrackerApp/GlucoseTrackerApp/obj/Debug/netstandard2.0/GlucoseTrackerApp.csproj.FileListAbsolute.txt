@@ -12,3 +12,4 @@ D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\obj\
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\obj\Debug\netstandard2.0\GlucoseTrackerApp.pdb
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\obj\Debug\netstandard2.0\Pages\LoginPage.xaml.g.cs
 D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\obj\Debug\netstandard2.0\Pages\AccountCreation.xaml.g.cs
+D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp\obj\Debug\netstandard2.0\Pages\HomePage.xaml.g.cs

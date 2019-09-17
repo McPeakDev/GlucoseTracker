@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GlucoseTrackerApp.ObjectClasses
 {
-    class Patient : User
+    public class Patient : User
     {
         public override int UserID { get; set; }
         public override string UserName { get; set; }
@@ -12,6 +12,11 @@ namespace GlucoseTrackerApp.ObjectClasses
         public override string LastName { get; set; }
         public override string Email { get; set; }
         public override string ContactNumber { get; set; }
+
+        public Patient()
+        {
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Doctor"/> class.
