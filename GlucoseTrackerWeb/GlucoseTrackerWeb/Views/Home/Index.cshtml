@@ -3,25 +3,23 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
-<head>
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap-grid.css">
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap-reboot.css">
-</head>
-<body>
-    <div class="text-center">
-        <h1 class="display-4">Welcome to Glucose Tracker</h1>
-    </div>
-    <form>
-        <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter email">
+    <body class="bg-dark">
+        <div class="text-center">
+            <h1 class="display-4">Welcome to Glucose Tracker</h1>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</body>
+        <form>
+            <fieldset>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary" asp-controller="Home" asp-action="Login">Login</button>
+                <button type="button" class="btn btn-secondary">Register</button>
+            </fieldset>
+        </form>
+    </body>
 </html>

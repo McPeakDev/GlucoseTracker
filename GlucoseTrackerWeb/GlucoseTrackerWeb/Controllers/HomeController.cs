@@ -15,6 +15,20 @@ namespace GlucoseTrackerWeb.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Login(string email, string password)
+        {
+            if (email == "jim@a" && password == "1234")
+                return RedirectToAction("Dashboard");
+            else
+                return View();
+        }
+
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
