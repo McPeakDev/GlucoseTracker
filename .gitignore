@@ -2,6 +2,13 @@
 *.apk
 *.ap_
 *.aab
+*.dll
+obj/
+
+# Cache Files
+*.cache
+.vs/
+*.map
 
 # Files for the ART/Dalvik VM
 *.dex
