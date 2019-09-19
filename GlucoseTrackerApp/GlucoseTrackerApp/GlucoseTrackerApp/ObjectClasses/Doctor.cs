@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GlucoseTrackerApp.ObjectClasses
 {
-    class Doctor : User
+    public class Doctor : User
     {
         public override int UserID { get; set; }
         public override string UserName { get; set; }
