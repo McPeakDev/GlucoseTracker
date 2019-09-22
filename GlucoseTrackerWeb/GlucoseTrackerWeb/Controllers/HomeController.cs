@@ -8,22 +8,32 @@ using GlucoseTrackerWeb.Models;
 using GlucoseTrackerWeb.Services;
 using GlucoseTrackerWeb.Models.DBFEntities;
 using static BCrypt.Net.BCrypt;
-using static System.Web.HttpUtility;
+using Microsoft.AspNetCore.Http;
+using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
 
 namespace GlucoseTrackerWeb.Controllers
 {
     public class HomeController : Controller
     {
         private IUserRepository _userRepo;
+        private ISession _session;
 
         public HomeController(IUserRepository userRepo)
         {
             _userRepo = userRepo;
+          
         }
 
         public IActionResult Index()
         {
-            return View();
+            if (!SessionExtensions.GetBool("LoggedIn"))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Dashboard");
+            }
         }
 
         public IActionResult Create()
@@ -49,6 +59,8 @@ namespace GlucoseTrackerWeb.Controllers
 
             if (Verify(creds.Password, user.Password))
             {
+                _session = HttpContext.Session;
+                SessionExtensions.SetBool(_session, "LoggedIn", true);
                 return RedirectToAction("Dashboard");
             }
 
@@ -61,7 +73,22 @@ namespace GlucoseTrackerWeb.Controllers
         {
             var model = _userRepo.ReadAll();
 
-            return View(model);
+            if(SessionExtensions.GetBool("LoggedIn"))
+            {
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public IActionResult Logout()
+        {
+            _session = null;
+            SessionExtensions.ClearSession();
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

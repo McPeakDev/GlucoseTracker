@@ -11,7 +11,7 @@ namespace GlucoseTrackerWeb.Models.DBFEntities
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public int? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
 
         public virtual Doctor Doctor { get; set; }
         public virtual Patient Patient { get; set; }
