@@ -74,6 +74,13 @@ namespace GlucoseTrackerWeb
                     name: "login",
                     template: "Login/{email}/{password}",
                     defaults: new {Controller = "Home", Action = "Login"} );
+
+                routes.MapRoute(
+                    name: "dashboard",
+                    template: "Dashboard",
+                    defaults: new { Controller = "Home", Action = "Dashboard" });
+
+
             });
         }
     }

@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -9,19 +12,20 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="nav-link" color="white" asp-controller="Home" asp-action="Index">GlucoseTracker</a>            
+            <a class="nav-link" color="white" asp-controller="Home" asp-action="Index">GlucoseTracker</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" asp-action="Index" asp-controller="Home">Dashboard<span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="Logout" asp-controller="Home">Logout</a>
-                    </li>
+                    @{
+                        if (SessionExtensions.GetBool(Context.Session, "LoggedIn"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="Logout" asp-controller="Home">Logout</a>
+                            </li>
+                        }
+                    }
                 </ul>
             </div>
         </nav>

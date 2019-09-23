@@ -43,27 +43,25 @@ namespace GlucoseTrackerWeb.Controllers
         public IActionResult Logout()
         {
             _session = null;
+            HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
 
         public IActionResult Index()
         {
-            if (!SessionExtensions.GetBool(_session, "LoggedIn"))
+            if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {
-                return View();
+                return RedirectToAction("Dashboard");
+
             }
             else
             {
-                return RedirectToAction("Dashboard");
+                return View();
             }
         }
 
         public IActionResult Create()
         {
-            if (!(_session is null))
-            {
-                TempData["LoggedIn"] = true;
-            }
             return View();
         }
 
