@@ -15,10 +15,11 @@ namespace GlucoseTrackerWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private IUserRepository _userRepo;
+        private IDbRepository<User> _userRepo;
+        private IDbRepository<Patient> _patientRepo;
         private static ISession _session;
 
-        public HomeController(IUserRepository userRepo)
+        public HomeController(IDbRepository<User> userRepo)
         {
             _userRepo = userRepo;
           
@@ -33,7 +34,7 @@ namespace GlucoseTrackerWeb.Controllers
             {
                 _session = HttpContext.Session;
                 SessionExtensions.SetBool(_session, "LoggedIn", true);
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Dashboard",user);
             }
 
             TempData["BadLogin"] = true;
@@ -75,9 +76,9 @@ namespace GlucoseTrackerWeb.Controllers
             }
             return View(user);
         }
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(User user)
         {
-            var model = _userRepo.ReadAll();
+            var model = _patientRepo.ReadAll(); ; //= _userRepo.ReadPatients(user.UserId);
 
             if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {

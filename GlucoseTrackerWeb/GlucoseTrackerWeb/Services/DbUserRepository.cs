@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using GlucoseTrackerWeb.Models.DBFEntities;
 using static BCrypt.Net.BCrypt;
 
 namespace GlucoseTrackerWeb.Services
 {
-    public class DbUserRepository : IUserRepository
+    public class DbUserRepository : IDbRepository<User>
     {
         private GlucoseTrackerContext _db;
 
@@ -23,6 +24,11 @@ namespace GlucoseTrackerWeb.Services
             user.MiddleName = user.MiddleName.Trim();
             user.LastName = user.LastName.Trim();
             user.PhoneNumber = user.PhoneNumber.Trim().Replace("-", " ");
+            user.Doctor = new Doctor()
+            {
+                DoctorId = user.UserId,
+                NumberOfPatients = 0
+            };
             _db.User.Add(user);
             _db.SaveChanges();
             return user;

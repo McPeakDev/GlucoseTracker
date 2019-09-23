@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace GlucoseTrackerWeb.Services
 {
-    public interface IUserRepository
+    public interface IDbRepository<T>
     {
-        User Create(User user);
+        T Create(T entity);
 
-        User Read(string email);
+        T Read(string email);
 
-        User Read(int id);
+        T Read(int id);
 
-        ICollection<User> ReadAll();
+        ICollection<T> ReadAll();
 
         void Update(int id, User user);
 

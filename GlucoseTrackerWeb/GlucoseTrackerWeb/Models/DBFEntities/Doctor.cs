@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GlucoseTrackerWeb.Models.DBFEntities
 {
-    public partial class Doctor
+    public partial class Doctor 
     {
         public Doctor()
         {
