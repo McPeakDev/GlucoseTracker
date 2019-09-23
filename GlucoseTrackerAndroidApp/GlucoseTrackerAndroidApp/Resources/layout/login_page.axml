@@ -39,12 +39,14 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/loginButton"
 		android:backgroundTint="#ffb7b4b4"
-		android:layout_marginTop="96.0dp" />
+		android:layout_marginTop="96.0dp"
+		android:clickable="true" />
 	<Button
 		android:text="Create Account"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/createButton" 
+		android:id="@+id/createButton"
+		android:clickable="true" 
 		
 	/>
 	

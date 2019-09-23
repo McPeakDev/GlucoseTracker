@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace GlucoseTrackerAndroidApp
 {
-    [Activity(Label = "@string / app_name", Theme = "@style / AppTheme")]
+    [Activity(Label = "Login Activity")]
     public class LoginActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -46,7 +46,7 @@ namespace GlucoseTrackerAndroidApp
                     }
                     else
                     {
-                        password.Text = "";
+                        password.Text = " ";
                     }
                 }
             };
