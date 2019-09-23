@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GlucoseTrackerWeb.Models.DBFEntities;
 using GlucoseTrackerWeb.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,6 @@ namespace GlucoseTrackerWeb
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
@@ -44,8 +44,7 @@ namespace GlucoseTrackerWeb
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<GlucoseTrackerContext>(options => 
-            options.UseMySql(Configuration.GetConnectionString("DefaultCOnnection")));
+            services.AddDbContext<GlucoseTrackerContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IUserRepository, DbUserRepository>();
         }
 

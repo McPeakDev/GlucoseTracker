@@ -17,8 +17,12 @@ namespace GlucoseTrackerWeb.Services
 
         public User Create(User user)
         {
-            string hashed = HashPassword(user.Password);
-            user.Password = hashed;
+            user.Email = user.Email.Trim();
+            user.Password = HashPassword(user.Password);
+            user.FirstName = user.FirstName.Trim();
+            user.MiddleName = user.MiddleName.Trim();
+            user.LastName = user.LastName.Trim();
+            user.PhoneNumber = user.PhoneNumber.Trim().Replace("-", " ");
             _db.User.Add(user);
             _db.SaveChanges();
             return user;
