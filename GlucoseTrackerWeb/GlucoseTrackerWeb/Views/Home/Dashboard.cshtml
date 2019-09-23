@@ -4,58 +4,59 @@
 
     ViewData["Title"] = "Dashboard";
 }
+    <body class="bg-dark">
+        <h1>Dashboard</h1>
 
-<h1>Dashboard</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.MiddleName)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th scope="col">
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MiddleName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PhoneNumber)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.UserId)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.MiddleName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <th scope="col">
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MiddleName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PhoneNumber)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </body>

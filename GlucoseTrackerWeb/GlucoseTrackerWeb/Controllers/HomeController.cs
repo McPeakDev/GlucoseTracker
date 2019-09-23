@@ -16,40 +16,12 @@ namespace GlucoseTrackerWeb.Controllers
     public class HomeController : Controller
     {
         private IUserRepository _userRepo;
-        private ISession _session;
+        private static ISession _session;
 
         public HomeController(IUserRepository userRepo)
         {
             _userRepo = userRepo;
           
-        }
-
-        public IActionResult Index()
-        {
-            if (!SessionExtensions.GetBool("LoggedIn"))
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Dashboard");
-            }
-        }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Create(User user)
-        {
-            if (ModelState.IsValid)
-            {
-                _userRepo.Create(user);
-                return RedirectToAction("Index");
-            }
-            return View(user);
         }
 
         [HttpPost]
@@ -68,12 +40,48 @@ namespace GlucoseTrackerWeb.Controllers
             return RedirectToAction("Index");
 
         }
+        public IActionResult Logout()
+        {
+            _session = null;
+            return RedirectToAction("Index");
+        }
 
+        public IActionResult Index()
+        {
+            if (!SessionExtensions.GetBool(_session, "LoggedIn"))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        public IActionResult Create()
+        {
+            if (!(_session is null))
+            {
+                TempData["LoggedIn"] = true;
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _userRepo.Create(user);
+                return RedirectToAction("Index");
+            }
+            return View(user);
+        }
         public IActionResult Dashboard()
         {
             var model = _userRepo.ReadAll();
 
-            if(SessionExtensions.GetBool("LoggedIn"))
+            if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {
                 return View(model);
             }
@@ -82,13 +90,6 @@ namespace GlucoseTrackerWeb.Controllers
                 return RedirectToAction("Index");
             }
 
-        }
-
-        public IActionResult Logout()
-        {
-            _session = null;
-            SessionExtensions.ClearSession();
-            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
