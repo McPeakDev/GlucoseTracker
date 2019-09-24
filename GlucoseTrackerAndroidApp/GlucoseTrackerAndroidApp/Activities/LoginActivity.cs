@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace GlucoseTrackerAndroidApp
 {
-    [Activity(Label = "Login Activity")]
+    [Activity(Label = "Glucose Tracker", Theme = "@style/AppTheme", MainLauncher = true)]
     public class LoginActivity : Activity
     {
         EditText username;
@@ -31,16 +31,18 @@ namespace GlucoseTrackerAndroidApp
             createButton = FindViewById<Button>(Resource.Id.createButton);
 
 
-            this.loginButton.Click += this.LoginAttempt;
-           
+            //loginButton.SetOnClickListener(View.IOnClickListener);
 
-            createButton.Click += (sender, e) =>
+            //this.loginButton.SetOnClickListener(LoginAttempt);
+
+
+            loginButton.Click += (sender, e) =>
             {
-                createButton.Text = "hello";
+                
             };
         }
 
-        public void LoginAttempt(object sender, EventArgs e)
+        public void LoginAttempt(View target)
         {
             createButton.Text = "hello";
                 if (username.Text == null)
@@ -60,7 +62,7 @@ namespace GlucoseTrackerAndroidApp
                     }
                     else
                     {
-                        password.Text = "landed";
+                        username.Text = "landed";
                     }
                 }
             

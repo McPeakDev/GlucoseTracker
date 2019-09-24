@@ -39,7 +39,9 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/loginButton"
 		android:backgroundTint="#ffb7b4b4"
-		android:layout_marginTop="96.0dp" />
+		android:layout_marginTop="84.0dp" 
+		
+	/>
 	<Button
 		android:text="Create Account"
 		android:layout_width="match_parent"

@@ -8,7 +8,7 @@ using Android.Widget;
 
 namespace GlucoseTrackerAndroidApp
 {
-    [Activity(Label = "Glucose Tracker", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "Glucose Tracker", Theme = "@style/AppTheme")]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         TextView textMessage;
