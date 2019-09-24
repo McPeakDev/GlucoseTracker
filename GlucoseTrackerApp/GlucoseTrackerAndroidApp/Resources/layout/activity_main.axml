@@ -11,23 +11,23 @@
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/textView1" />
+		android:id="@+id/emailTextView" />
 	<EditText
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/usernameText"
+		android:id="@+id/emailText"
 		android:layout_marginTop="0.0dp"
 		android:inputType="textUri"
 		android:autoText="false"
 		android:contentDescription="Username"
-		android:maxLines="1"	
+		android:maxLines="1"
 	/>
 	<TextView
 		android:text="Password"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/textView2" />
+		android:id="@+id/passwordView" />
 	<EditText
 		android:inputType="textPassword"
 		android:layout_width="match_parent"

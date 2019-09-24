@@ -2519,6 +2519,12 @@ namespace GlucoseTrackerAndroidApp
 			// aapt resource value: 0x7f08007e
 			public const int edit_query = 2131230846;
 			
+			// aapt resource value: 0x7f08008c
+			public const int emailText = 2131230860;
+			
+			// aapt resource value: 0x7f08008b
+			public const int emailTextView = 2131230859;
+			
 			// aapt resource value: 0x7f080030
 			public const int end = 2131230768;
 			
@@ -2665,6 +2671,9 @@ namespace GlucoseTrackerAndroidApp
 			
 			// aapt resource value: 0x7f08008e
 			public const int passwordText = 2131230862;
+			
+			// aapt resource value: 0x7f08008d
+			public const int passwordView = 2131230861;
 			
 			// aapt resource value: 0x7f08004d
 			public const int pin = 2131230797;
@@ -2816,12 +2825,6 @@ namespace GlucoseTrackerAndroidApp
 			// aapt resource value: 0x7f080069
 			public const int textSpacerNoTitle = 2131230825;
 			
-			// aapt resource value: 0x7f08008b
-			public const int textView1 = 2131230859;
-			
-			// aapt resource value: 0x7f08008d
-			public const int textView2 = 2131230861;
-			
 			// aapt resource value: 0x7f08009e
 			public const int text_input_password_toggle = 2131230878;
 			
@@ -2875,9 +2878,6 @@ namespace GlucoseTrackerAndroidApp
 			
 			// aapt resource value: 0x7f080026
 			public const int useLogo = 2131230758;
-			
-			// aapt resource value: 0x7f08008c
-			public const int usernameText = 2131230860;
 			
 			// aapt resource value: 0x7f080016
 			public const int view_offset_helper = 2131230742;
@@ -3071,67 +3071,64 @@ namespace GlucoseTrackerAndroidApp
 			public const int design_text_input_password_icon = 2130968616;
 			
 			// aapt resource value: 0x7f040029
-			public const int login_page = 2130968617;
+			public const int notification_action = 2130968617;
 			
 			// aapt resource value: 0x7f04002a
-			public const int notification_action = 2130968618;
+			public const int notification_action_tombstone = 2130968618;
 			
 			// aapt resource value: 0x7f04002b
-			public const int notification_action_tombstone = 2130968619;
+			public const int notification_media_action = 2130968619;
 			
 			// aapt resource value: 0x7f04002c
-			public const int notification_media_action = 2130968620;
+			public const int notification_media_cancel_action = 2130968620;
 			
 			// aapt resource value: 0x7f04002d
-			public const int notification_media_cancel_action = 2130968621;
+			public const int notification_template_big_media = 2130968621;
 			
 			// aapt resource value: 0x7f04002e
-			public const int notification_template_big_media = 2130968622;
+			public const int notification_template_big_media_custom = 2130968622;
 			
 			// aapt resource value: 0x7f04002f
-			public const int notification_template_big_media_custom = 2130968623;
+			public const int notification_template_big_media_narrow = 2130968623;
 			
 			// aapt resource value: 0x7f040030
-			public const int notification_template_big_media_narrow = 2130968624;
+			public const int notification_template_big_media_narrow_custom = 2130968624;
 			
 			// aapt resource value: 0x7f040031
-			public const int notification_template_big_media_narrow_custom = 2130968625;
+			public const int notification_template_custom_big = 2130968625;
 			
 			// aapt resource value: 0x7f040032
-			public const int notification_template_custom_big = 2130968626;
+			public const int notification_template_icon_group = 2130968626;
 			
 			// aapt resource value: 0x7f040033
-			public const int notification_template_icon_group = 2130968627;
+			public const int notification_template_lines_media = 2130968627;
 			
 			// aapt resource value: 0x7f040034
-			public const int notification_template_lines_media = 2130968628;
+			public const int notification_template_media = 2130968628;
 			
 			// aapt resource value: 0x7f040035
-			public const int notification_template_media = 2130968629;
+			public const int notification_template_media_custom = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int notification_template_media_custom = 2130968630;
+			public const int notification_template_part_chronometer = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int notification_template_part_chronometer = 2130968631;
+			public const int notification_template_part_time = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int notification_template_part_time = 2130968632;
+			public const int select_dialog_item_material = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int select_dialog_item_material = 2130968633;
+			public const int select_dialog_multichoice_material = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int select_dialog_multichoice_material = 2130968634;
+			public const int select_dialog_singlechoice_material = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int select_dialog_singlechoice_material = 2130968635;
+			public const int support_simple_spinner_dropdown_item = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int support_simple_spinner_dropdown_item = 2130968636;
-			
-			// aapt resource value: 0x7f04003d
-			public const int tooltip = 2130968637;
+			public const int tooltip = 2130968636;
 			
 			static Layout()
 			{

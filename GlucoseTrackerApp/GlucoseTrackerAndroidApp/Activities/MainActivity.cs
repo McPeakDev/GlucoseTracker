@@ -5,24 +5,27 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using GlucoseTrackerAndroidApp.Services;
+using GlucoseTrackerWeb.Models;
 using System;
+using System.Net;
 
 namespace GlucoseTrackerAndroidApp
 {
-    [Activity(Label = "Glucose Tracker", Theme = "@style/AppTheme", MainLauncher = true)]
-    public class MainActivity : AppCompatActivity
+    [Activity(Label = "Glucose Tracker", Theme = "@android:style/Theme.Material", MainLauncher = true)]
+    public class MainActivity : Activity
     {
-        EditText username;
+        EditText email;
         EditText password;
         Button loginButton;
         Button createButton;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.login_page);
             // Create your application here
+            SetContentView(Resource.Layout.activity_main);
             //get UI controls
-            username = FindViewById<EditText>(Resource.Id.usernameText);
+            email = FindViewById<EditText>(Resource.Id.emailText);
             password = FindViewById<EditText>(Resource.Id.passwordText);
             loginButton = FindViewById<Button>(Resource.Id.loginButton);
             createButton = FindViewById<Button>(Resource.Id.createButton);
@@ -33,27 +36,22 @@ namespace GlucoseTrackerAndroidApp
 
         public void LoginAttempt_Click(object sender, EventArgs e)
         {
-            createButton.Text = "hello";
-            if (username.Text == null)
+            RestService api = new RestService();
+            Boolean status = api.LoginAsync(new Credentials()
             {
-                //
-            }
-            else if (password.Text == null)
+                Email = email.Text,
+                Password = password.Text
+            }).Result;
+
+            if(status)
             {
-                //
+                email.Text = "Success";
             }
-            else if (password.Text != null && username.Text != null)
+            else
             {
-                Patient user = Login.LoginPatient(username.Text, password.Text);
-                if (user != null)
-                {
-                    //
-                }
-                else
-                {
-                    username.Text = "landed";
-                }
+                email.Text = "Failure";
             }
+
 
         }
     }
