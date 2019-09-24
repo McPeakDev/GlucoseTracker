@@ -9,7 +9,7 @@ obj/
 *.cache
 .vs/
 *.map
-Properties/
+PublishProfiles/
 
 # Files for the ART/Dalvik VM
 *.dex

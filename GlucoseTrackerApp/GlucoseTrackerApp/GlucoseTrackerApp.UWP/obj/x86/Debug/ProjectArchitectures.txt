@@ -1,1 +1,0 @@
-D:\SE1\GlucoseTracker\GlucoseTrackerApp\GlucoseTrackerApp\GlucoseTrackerApp.UWP\GlucoseTrackerApp.UWP.csproj;x86
