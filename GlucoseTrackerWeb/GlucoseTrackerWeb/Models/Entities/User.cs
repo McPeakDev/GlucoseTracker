@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GlucoseTrackerWeb.Models.DBFEntities
+namespace GlucoseTrackerWeb.Models.Entities
 {
-    public partial class User
+    public abstract class User
     {
         public int UserId { get; set; }
         public string Password { get; set; }
@@ -12,10 +12,5 @@ namespace GlucoseTrackerWeb.Models.DBFEntities
         public string LastName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
-
-        public virtual Doctor Doctor { get; set; }
-        public virtual Login LoginEmailNavigation { get; set; }
-        public virtual Login LoginUser { get; set; }
-        public virtual Patient Patient { get; set; }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace GlucoseTrackerWeb.Models.DBFEntities
+namespace GlucoseTrackerWeb.Models.Entities
 {
     public partial class PatientCarbohydrates
     {
+        [Key]
+        public int  CarbId { get; set; }
         public int PatientId { get; set; }
         public int TotalCarbs { get; set; }
         public string MealName { get; set; }

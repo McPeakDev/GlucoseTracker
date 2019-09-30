@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GlucoseTrackerWeb.Models.DBFEntities;
+using GlucoseTrackerWeb.Models.Entities;
 using GlucoseTrackerWeb.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -43,7 +43,7 @@ namespace GlucoseTrackerWeb
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddDbContext<GlucoseTrackerContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<GlucoseTrackerContext>(options => options.UseMySql(Configuration.GetConnectionString("DevConnection")));
             services.AddScoped<IDbRepository<User>, DbUserRepository>();
         }
 

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace GlucoseTrackerWeb.Models.DBFEntities
+namespace GlucoseTrackerWeb.Models.Entities
 {
     public partial class PatientBloodSugar
     {
+        [Key]
+        public int BloodId { get; set; }
         public int PatientId { get; set; }
         public float LevelBefore { get; set; }
         public float LevelAfter { get; set; }

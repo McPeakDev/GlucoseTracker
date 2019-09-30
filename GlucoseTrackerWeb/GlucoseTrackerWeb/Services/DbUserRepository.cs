@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GlucoseTrackerWeb.Models.DBFEntities;
+using GlucoseTrackerWeb.Models.Entities;
 using static BCrypt.Net.BCrypt;
 
 namespace GlucoseTrackerWeb.Services
@@ -24,11 +24,11 @@ namespace GlucoseTrackerWeb.Services
             user.MiddleName = user.MiddleName.Trim();
             user.LastName = user.LastName.Trim();
             user.PhoneNumber = user.PhoneNumber.Trim().Replace("-", " ");
-            user.Doctor = new Doctor()
+            /*user.Doctor = new Doctor()
             {
                 DoctorId = user.UserId,
                 NumberOfPatients = 0
-            };
+            };*/
             _db.User.Add(user);
             _db.SaveChanges();
             return user;

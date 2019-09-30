@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using GlucoseTrackerWeb.Models;
 using GlucoseTrackerWeb.Services;
-using GlucoseTrackerWeb.Models.DBFEntities;
+using GlucoseTrackerWeb.Models.Entities;
 using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Http;
 using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
@@ -28,13 +28,13 @@ namespace GlucoseTrackerWeb.Controllers
         [HttpPost]
         public IActionResult Login(Credentials creds)
         {
-            User user = _userRepo.Read(creds.Email);
+            Doctor doctor = (Doctor) _userRepo.Read(creds.Email);
 
-            if (Verify(creds.Password, user.Password))
+            if (Verify(creds.Password, doctor.Password))
             {
                 _session = HttpContext.Session;
                 SessionExtensions.SetBool(_session, "LoggedIn", true);
-                return RedirectToAction("Dashboard",user);
+                return RedirectToAction("Dashboard", doctor);
             }
 
             TempData["BadLogin"] = true;
@@ -67,18 +67,18 @@ namespace GlucoseTrackerWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(User user)
+        public IActionResult Create(Doctor doctor)
         {
             if (ModelState.IsValid)
             {
-                _userRepo.Create(user);
+                _userRepo.Create(doctor);
                 return RedirectToAction("Index");
             }
-            return View(user);
+            return View(doctor);
         }
-        public IActionResult Dashboard(User user)
+        public IActionResult Dashboard(Doctor doctor)
         {
-            var model = _patientRepo.ReadAll(); ; //= _userRepo.ReadPatients(user.UserId);
+            var model = _userRepo.ReadAll(); ; //= _userRepo.ReadPatients(user.UserId);
 
             if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {
