@@ -13,32 +13,31 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using GlucoseTrackerWeb.Models;
 using Newtonsoft.Json;
+using GlucoseAPI.Models.DBFEntities;
 
 namespace GlucoseTrackerAndroidApp.Services
 {
     public class RestService
     {
         HttpClient _client;
+        string  _baseAddress;
+        HttpResponseMessage _response;
+        string _data;
 
         public RestService()
         {
             _client = new HttpClient();
+            _baseAddress = "http://glucosetracker.duckdns.org:8080/";
+
         }
 
-        public async Task<Boolean> LoginAsync(Credentials creds)
+        public async Task<User> LoginAsync(Credentials creds)
         {
-            User user = null;
-            var uri = new Uri(string.Format($"http://localhost:5000/API/$2y$12$KPxgNtzXN1PvL89l7nrnJ.MPFxLfCz7BZvI8fa5lyORGNw5S.O9x./{creds.Email}/{creds.Password}"));
-
-            var response = await _client.GetAsync(uri);
-
-            if (response.IsSuccessStatusCode)
-            {
-                //var content = response.Content.ReadAsStringAsync();
-                return true;
-                //user = JsonConvert.DeserializeObject<User>(content);
-            }
-            return false;
+            StringContent loginContent = new StringContent(creds.ToString(), Encoding.UTF8, "application/json");
+            _response =  await _client.PostAsync(new Uri(_baseAddress), loginContent);
+            _data = await _response.Content.ReadAsStringAsync();
+            User user = JsonConvert.DeserializeObject<User>(_data.ToString());
+            return user;
         } 
     }
 }

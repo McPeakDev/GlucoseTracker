@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace GlucoseTrackerWeb.Models.DBFEntities
+namespace GlucoseAPI.Models.DBFEntities
 {
     public partial class GlucoseTrackerContext : DbContext
     {
@@ -28,11 +28,6 @@ namespace GlucoseTrackerWeb.Models.DBFEntities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=glucosetracker.duckdns.org;port=3306;database=GlucoseTracker;uid=Glucose;password=9cjGMXhIRm4Q503UtvTqn5dX9ffPACWoT2BX");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

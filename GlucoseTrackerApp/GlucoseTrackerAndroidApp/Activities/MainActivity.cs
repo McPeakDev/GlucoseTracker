@@ -9,6 +9,8 @@ using GlucoseTrackerAndroidApp.Services;
 using GlucoseTrackerWeb.Models;
 using System;
 using System.Net;
+using System.Threading.Tasks;
+using static BCrypt.Net.BCrypt;
 
 namespace GlucoseTrackerAndroidApp
 {
@@ -34,24 +36,17 @@ namespace GlucoseTrackerAndroidApp
 
         }
 
-        public void LoginAttempt_Click(object sender, EventArgs e)
+        public async void LoginAttempt_Click(object sender, EventArgs e)
         {
             RestService api = new RestService();
-            Boolean status = api.LoginAsync(new Credentials()
+            var result = await api.LoginAsync(new Credentials()
             {
                 Email = email.Text,
-                Password = password.Text
-            }).Result;
+                Password = HashPassword(password.Text)
+            });
 
-            if(status)
-            {
-                email.Text = "Success";
-            }
-            else
-            {
-                email.Text = "Failure";
-            }
 
+            email.Text = $"Hello, {result.FirstName}";
 
         }
     }

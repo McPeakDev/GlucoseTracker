@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GlucoseTrackerWeb.Models.DBFEntities
+namespace GlucoseAPI.Models.DBFEntities
 {
     public partial class Doctor
     {

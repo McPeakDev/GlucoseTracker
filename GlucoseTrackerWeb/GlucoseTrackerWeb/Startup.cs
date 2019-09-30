@@ -61,7 +61,6 @@ namespace GlucoseTrackerWeb
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseHttpsRedirection();
             app.UseSession();
 
             app.UseMvc(routes =>

@@ -14,6 +14,8 @@ namespace GlucoseTrackerWeb.Models.DBFEntities
         public string PhoneNumber { get; set; }
 
         public virtual Doctor Doctor { get; set; }
+        public virtual Login LoginEmailNavigation { get; set; }
+        public virtual Login LoginUser { get; set; }
         public virtual Patient Patient { get; set; }
     }
 }
