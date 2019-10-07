@@ -71,9 +71,15 @@ namespace GlucoseAPI.Controllers
         [HttpPost("Create")]
         public async void CreatePatient(Patient patient)
         {
-           patient.Doctor = (Doctor) _context.Doctor.FirstOrDefault(d => d.UserId == patient.DoctorId);
-
+            patient.Doctor = (Doctor) _context.Doctor.FirstOrDefault(d => d.UserId == patient.DoctorId);
             _context.Patient.Add(patient);
+            _context.Login.Add(new Login()
+            {
+                Email = patient.Email,
+                Password = patient.Password,
+                UserId = patient.UserId
+
+            });
             _context.SaveChanges();
         }
 

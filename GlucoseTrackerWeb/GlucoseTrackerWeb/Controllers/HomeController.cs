@@ -29,18 +29,25 @@ namespace GlucoseTrackerWeb.Controllers
         [HttpPost]
         public IActionResult Login(Credentials creds)
         {
-            Doctor doctor = _doctorRepo.Read(creds.Email);
-
-            if (Verify(creds.Password, doctor.Password))
+            try
             {
-                _session = HttpContext.Session;
-                SessionExtensions.SetBool(_session, "LoggedIn", true);
-                return RedirectToAction("Dashboard", doctor);
+                Doctor doctor = _doctorRepo.Read(creds.Email);
+
+                if (Verify(creds.Password, doctor.Password))
+                {
+                    _session = HttpContext.Session;
+                    SessionExtensions.SetBool(_session, "LoggedIn", true);
+                    return RedirectToAction("Dashboard", doctor);
+                }
+
+                TempData["BadLogin"] = true;
+                return RedirectToAction("Index");
             }
-
-            TempData["BadLogin"] = true;
-            return RedirectToAction("Index");
-
+            catch (Exception)
+            {
+                TempData["BadLogin"] = true;
+                return RedirectToAction("Index");
+            }
         }
         public IActionResult Logout()
         {

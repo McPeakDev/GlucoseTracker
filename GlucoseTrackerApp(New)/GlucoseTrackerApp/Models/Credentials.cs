@@ -11,12 +11,5 @@ namespace GlucoseAPI.Models.Entities
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public override string ToString()
-        {
-            JObject jCreds = JObject.FromObject(this);
-            string jsonCreds = jCreds.ToString();
-            return jsonCreds;
-        }
-
     }
 }

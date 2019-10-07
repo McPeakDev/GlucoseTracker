@@ -6,7 +6,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	app:layout_behavior="@string/appbar_scrolling_view_behavior"
-	tools:showIn="@layout/app_bar_main"
+	tools:showIn="@layout/app_bar_register"
 	android:minWidth="25px"
 	android:minHeight="25px">
 	<EditText
@@ -28,23 +28,56 @@
 		android:hint="Password"
 		android:layout_below="@id/email"
 		android:id="@+id/password"/>
-	<CheckBox
-		android:text="Remember Login"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginLeft= "15px"
-		android:layout_marginTop = "10px"
-		android:layout_below="@id/password"
-		android:id="@+id/auto_login" />
-	<Button
-		android:text="Login"
+	<EditText
+		android:inputType="textPersonName"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:layout_below="@id/auto_login"
-		android:id="@+id/login_button"/>
+		android:hint="First Name"
+		android:layout_below="@id/password"
+		android:id="@+id/first_name" />
+	<EditText
+		android:inputType="textPersonName"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+		android:hint="MIddle Name"
+		android:layout_below="@id/first_name"
+		android:id="@+id/middle_name" />
+	<EditText
+		android:inputType="textPersonName"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+		android:hint="Last Name"
+		android:layout_below="@id/middle_name"
+		android:id="@+id/last_name" />
+	<EditText
+		android:inputType="phone"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+		android:hint="Phone Number"
+		android:layout_below="@id/last_name"
+		android:id="@+id/phone_number" />
+	<EditText
+		android:inputType="number"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+		android:hint="Doctor ID"
+		android:layout_below="@id/phone_number"
+		android:id="@+id/doctor_id" />
 	<Button
 		android:text="Register"
 		android:layout_width="fill_parent"
@@ -52,6 +85,6 @@
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:layout_below="@id/login_button"
+		android:layout_below="@id/doctor_id"
 		android:id="@+id/register_button"/>
 </RelativeLayout>

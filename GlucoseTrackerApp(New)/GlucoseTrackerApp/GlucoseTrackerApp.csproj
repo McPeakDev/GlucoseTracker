@@ -68,6 +68,7 @@
     <Compile Include="Models\PatientCarbohydrates.cs" />
     <Compile Include="Models\PatientExercise.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="RegisterActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RestService.cs" />

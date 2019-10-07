@@ -13,6 +13,7 @@ using static BCrypt.Net.BCrypt;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
+using Android.Content;
 
 namespace GlucoseTrackerApp
 {
@@ -104,9 +105,10 @@ namespace GlucoseTrackerApp
             return;
         }
 
-        public async void OnRegisterPressedAsync(string email, string password)
+        public void OnRegisterPressedAsync(string email, string password)
         {
-            
+            Intent registerActivity = new Intent(this, typeof(RegisterActivity));
+            StartActivity(registerActivity);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
