@@ -35,12 +35,12 @@ namespace GlucoseTrackerWeb.Services
             return _db.Patient.FirstOrDefault(p => p.PatientId == id);
         }
 
-        public ICollection<Patient> ReadAll()
+        public ICollection<Patient> ReadAll(int? id)
         {
-            return _db.Patient.ToList();
+            return _db.Patient.Where(d => d.DoctorId == id).ToList();
         }
 
-        public void Update(int id, User user)
+        public void Update(int id, Patient patient)
         {
             throw new NotImplementedException();
         }

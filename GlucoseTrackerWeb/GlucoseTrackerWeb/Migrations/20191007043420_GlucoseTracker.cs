@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GlucoseTrackerWeb.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class GlucoseTracker : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,24 +29,21 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     UserId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Password = table.Column<string>(nullable: true),
-                    FirstName = table.Column<string>(nullable: true),
-                    MiddleName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(maxLength: 255, nullable: false),
+                    FirstName = table.Column<string>(maxLength: 150, nullable: false),
+                    MiddleName = table.Column<string>(maxLength: 150, nullable: true),
+                    LastName = table.Column<string>(maxLength: 150, nullable: false),
+                    Email = table.Column<string>(maxLength: 255, nullable: false),
+                    PhoneNumber = table.Column<string>(maxLength: 11, nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
-                    DoctorId = table.Column<int>(nullable: true),
-                    NumberOfPatients = table.Column<int>(nullable: true),
-                    PatientId = table.Column<int>(nullable: true),
-                    Patient_DoctorId = table.Column<int>(nullable: true)
+                    DoctorId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_User_User_Patient_DoctorId",
-                        column: x => x.Patient_DoctorId,
+                        name: "FK_User_User_DoctorId",
+                        column: x => x.DoctorId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -58,8 +55,8 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     LoginId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Email = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(maxLength: 255, nullable: false),
+                    Password = table.Column<string>(maxLength: 255, nullable: false),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -165,9 +162,9 @@ namespace GlucoseTrackerWeb.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Patient_DoctorId",
+                name: "IX_User_DoctorId",
                 table: "User",
-                column: "Patient_DoctorId");
+                column: "DoctorId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

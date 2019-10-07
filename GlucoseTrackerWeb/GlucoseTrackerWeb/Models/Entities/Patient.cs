@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GlucoseTrackerWeb.Models.Entities
 {
     public partial class Patient : User
     {
-        public int PatientId { get; set; }
+        [Required]
+        public int PatientId
+        {
+            get
+            {
+                return UserId;
+            }
+        }
+
+        [Required]
         public int DoctorId { get; set; }
 
         public virtual Doctor Doctor { get; set; }

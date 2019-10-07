@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GlucoseAPI.Models.DBFEntities;
+using GlucoseAPI.Models.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +42,10 @@ namespace GlucoseAPI
             app.UseMvc(routes =>
             {
                 routes.MapRoute("default", "{controller=Users}/{action=GetUser}/{id?}");
+            });
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("CreateUser", "{controller=Users}/Create/{action=CreateUser}/");
             });
         }
     }

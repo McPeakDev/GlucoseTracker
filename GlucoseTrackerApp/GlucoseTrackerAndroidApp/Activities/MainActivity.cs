@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -15,7 +16,7 @@ using static BCrypt.Net.BCrypt;
 namespace GlucoseTrackerAndroidApp
 {
     [Activity(Label = "Glucose Tracker", Theme = "@android:style/Theme.Material", MainLauncher = true)]
-    public class MainActivity : Activity
+    public class MainActivity : AppCompatActivity
     {
         EditText email;
         EditText password;
@@ -45,9 +46,7 @@ namespace GlucoseTrackerAndroidApp
                 Password = HashPassword(password.Text)
             });
 
-
-            email.Text = $"Hello, {result.FirstName}";
-
+            Intent intent = new Intent();
         }
     }
 }

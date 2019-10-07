@@ -44,7 +44,8 @@ namespace GlucoseTrackerWeb
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<GlucoseTrackerContext>(options => options.UseMySql(Configuration.GetConnectionString("DevConnection")));
-            services.AddScoped<IDbRepository<User>, DbUserRepository>();
+            services.AddScoped<IDbRepository<Doctor>, DbDoctorRepository>();
+            services.AddScoped<IDbRepository<Patient>, DbPatientRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

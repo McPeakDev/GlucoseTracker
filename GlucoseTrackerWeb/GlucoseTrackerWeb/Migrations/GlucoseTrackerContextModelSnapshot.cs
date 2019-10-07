@@ -22,9 +22,13 @@ namespace GlucoseTrackerWeb.Migrations
                     b.Property<int>("LoginId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
                     b.Property<int>("UserId");
 
@@ -126,17 +130,28 @@ namespace GlucoseTrackerWeb.Migrations
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(150);
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(150);
 
-                    b.Property<string>("MiddleName");
+                    b.Property<string>("MiddleName")
+                        .HasMaxLength(150);
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
-                    b.Property<string>("PhoneNumber");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(11);
 
                     b.HasKey("UserId");
 
@@ -149,10 +164,6 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     b.HasBaseType("GlucoseTrackerWeb.Models.Entities.User");
 
-                    b.Property<int>("DoctorId");
-
-                    b.Property<int>("NumberOfPatients");
-
                     b.HasDiscriminator().HasValue("Doctor");
                 });
 
@@ -160,10 +171,7 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     b.HasBaseType("GlucoseTrackerWeb.Models.Entities.User");
 
-                    b.Property<int>("DoctorId")
-                        .HasColumnName("Patient_DoctorId");
-
-                    b.Property<int>("PatientId");
+                    b.Property<int>("DoctorId");
 
                     b.HasIndex("DoctorId");
 

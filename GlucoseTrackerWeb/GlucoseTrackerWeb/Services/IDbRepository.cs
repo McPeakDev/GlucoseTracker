@@ -14,9 +14,9 @@ namespace GlucoseTrackerWeb.Services
 
         T Read(int id);
 
-        ICollection<T> ReadAll();
+        ICollection<T> ReadAll(int? id);
 
-        void Update(int id, User user);
+        void Update(int id, T obj);
 
         void Delete(int id);
     }

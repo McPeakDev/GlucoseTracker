@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GlucoseTrackerWeb.Models.Entities
 {
@@ -10,8 +12,23 @@ namespace GlucoseTrackerWeb.Models.Entities
             Patient = new List<Patient>();
         }
 
-        public int DoctorId { get; set; }
-        public int NumberOfPatients { get; set; }
+        [Required]
+        public int DoctorId
+        {
+            get
+            {
+                return UserId;
+            }
+        }
+
+        [Required]
+        public int NumberOfPatients
+        {
+            get
+            {
+                return Patient.Count;
+            }
+        }
 
         public ICollection<Patient> Patient { get; set; }
     }

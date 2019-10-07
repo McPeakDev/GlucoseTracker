@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GlucoseAPI.Models.DBFEntities;
-using GlucoseTrackerWeb.Models;
+using GlucoseAPI.Models.Entities;
+using GlucoseAPI.Models;
 using static BCrypt.Net.BCrypt;
 
 namespace GlucoseAPI.Controllers
@@ -22,22 +22,24 @@ namespace GlucoseAPI.Controllers
             _context = context;
         }
 
-        public async Task<ActionResult<User>> GetUser(Login login)
+        private async Task<ActionResult<Patient>> GrabPatient(Login login)
         {
-            var user = await _context.User.FindAsync(login.UserId);
-            user.LoginEmailNavigation = null;
-            user.LoginUser = null;
-            if (user == null)
+            var user = await _context.Patient.FindAsync(login.UserId);
+            if (user != null && user is Patient)
             {
-                return NotFound();
+                return (Patient) user;
             }
-
-            return user;
+            else
+            {
+                NotFound();
+                return null;
+            }
+                
         }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutPatient(int id, User user)
         {
             if (id != user.UserId)
             {
@@ -66,34 +68,44 @@ namespace GlucoseAPI.Controllers
         }
 
         // POST: api/Users
+        [HttpPost("Create")]
+        public async void CreatePatient(Patient patient)
+        {
+           patient.Doctor = (Doctor) _context.Doctor.FirstOrDefault(d => d.UserId == patient.DoctorId);
+
+            _context.Patient.Add(patient);
+            _context.SaveChanges();
+        }
+
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(Credentials creds)
+        public async Task<ActionResult<Patient>> PostPatient(Credentials creds)
         {
 
             Login login = await _context.Login.FirstOrDefaultAsync(c => c.Email == creds.Email);
 
-            return await GetUser(login);
+            return await GrabPatient(login);
         }
+
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        public async Task<ActionResult<Patient>> DeletePatient(int id)
         {
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var user = await _context.Patient.FindAsync(id);
+            if (user is Patient)
             {
                 return NotFound();
             }
 
-            _context.User.Remove(user);
+            _context.Patient.Remove(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return null;
         }
 
         private bool UserExists(int id)
         {
-            return _context.User.Any(e => e.UserId == id);
+            return _context.Patient.Any(e => e.UserId == id);
         }
     }
 }

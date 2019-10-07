@@ -15,20 +15,21 @@ namespace GlucoseTrackerWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private IDbRepository<User> _userRepo;
+        private IDbRepository<Doctor> _doctorRepo;
         private IDbRepository<Patient> _patientRepo;
+
         private static ISession _session;
 
-        public HomeController(IDbRepository<User> userRepo)
+        public HomeController(IDbRepository<Doctor> doctorRepo, IDbRepository<Patient> patientRepo)
         {
-            _userRepo = userRepo;
-          
+            _doctorRepo = doctorRepo;
+            _patientRepo = patientRepo;
         }
 
         [HttpPost]
         public IActionResult Login(Credentials creds)
         {
-            Doctor doctor = (Doctor) _userRepo.Read(creds.Email);
+            Doctor doctor = _doctorRepo.Read(creds.Email);
 
             if (Verify(creds.Password, doctor.Password))
             {
@@ -71,14 +72,14 @@ namespace GlucoseTrackerWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                _userRepo.Create(doctor);
+                _doctorRepo.Create(doctor);
                 return RedirectToAction("Index");
             }
             return View(doctor);
         }
         public IActionResult Dashboard(Doctor doctor)
         {
-            var model = _userRepo.ReadAll(); ; //= _userRepo.ReadPatients(user.UserId);
+            var model = _patientRepo.ReadAll(doctor.UserId);
 
             if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {
