@@ -19,8 +19,8 @@ namespace GlucoseAPI.Models.Entities
         public int? DoctorId { get; set; }
 
         public virtual Doctor Doctor { get; set; }
-        public virtual PatientBloodSugar PatientBloodSugar { get; set; }
-        public virtual PatientCarbohydrates PatientCarbohydrates { get; set; }
-        public virtual PatientExercise PatientExercise { get; set; }
+        public virtual List<PatientBloodSugar> PatientBloodSugars { get; set; }
+        public virtual List<PatientCarbohydrates> PatientCarbohydrates { get; set; }
+        public virtual List<PatientExercise> PatientExercises { get; set; }
     }
 }

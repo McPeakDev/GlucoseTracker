@@ -28,9 +28,9 @@ namespace GlucoseAPI.Controllers
                     var login = PostPatient(creds).Value;
 
                     var patient = _context.Patient.Include(p => p.Doctor)
-                        .Include(p => p.PatientBloodSugar)
+                        .Include(p => p.PatientBloodSugars)
                         .Include(p => p.PatientCarbohydrates)
-                        .Include(p => p.PatientExercise)
+                        .Include(p => p.PatientExercises)
                         .FirstOrDefault(p => p.PatientId == login.User.UserId);
 
                     return patient;
