@@ -17,8 +17,8 @@ namespace GlucoseAPI.Models.Entities
         [StringLength(255)]
         public string Password { get; set; }
         [Required]
-        public int UserId { get; set; }
-
+        [StringLength(255)]
+        public string Token { get; set; }
         public virtual User User { get; set; }
     }
 }

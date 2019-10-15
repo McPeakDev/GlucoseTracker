@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlucoseAPI.Models.Entities;
-using GlucoseAPI.Models;
 using static BCrypt.Net.BCrypt;
+using System;
 
 namespace GlucoseAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
@@ -22,91 +18,133 @@ namespace GlucoseAPI.Controllers
             _context = context;
         }
 
-        private async Task<ActionResult<Patient>> GrabPatient(Login login)
+        [HttpPost("Read")]
+        public ActionResult<Patient> GrabPatient(Credentials creds)
         {
-            var user = await _context.Patient.FindAsync(login.UserId);
-            if (user != null && user is Patient)
+            if (VerifyToken(creds.Token))
             {
-                return (Patient) user;
+                try
+                {
+                    var login = PostPatient(creds).Value;
+
+                    var patient = _context.Patient.Include(p => p.Doctor)
+                        .Include(p => p.PatientBloodSugar)
+                        .Include(p => p.PatientCarbohydrates)
+                        .Include(p => p.PatientExercise)
+                        .FirstOrDefault(p => p.PatientId == login.User.UserId);
+
+                    return patient;
+                }
+                catch (Exception)
+                {
+                    return Content("Invalid User");
+                }
             }
             else
             {
-                NotFound();
-                return null;
+                return Content("Invalid Token");
             }
-                
         }
 
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPatient(int id, User user)
+        [HttpPut("Update")]
+        public IActionResult PutPatient(Register register)
         {
-            if (id != user.UserId)
+            if (VerifyToken(register.Login.Token))
             {
-                return BadRequest();
+                try
+                {
+                    Login login = _context.Login.FirstOrDefault(l => l.LoginId == register.Login.LoginId);
+
+                    login.Email = register.Login.Email;
+                    login.Password = register.Login.Password;
+                    login.Token = register.Login.Token;
+                    login.User = register.Patient;
+
+                    _context.Patient.Attach(register.Patient);
+
+                    _context.Entry(register.Patient).State = EntityState.Modified;
+
+                    _context.SaveChanges();
+
+                    return Content("Success");
+                }
+                catch (Exception)
+                {
+                    return Content("Invalid User");
+                }
             }
+            return Content("Invalid Token");
+        }
 
-            _context.Entry(user).State = EntityState.Modified;
-
+        [HttpPost("Create")]
+        public IActionResult CreatePatient(Register register)
+        {
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
+                Patient patient = register.Patient;
+
+                if (!(patient.DoctorId is null))
                 {
-                    return NotFound();
+                    patient.Doctor = _context.Doctor.FirstOrDefault(d => d.UserId == patient.DoctorId);
+                    patient.Doctor.Patients.Add(patient);
                 }
-                else
+                _context.Patient.Add(patient);
+
+                register.Login.User = register.Patient;
+
+                _context.Login.Add(register.Login);
+                _context.SaveChanges();
+                return Content("Success");
+            }
+            catch (Exception)
+            {
+                return Content("Bad Input");
+            }
+        }
+
+        private ActionResult<Login> PostPatient(Credentials creds)
+        {
+
+            Login login = _context.Login.Include(l => l.User).Where(l => l.Email.Equals(creds.Email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault(l => Verify(creds.Password, l.Password));
+
+            return login;
+        }
+
+
+        [HttpDelete ("Delete")]
+        public IActionResult DeletePatient(Credentials creds)
+        {
+            if (VerifyToken(creds.Token))
+            {
+                try
                 {
-                    throw;
+                    var patient = GrabPatient(creds).Value;
+
+                    _context.Login.Remove(PostPatient(creds).Value);
+                    _context.Patient.Remove(patient);
+
+                    _context.SaveChanges();
+
+                    patient = null;
+
+                    return Content("Deleted!");
+                }
+                catch (Exception)
+                {
+                    return Content("Invalid User");
                 }
             }
-
-            return NoContent();
+            return Content("Invalid Token");
         }
 
-        // POST: api/Users
-        [HttpPost("Create")]
-        public async void CreatePatient(Patient patient)
+        private bool VerifyToken(string token)
         {
-            patient.Doctor = (Doctor) _context.Doctor.FirstOrDefault(d => d.UserId == patient.DoctorId);
-            _context.Patient.Add(patient);
-            _context.Login.Add(new Login()
+            
+            if(!(_context.Login.FirstOrDefault(l => l.Token == token) is null))
             {
-                Email = patient.Email,
-                Password = patient.Password,
-                UserId = patient.UserId
-
-            });
-            _context.SaveChanges();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Patient>> PostPatient(Credentials creds)
-        {
-
-            Login login = await _context.Login.FirstOrDefaultAsync(c => c.Email == creds.Email);
-
-            return await GrabPatient(login);
-        }
-
-
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Patient>> DeletePatient(int id)
-        {
-            var user = await _context.Patient.FindAsync(id);
-            if (user is Patient)
-            {
-                return NotFound();
+                return true;
             }
-
-            _context.Patient.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return null;
+            return false;
         }
 
         private bool UserExists(int id)
