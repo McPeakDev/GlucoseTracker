@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GlucoseTrackerWeb.Models.Entities;
+using GlucoseAPI.Models.Entities;
 using GlucoseTrackerWeb.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;

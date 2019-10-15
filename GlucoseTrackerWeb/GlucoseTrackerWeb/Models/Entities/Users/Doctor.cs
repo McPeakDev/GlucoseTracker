@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GlucoseTrackerWeb.Models.Entities
+namespace GlucoseAPI.Models.Entities
 {
     public partial class Doctor : User
     {
         public Doctor()
         {
-            Patient = new List<Patient>();
+            Patients = new List<Patient>();
         }
 
         [Required]
@@ -26,10 +26,10 @@ namespace GlucoseTrackerWeb.Models.Entities
         {
             get
             {
-                return Patient.Count;
+                return Patients.Count;
             }
         }
 
-        public ICollection<Patient> Patient { get; set; }
+        public virtual ICollection<Patient> Patients { get; set; }
     }
 }

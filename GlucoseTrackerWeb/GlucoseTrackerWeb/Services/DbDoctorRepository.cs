@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GlucoseTrackerWeb.Models.Entities;
+using GlucoseAPI.Models.Entities;
 using static BCrypt.Net.BCrypt;
 
 namespace GlucoseTrackerWeb.Services
@@ -19,7 +19,6 @@ namespace GlucoseTrackerWeb.Services
         public Doctor Create(Doctor doctor)
         {
             doctor.Email = doctor.Email.Trim();
-            doctor.Password = HashPassword(doctor.Password);
             doctor.FirstName = doctor.FirstName.Trim();
             doctor.MiddleName = doctor.MiddleName.Trim();
             doctor.LastName = doctor.LastName.Trim();

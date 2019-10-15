@@ -1,4 +1,4 @@
-﻿using GlucoseTrackerWeb.Models.Entities;
+﻿using GlucoseAPI.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

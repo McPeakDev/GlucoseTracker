@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using GlucoseTrackerWeb.Models;
 using GlucoseTrackerWeb.Services;
-using GlucoseTrackerWeb.Models.Entities;
+using GlucoseAPI.Models.Entities;
 using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Http;
 using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
@@ -17,6 +17,7 @@ namespace GlucoseTrackerWeb.Controllers
     {
         private IDbRepository<Doctor> _doctorRepo;
         private IDbRepository<Patient> _patientRepo;
+        private IDbRepository<Login> _loginRepo;
 
         private static ISession _session;
 
@@ -32,8 +33,9 @@ namespace GlucoseTrackerWeb.Controllers
             try
             {
                 Doctor doctor = _doctorRepo.Read(creds.Email);
+                Login login = _loginRepo.Read(creds.Email);
 
-                if (Verify(creds.Password, doctor.Password))
+                if (Verify(creds.Password, login.Password))
                 {
                     _session = HttpContext.Session;
                     SessionExtensions.SetBool(_session, "LoggedIn", true);

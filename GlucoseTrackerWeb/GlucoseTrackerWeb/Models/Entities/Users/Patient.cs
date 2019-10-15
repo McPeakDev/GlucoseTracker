@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GlucoseTrackerWeb.Models.Entities
+namespace GlucoseAPI.Models.Entities
 {
     public partial class Patient : User
     {
@@ -16,8 +16,7 @@ namespace GlucoseTrackerWeb.Models.Entities
             }
         }
 
-        [Required]
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
 
         public virtual Doctor Doctor { get; set; }
         public virtual PatientBloodSugar PatientBloodSugar { get; set; }

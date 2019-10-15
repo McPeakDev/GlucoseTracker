@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace GlucoseTrackerWeb.Models.Entities
+namespace GlucoseAPI.Models.Entities
 {
     public partial class GlucoseTrackerContext : DbContext
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GlucoseTrackerWeb.Models.Entities
+namespace GlucoseAPI.Models.Entities
 {
     public partial class Login
     {
@@ -17,8 +17,8 @@ namespace GlucoseTrackerWeb.Models.Entities
         [StringLength(255)]
         public string Password { get; set; }
         [Required]
-        public int UserId { get; set; }
-
+        [StringLength(255)]
+        public string Token { get; set; }
         public virtual User User { get; set; }
     }
 }
