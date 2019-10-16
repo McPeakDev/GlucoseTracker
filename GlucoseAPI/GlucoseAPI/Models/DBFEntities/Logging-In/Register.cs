@@ -7,7 +7,7 @@ namespace GlucoseAPI.Models.Entities
 {
     public class Register
     {
-        public Login Login { get; set; }
+        public Credentials Credentials{ get; set; }
         public string Token { get; set; }
         public virtual Patient Patient { get; set; }
         public virtual Doctor Doctor { get; set; }
