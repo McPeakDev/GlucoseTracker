@@ -28,6 +28,7 @@ namespace GlucoseAPI.Migrations
                 {
                     UserId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Token = table.Column<string>(maxLength: 255, nullable: true),
                     FirstName = table.Column<string>(maxLength: 150, nullable: false),
                     MiddleName = table.Column<string>(maxLength: 150, nullable: true),
                     LastName = table.Column<string>(maxLength: 150, nullable: false),
@@ -48,25 +49,24 @@ namespace GlucoseAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Login",
+                name: "Credentials",
                 columns: table => new
                 {
-                    LoginId = table.Column<int>(nullable: false)
+                    CredentialsId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(nullable: false),
                     Email = table.Column<string>(maxLength: 255, nullable: false),
-                    Password = table.Column<string>(maxLength: 255, nullable: false),
-                    Token = table.Column<string>(maxLength: 255, nullable: false),
-                    UserId = table.Column<int>(nullable: true)
+                    Password = table.Column<string>(maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Login", x => x.LoginId);
+                    table.PrimaryKey("PK_Credentials", x => x.CredentialsId);
                     table.ForeignKey(
-                        name: "FK_Login_User_UserId",
+                        name: "FK_Credentials_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,8 +149,8 @@ namespace GlucoseAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Login_UserId",
-                table: "Login",
+                name: "IX_Credentials_UserId",
+                table: "Credentials",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -190,7 +190,7 @@ namespace GlucoseAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Login");
+                name: "Credentials");
 
             migrationBuilder.DropTable(
                 name: "PatientBloodSugar");

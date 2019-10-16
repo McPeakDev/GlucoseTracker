@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GlucoseAPI.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
-    [Migration("20191016003339_GlucoseTracker")]
+    [Migration("20191016175508_GlucoseTracker")]
     partial class GlucoseTracker
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,9 +19,9 @@ namespace GlucoseAPI.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("GlucoseAPI.Models.Entities.Login", b =>
+            modelBuilder.Entity("GlucoseAPI.Models.Entities.Credentials", b =>
                 {
-                    b.Property<int>("LoginId")
+                    b.Property<int>("CredentialsId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email")
@@ -32,17 +32,13 @@ namespace GlucoseAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(255);
+                    b.Property<int>("UserId");
 
-                    b.Property<int?>("UserId");
-
-                    b.HasKey("LoginId");
+                    b.HasKey("CredentialsId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Login");
+                    b.ToTable("Credentials");
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.MealItem", b =>
@@ -155,6 +151,9 @@ namespace GlucoseAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(11);
 
+                    b.Property<string>("Token")
+                        .HasMaxLength(255);
+
                     b.HasKey("UserId");
 
                     b.ToTable("User");
@@ -180,11 +179,12 @@ namespace GlucoseAPI.Migrations
                     b.HasDiscriminator().HasValue("Patient");
                 });
 
-            modelBuilder.Entity("GlucoseAPI.Models.Entities.Login", b =>
+            modelBuilder.Entity("GlucoseAPI.Models.Entities.Credentials", b =>
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.PatientBloodSugar", b =>

@@ -10,6 +10,8 @@ namespace GlucoseAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
+        [StringLength(255)]
+        public string Token { get; set; }
         [Required]
         [StringLength(150)]
         public string FirstName { get; set; }

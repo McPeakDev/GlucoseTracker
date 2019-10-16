@@ -26,49 +26,19 @@ namespace GlucoseAPI.Controllers
 
         #region User Properties
         [HttpPost("Carbs")]
-        public ActionResult<IQueryable<PatientCarbohydrates>> GrabPatientCarbs(Credentials creds)
+        public ActionResult<IQueryable<PatientCarbohydrates>> GrabPatientCarbs(UserCredentials userCreds)
         {
             try
             {
-                Login login = PostPatient(creds);
+                if (VerifyPatient(userCreds.Token))
+                {
+                    Patient patient = GrabPatient(userCreds).Value;
 
-                IQueryable<PatientCarbohydrates> patientCarbs = _context.PatientCarbohydrates.Include(pc =>pc.Patient).Where(pc => pc.PatientId == login.User.UserId);
+                    IQueryable<PatientCarbohydrates> patientCarbs = _context.PatientCarbohydrates.Include(pc => pc.Patient).Where(pc => pc.PatientId == patient.UserId);
 
-                return new ActionResult<IQueryable<PatientCarbohydrates>>(patientCarbs);
-            }
-            catch (Exception)
-            {
-                return Content("Invalid User");
-            }
-        }
-
-        [HttpPost("BloodSugars")]
-        public ActionResult<IQueryable<PatientBloodSugar>> GrabPatientBloodSugars(Credentials creds)
-        {
-            try
-            {
-                Login login = PostPatient(creds);
-
-                IQueryable<PatientBloodSugar> patientBloodSugars = _context.PatientBloodSugar.Include(bs => bs.Patient).Where(bs => bs.PatientId == login.User.UserId);
-
-                return new ActionResult<IQueryable<PatientBloodSugar>>(patientBloodSugars);
-            }
-            catch (Exception)
-            {
-                return Content("Invalid User");
-            }
-        }
-
-        [HttpPost("Exercises")]
-        public ActionResult<IQueryable<PatientExercise>> GrabPatientExercises(Credentials creds)
-        {
-            try
-            {
-                Login login = PostPatient(creds);
-
-                IQueryable<PatientExercise> patientExercises = _context.PatientExercise.Include(pe => pe.Patient).Where(pe => pe.PatientId == login.User.UserId);
-
-                return new ActionResult<IQueryable<PatientExercise>>(patientExercises);
+                    return new ActionResult<IQueryable<PatientCarbohydrates>>(patientCarbs);
+                }
+                return Content("Invlaid Token");
             }
             catch (Exception)
             {
@@ -79,17 +49,16 @@ namespace GlucoseAPI.Controllers
 
         #region CRUD
         [HttpPost("Read")]
-        public ActionResult<Patient> GrabPatient(Credentials creds)
+        public ActionResult<Patient> GrabPatient(UserCredentials userCreds)
         {
             try
             {
-                var login = PostPatient(creds);
-
-                var patient = _context.Patient.Include(p => p.Doctor)
+                var patient = _context.Patient.AsNoTracking().Include(p => p.Doctor)
                     .Include(p => p.RecentPatientBloodSugar)
                     .Include(p => p.RecentPatientCarbs)
                     .Include(p => p.RecentPatientExercise)
-                    .FirstOrDefault(p => p.PatientId == login.User.UserId);
+                    .Where(p => p.Email.Equals(userCreds.Email, StringComparison.InvariantCultureIgnoreCase))
+                    .FirstOrDefault(p => p.Token == userCreds.Token);
 
                 return patient;
             }
@@ -100,41 +69,51 @@ namespace GlucoseAPI.Controllers
         }
 
         [HttpPut("Update")]
-        public IActionResult PutPatient(Register register)
+        public IActionResult PutPatient(UserData userData)
         {
             try
             {
+                if (VerifyPatient(userData.Token))
+                {
+                    Patient patient = GrabPatient(userData.UserCredentials).Value;
 
-                //Login login = PostPatient(register.Credentials);
+                    if (patient.UserId == userData.Patient.UserId)
+                    {
 
-                _context.Patient.Attach(register.Patient);
+                        _context.Patient.Attach(userData.Patient);
 
-                _context.Entry(register.Patient).State = EntityState.Modified;
+                        _context.Entry(userData.Patient).State = EntityState.Modified;
 
-                _context.SaveChanges();
+                        _context.SaveChanges();
 
-                return Content("Success");
+                        return Content("Success");
+                    }
+                    throw new Exception();
+                }
+                return Content("Invalid Token");
             }
             catch (Exception)
             {
-                return Content("Invalid User/ Credentials");
+                return Content("Invalid User");
             }
 
         }
 
         [HttpPost("Create")]
-        public ActionResult<StringContent> CreatePatient(Register register)
+        public ActionResult<StringContent> CreatePatient(UserData userData)
         {
             try
             {
-                Login login = new Login()
+                Credentials credentials = new Credentials()
                 {
-                    Email = register.Credentials.Email,
-                    Password = HashPassword(register.Credentials.Password),
-                    Token = HashPassword(HashPassword(register.Credentials.Password))
+                    UserId = userData.Patient.UserId,
+                    Email = userData.UserCredentials.Email,
+                    Password = HashPassword(userData.UserCredentials.Password),
+                    User = userData.Patient
                 };
 
-                Patient patient = register.Patient;
+                Patient patient = userData.Patient;
+                patient.Token = HashPassword(credentials.Password);
 
                 if (!(patient.DoctorId is null))
                 {
@@ -142,13 +121,11 @@ namespace GlucoseAPI.Controllers
                     patient.Doctor.Patients.Add(patient);
                 }
                 _context.Patient.Add(patient);
+                _context.Credentials.Add(credentials);
 
-                login.User = register.Patient;
-
-                _context.Login.Add(login);
                 _context.SaveChanges();
 
-                return (ActionResult<StringContent>) new StringContent(JObject.FromObject(login).ToString(), Encoding.UTF8, "application/json");
+                return Content(patient.Token);
             }
             catch (Exception)
             {
@@ -157,22 +134,27 @@ namespace GlucoseAPI.Controllers
         }
 
         [HttpDelete ("Delete")]
-        public IActionResult DeletePatient(Credentials creds)
+        public IActionResult DeletePatient(UserData userData)
         {
             try
             {
-                Login login = PostPatient(creds);
+                if (VerifyPatient(userData.Token))
+                {
 
-                var patient = GrabPatient(creds).Value;
+                    Patient patient = GrabPatient(userData.UserCredentials).Value;
+                    Credentials creds = _context.Credentials.FirstOrDefault(c => c.UserId == patient.UserId);
 
-                _context.Login.Remove(login);
-                _context.Patient.Remove(patient);
+                    _context.Credentials.Remove(creds);
+                    _context.Patient.Remove(patient);
 
-                _context.SaveChanges();
+                    _context.SaveChanges();
 
-                patient = null;
+                    patient = null;
+                    creds = null;
 
-                return Content("Deleted!");
+                    return Content("Deleted!");
+                }
+                return Content("Invalid Token");
             }
             catch (Exception)
             {
@@ -182,12 +164,18 @@ namespace GlucoseAPI.Controllers
         #endregion
 
         #region Helper Methods
-        private Login PostPatient(Credentials creds)
+        private bool VerifyPatient(string token)
         {
+            try
+            {
+                Patient patient = _context.Patient.AsNoTracking().FirstOrDefault(p => p.Token.Equals(token));
 
-            Login login = _context.Login.Include(l => l.User).Where(l => l.Email.Equals(creds.Email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault(l => Verify(creds.Password, l.Password));
-
-            return login;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private bool UserExists(int id)

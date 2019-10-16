@@ -60,6 +60,7 @@ namespace GlucoseTrackerWeb.Controllers
 
         public IActionResult Index()
         {
+
             if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {
                 return RedirectToAction("Dashboard");
