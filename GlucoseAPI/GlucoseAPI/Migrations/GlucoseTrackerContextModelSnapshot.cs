@@ -64,16 +64,15 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<int?>("MealId");
 
-                    b.Property<int>("PatientId");
-
                     b.Property<DateTime?>("TimeOfDay");
+
+                    b.Property<int>("UserId");
 
                     b.HasKey("BloodId");
 
                     b.HasIndex("MealId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("PatientBloodSugar");
                 });
@@ -87,18 +86,17 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<int?>("MealId");
 
-                    b.Property<int>("PatientId");
-
                     b.Property<DateTime?>("TimeOfDay");
 
                     b.Property<int>("TotalCarbs");
+
+                    b.Property<int>("UserId");
 
                     b.HasKey("CarbId");
 
                     b.HasIndex("MealId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("PatientCarbohydrates");
                 });
@@ -108,16 +106,15 @@ namespace GlucoseAPI.Migrations
                     b.Property<int>("ExerciseId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<decimal>("HoursExercised");
-
-                    b.Property<int>("PatientId");
+                    b.Property<float>("HoursExercised");
 
                     b.Property<DateTime?>("TimeOfDay");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("ExerciseId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("PatientExercise");
                 });
@@ -192,8 +189,8 @@ namespace GlucoseAPI.Migrations
                         .HasForeignKey("MealId");
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
-                        .WithOne("RecentPatientBloodSugar")
-                        .HasForeignKey("GlucoseAPI.Models.Entities.PatientBloodSugar", "PatientId")
+                        .WithMany("PatientBloodSugars")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -204,16 +201,16 @@ namespace GlucoseAPI.Migrations
                         .HasForeignKey("MealId");
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
-                        .WithOne("RecentPatientCarbs")
-                        .HasForeignKey("GlucoseAPI.Models.Entities.PatientCarbohydrates", "PatientId")
+                        .WithMany("PatientCarbs")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.PatientExercise", b =>
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
-                        .WithOne("RecentPatientExercise")
-                        .HasForeignKey("GlucoseAPI.Models.Entities.PatientExercise", "PatientId")
+                        .WithMany("PatientExercises")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

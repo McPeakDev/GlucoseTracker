@@ -7,10 +7,10 @@ namespace GlucoseAPI.Models.Entities
 {
     public struct PatientData
     {
-        UserCredentials UserCredentials { get; set; }
-        IQueryable<PatientExercise> PatientExercises { get; set; }
-        IQueryable<PatientBloodSugar> PatientBloodSugars { get; set; }
-        IQueryable<PatientCarbohydrates> PatientCarbohydrates { get; set; }
+        public UserCredentials UserCredentials { get; set; }
+        public List<PatientExercise> PatientExercises { get; set; }
+        public List<PatientBloodSugar> PatientBloodSugars { get; set; }
+        public List<PatientCarbohydrates> PatientCarbohydrates { get; set; }
 
     }
 }

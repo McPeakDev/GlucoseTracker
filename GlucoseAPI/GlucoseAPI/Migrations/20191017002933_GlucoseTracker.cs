@@ -75,7 +75,7 @@ namespace GlucoseAPI.Migrations
                 {
                     BloodId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     LevelBefore = table.Column<float>(nullable: false),
                     LevelAfter = table.Column<float>(nullable: false),
                     MealId = table.Column<int>(nullable: true),
@@ -91,8 +91,8 @@ namespace GlucoseAPI.Migrations
                         principalColumn: "MealId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PatientBloodSugar_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientBloodSugar_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -104,7 +104,7 @@ namespace GlucoseAPI.Migrations
                 {
                     CarbId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     TotalCarbs = table.Column<int>(nullable: false),
                     FoodCarbs = table.Column<int>(nullable: false),
                     MealId = table.Column<int>(nullable: true),
@@ -120,8 +120,8 @@ namespace GlucoseAPI.Migrations
                         principalColumn: "MealId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_PatientCarbohydrates_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientCarbohydrates_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -133,16 +133,16 @@ namespace GlucoseAPI.Migrations
                 {
                     ExerciseId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
-                    HoursExercised = table.Column<decimal>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    HoursExercised = table.Column<float>(nullable: false),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientExercise", x => x.ExerciseId);
                     table.ForeignKey(
-                        name: "FK_PatientExercise_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientExercise_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -159,10 +159,10 @@ namespace GlucoseAPI.Migrations
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientBloodSugar_PatientId",
+                name: "IX_PatientBloodSugar_UserId",
                 table: "PatientBloodSugar",
-                column: "PatientId",
-                unique: true);
+                column: "UserId",
+                unique: false);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PatientCarbohydrates_MealId",
@@ -170,16 +170,16 @@ namespace GlucoseAPI.Migrations
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientCarbohydrates_PatientId",
+                name: "IX_PatientCarbohydrates_UserId",
                 table: "PatientCarbohydrates",
-                column: "PatientId",
-                unique: true);
+                column: "UserId",
+                unique: false);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientExercise_PatientId",
+                name: "IX_PatientExercise_UserId",
                 table: "PatientExercise",
-                column: "PatientId",
-                unique: true);
+                column: "UserId",
+                unique: false);
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_DoctorId",
