@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace ProMan.Services
+namespace GlucoseAPI.Services
 {
     public interface IRepository<TEntity>
     {

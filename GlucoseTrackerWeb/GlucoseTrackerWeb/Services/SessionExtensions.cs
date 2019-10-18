@@ -1,39 +1,25 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GlucoseTrackerWeb.Services
+namespace GlucoseAPI.Services
 {
     public static class SessionExtensions
     {
-        public static void SetBool(this ISession session, string key, bool value)
+        public static void Set<T>(this ISession session, string key, T value)
         {
-            if (value)
-            {
-                session.SetString(key, true.ToString());
-            }
-            else
-            {
-                session.SetString(key, false.ToString());
-            }
+            session.SetString(key, JsonConvert.SerializeObject(value));
         }
 
-        public static bool GetBool(this ISession session, string key)
+        public static T Get<T>(this ISession session, string key)
         {
-            if(session is null)
-            {
-                return false;
-            }
-            if(session.GetString(key) == true.ToString())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var value = session.GetString(key);
+
+            return value == null ? default(T) :
+                JsonConvert.DeserializeObject<T>(value);
         }
     }
 }

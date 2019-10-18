@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace ProMan.Services
+namespace GlucoseAPI.Services
 {
     public class GlucoseDbRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
@@ -29,7 +29,6 @@ namespace ProMan.Services
         {
             //return _table.Include().Find(id);
             return includes.Aggregate(_table.AsQueryable(), (current, includeProperty) => current.Include(includeProperty)).FirstOrDefault(predicate);
-
         }
 
         public IQueryable<TEntity> ReadAll(params Expression<Func<TEntity, object>>[] includes)

@@ -4,13 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using GlucoseTrackerWeb.Models;
-using GlucoseTrackerWeb.Services;
-using GlucoseAPI.Models.Entities;
-using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Http;
-using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
-using ProMan.Services;
+using GlucoseAPI.Models.Entities;
+using GlucoseAPI.Services;
+using static BCrypt.Net.BCrypt;
+using SessionExtensions = GlucoseAPI.Services.SessionExtensions;
+using GlucoseAPI.Models;
 
 namespace GlucoseTrackerWeb.Controllers
 {
@@ -18,30 +17,32 @@ namespace GlucoseTrackerWeb.Controllers
     {
         private IRepository<Doctor> _doctorRepo;
         private IRepository<Patient> _patientRepo;
-        private IRepository<Credentials> _credentialsRepo;
+        private IRepository<Auth> _authRepo;
+        private IRepository<TokenAuth> _tokenAuthRepo;
 
-        private static ISession _session;
-
-        public HomeController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Credentials> credentialsRepo)
+        public HomeController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Auth> authRepo, IRepository<TokenAuth> tokenAuthRepo)
         {
             _doctorRepo = doctorRepo;
             _patientRepo = patientRepo;
-            _credentialsRepo = credentialsRepo;
+            _authRepo = authRepo;
+            _tokenAuthRepo = tokenAuthRepo;
         }
 
         [HttpPost]
-        public IActionResult Login(UserCredentials userCreds)
+        public IActionResult Login(Credentials creds)
         {
             try
             {
-                Doctor doctor = _doctorRepo.Read(d => d.Email == userCreds.Email);
-                Credentials creds = _credentialsRepo.Read(c => c.Email == userCreds.Email);
+                Auth authorization = _authRepo.Read(a => a.Email == creds.Email);
+                TokenAuth tokenAuthorization = _tokenAuthRepo.Read(ta => ta.AuthId == authorization.AuthId);
+                Doctor doctor = _doctorRepo.Read(d => d.Email == creds.Email);
 
-                if (Verify(userCreds.Password, creds.Password))
+                if (Verify(creds.Password, authorization.Password))
                 {
-                    _session = HttpContext.Session;
-                    SessionExtensions.SetBool(_session, "LoggedIn", true);
-                    return RedirectToAction(Dashboard(doctor));
+                    HttpContext.Session.SetString("TokenAuth", tokenAuthorization.Token);
+
+                    return RedirectToAction("Dashboard", "Home");
+                    
                 }
 
                 TempData["BadLogin"] = true;
@@ -55,7 +56,6 @@ namespace GlucoseTrackerWeb.Controllers
         }
         public IActionResult Logout()
         {
-            _session = null;
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
@@ -63,9 +63,9 @@ namespace GlucoseTrackerWeb.Controllers
         public IActionResult Index()
         {
 
-            if (SessionExtensions.GetBool(_session, "LoggedIn"))
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
             {
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Dashboard", "Home");
 
             }
             else
@@ -80,41 +80,46 @@ namespace GlucoseTrackerWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(UserData userData)
+        public IActionResult Create(DoctorCreationBundle doctorCreationBundle)
         {
             try
             {
-                userData.Doctor.Email = userData.UserCredentials.Email;
 
-                Credentials creds = new Credentials()
+                Auth authEntry = new Auth()
                 {
-                    Email = userData.UserCredentials.Email,
-                    Password = HashPassword(userData.UserCredentials.Password),
-                    User = userData.Doctor
+                    Email = doctorCreationBundle.Doctor.Email,
+                    Password = doctorCreationBundle.Password
                 };
 
-                userData.Doctor.Token = HashPassword(creds.Password);
+                TokenAuth TokenAuthEntry = new TokenAuth()
+                {
+                    Token = HashPassword(authEntry.Password), 
+                    Auth = authEntry,
+                    User = doctorCreationBundle.Doctor
+                };
 
-                _credentialsRepo.Create(creds);
+                _authRepo.Create(authEntry);
+                _tokenAuthRepo.Create(TokenAuthEntry);
 
-
-
-                //_doctorRepo.Create(userData.Doctor);
                 return RedirectToAction("Index");
             }
             catch (Exception)
             {
-                return View(userData);
+                return View(doctorCreationBundle);
             }
         }
 
-        [HttpPost]
-        public IActionResult Dashboard(Doctor doctor)
-        {
-            var model = _patientRepo.ReadAll(d => d.UserId == doctor.UserId);
 
-            if (SessionExtensions.GetBool(_session, "LoggedIn"))
+        public IActionResult Dashboard()
+        {
+
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
             {
+                string token = HttpContext.Session.GetString("TokenAuth");
+
+                Doctor doctor = _tokenAuthRepo.Read(ta => ta.Token == token, ta => ta.User).User as Doctor;
+
+                var model = _patientRepo.ReadAll(p => p.PatientBloodSugars, p => p.PatientCarbs, p => p.PatientExercises).Where(p => p.DoctorId == doctor.UserId);
                 return View(model);
             }
             else

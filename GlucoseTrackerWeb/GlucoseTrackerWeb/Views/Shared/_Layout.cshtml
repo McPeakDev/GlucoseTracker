@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
-@using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
+@using SessionExtensions = GlucoseAPI.Services.SessionExtensions;
+@using GlucoseAPI.Models.Entities;
+
 
 <!DOCTYPE html>
 <html>
@@ -21,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav mr-auto">
                     @{
-                        if (SessionExtensions.GetBool(Context.Session, "LoggedIn"))
+                        if (!(Context.Session.GetString("TokenAuth") is null))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-action="Logout" asp-controller="Home">Logout</a>

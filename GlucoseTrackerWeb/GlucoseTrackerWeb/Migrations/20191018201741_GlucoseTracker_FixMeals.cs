@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GlucoseAPI.Migrations
+namespace GlucoseTrackerWeb.Migrations
 {
-    public partial class GlucoseTracker : Migration
+    public partial class GlucoseTracker_FixMeals : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,6 @@ namespace GlucoseAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Auth", x => x.AuthId);
-                    table.UniqueConstraint("UNIQUE_Auth_Email", a => a.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -46,21 +45,20 @@ namespace GlucoseAPI.Migrations
                     FirstName = table.Column<string>(maxLength: 150, nullable: false),
                     MiddleName = table.Column<string>(maxLength: 150, nullable: true),
                     LastName = table.Column<string>(maxLength: 150, nullable: false),
-                    Email = table.Column<string>(maxLength: 255, nullable: false),
+                    Email = table.Column<string>(maxLength: 255, nullable: true),
                     PhoneNumber = table.Column<string>(maxLength: 11, nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     DoctorId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User_UserId", x => x.UserId );
+                    table.PrimaryKey("PK_User", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_User_User_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
-                    table.UniqueConstraint("UNIQUE_User_Email", u => u.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,9 +68,9 @@ namespace GlucoseAPI.Migrations
                     BloodId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
+                    MealId = table.Column<int>(nullable: false),
                     LevelBefore = table.Column<float>(nullable: false),
                     LevelAfter = table.Column<float>(nullable: false),
-                    MealId = table.Column<int>(nullable: true),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
@@ -83,7 +81,7 @@ namespace GlucoseAPI.Migrations
                         column: x => x.MealId,
                         principalTable: "MealItem",
                         principalColumn: "MealId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientBloodSugar_User_UserId",
                         column: x => x.UserId,
@@ -99,9 +97,9 @@ namespace GlucoseAPI.Migrations
                     CarbId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
+                    MealId = table.Column<int>(nullable: false),
                     TotalCarbs = table.Column<int>(nullable: false),
                     FoodCarbs = table.Column<int>(nullable: false),
-                    MealId = table.Column<int>(nullable: true),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
@@ -112,7 +110,7 @@ namespace GlucoseAPI.Migrations
                         column: x => x.MealId,
                         principalTable: "MealItem",
                         principalColumn: "MealId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PatientCarbohydrates_User_UserId",
                         column: x => x.UserId,

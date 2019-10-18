@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace GlucoseAPI.Migrations
+namespace GlucoseTrackerWeb.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
     partial class GlucoseTrackerContextModelSnapshot : ModelSnapshot
@@ -58,7 +58,7 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<float>("LevelBefore");
 
-                    b.Property<int?>("MealId");
+                    b.Property<int>("MealId");
 
                     b.Property<DateTime?>("TimeOfDay");
 
@@ -80,7 +80,7 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<int>("FoodCarbs");
 
-                    b.Property<int?>("MealId");
+                    b.Property<int>("MealId");
 
                     b.Property<DateTime?>("TimeOfDay");
 
@@ -193,7 +193,8 @@ namespace GlucoseAPI.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.MealItem", "Meal")
                         .WithMany()
-                        .HasForeignKey("MealId");
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientBloodSugars")
@@ -205,7 +206,8 @@ namespace GlucoseAPI.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.MealItem", "Meal")
                         .WithMany()
-                        .HasForeignKey("MealId");
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientCarbs")

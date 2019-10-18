@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace GlucoseAPI.Migrations
+namespace GlucoseTrackerWeb.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
-    [Migration("20191018020521_GlucoseTracker")]
-    partial class GlucoseTracker
+    [Migration("20191018201741_GlucoseTracker_FixMeals")]
+    partial class GlucoseTracker_FixMeals
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,7 +60,7 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<float>("LevelBefore");
 
-                    b.Property<int?>("MealId");
+                    b.Property<int>("MealId");
 
                     b.Property<DateTime?>("TimeOfDay");
 
@@ -82,7 +82,7 @@ namespace GlucoseAPI.Migrations
 
                     b.Property<int>("FoodCarbs");
 
-                    b.Property<int?>("MealId");
+                    b.Property<int>("MealId");
 
                     b.Property<DateTime?>("TimeOfDay");
 
@@ -149,7 +149,6 @@ namespace GlucoseAPI.Migrations
                         .IsRequired();
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(255);
 
                     b.Property<string>("FirstName")
@@ -168,12 +167,10 @@ namespace GlucoseAPI.Migrations
                         .HasMaxLength(11);
 
                     b.HasKey("UserId");
-              
+
                     b.ToTable("User");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.HasIndex("Email").IsUnique();
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.Doctor", b =>
@@ -198,7 +195,8 @@ namespace GlucoseAPI.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.MealItem", "Meal")
                         .WithMany()
-                        .HasForeignKey("MealId");
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientBloodSugars")
@@ -210,7 +208,8 @@ namespace GlucoseAPI.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.MealItem", "Meal")
                         .WithMany()
-                        .HasForeignKey("MealId");
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientCarbs")

@@ -1,6 +1,6 @@
 using System;
 
-namespace GlucoseTrackerWeb.Models
+namespace GlucoseAPI.Models
 {
     public class ErrorViewModel
     {
