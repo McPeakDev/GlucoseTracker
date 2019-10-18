@@ -12,7 +12,8 @@ namespace GlucoseAPI.Models.Entities
         }
 
         public virtual DbSet<Doctor> Doctor { get; set; }
-        public virtual DbSet<Credentials> Credentials { get; set; }
+        public virtual DbSet<Auth> Auth{ get; set; }
+        public virtual DbSet<TokenAuth> TokenAuth { get; set; }
         public virtual DbSet<MealItem> MealItem { get; set; }
         public virtual DbSet<Patient> Patient { get; set; }
         public virtual DbSet<PatientBloodSugar> PatientBloodSugar { get; set; }

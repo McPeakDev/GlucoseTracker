@@ -2,19 +2,33 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GlucoseTrackerWeb.Migrations
+namespace GlucoseAPI.Migrations
 {
     public partial class GlucoseTracker : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Auth",
+                columns: table => new
+                {
+                    AuthId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Email = table.Column<string>(maxLength: 255, nullable: false),
+                    Password = table.Column<string>(maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Auth", x => x.AuthId);
+                    table.UniqueConstraint("UNIQUE_Auth_Email", a => a.Email);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MealItem",
                 columns: table => new
                 {
                     MealId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    FoodId = table.Column<int>(nullable: false),
                     FoodName = table.Column<string>(nullable: true),
                     Carbs = table.Column<int>(nullable: false)
                 },
@@ -29,7 +43,6 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     UserId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Password = table.Column<string>(maxLength: 255, nullable: false),
                     FirstName = table.Column<string>(maxLength: 150, nullable: false),
                     MiddleName = table.Column<string>(maxLength: 150, nullable: true),
                     LastName = table.Column<string>(maxLength: 150, nullable: false),
@@ -40,34 +53,14 @@ namespace GlucoseTrackerWeb.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.UserId);
+                    table.PrimaryKey("PK_User_UserId", x => x.UserId );
                     table.ForeignKey(
                         name: "FK_User_User_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Login",
-                columns: table => new
-                {
-                    LoginId = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Email = table.Column<string>(maxLength: 255, nullable: false),
-                    Password = table.Column<string>(maxLength: 255, nullable: false),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Login", x => x.LoginId);
-                    table.ForeignKey(
-                        name: "FK_Login_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.UniqueConstraint("UNIQUE_User_Email", u => u.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,18 +69,24 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     BloodId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     LevelBefore = table.Column<float>(nullable: false),
                     LevelAfter = table.Column<float>(nullable: false),
-                    Meal = table.Column<string>(nullable: true),
+                    MealId = table.Column<int>(nullable: true),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientBloodSugar", x => x.BloodId);
                     table.ForeignKey(
-                        name: "FK_PatientBloodSugar_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientBloodSugar_MealItem_MealId",
+                        column: x => x.MealId,
+                        principalTable: "MealItem",
+                        principalColumn: "MealId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PatientBloodSugar_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -99,19 +98,24 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     CarbId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     TotalCarbs = table.Column<int>(nullable: false),
-                    MealName = table.Column<string>(nullable: true),
                     FoodCarbs = table.Column<int>(nullable: false),
-                    Meal = table.Column<string>(nullable: true),
+                    MealId = table.Column<int>(nullable: true),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientCarbohydrates", x => x.CarbId);
                     table.ForeignKey(
-                        name: "FK_PatientCarbohydrates_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientCarbohydrates_MealItem_MealId",
+                        column: x => x.MealId,
+                        principalTable: "MealItem",
+                        principalColumn: "MealId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PatientCarbohydrates_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -123,43 +127,83 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     ExerciseId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PatientId = table.Column<int>(nullable: false),
-                    HoursExercised = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    HoursExercised = table.Column<float>(nullable: false),
                     TimeOfDay = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PatientExercise", x => x.ExerciseId);
                     table.ForeignKey(
-                        name: "FK_PatientExercise_User_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_PatientExercise_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TokenAuth",
+                columns: table => new
+                {
+                    TokenId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(nullable: false),
+                    AuthId = table.Column<int>(nullable: false),
+                    Token = table.Column<string>(maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TokenAuth", x => x.TokenId);
+                    table.ForeignKey(
+                        name: "FK_TokenAuth_Auth_AuthId",
+                        column: x => x.AuthId,
+                        principalTable: "Auth",
+                        principalColumn: "AuthId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TokenAuth_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Login_UserId",
-                table: "Login",
+                name: "IX_PatientBloodSugar_MealId",
+                table: "PatientBloodSugar",
+                column: "MealId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientBloodSugar_UserId",
+                table: "PatientBloodSugar",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientBloodSugar_PatientId",
-                table: "PatientBloodSugar",
-                column: "PatientId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PatientCarbohydrates_PatientId",
+                name: "IX_PatientCarbohydrates_MealId",
                 table: "PatientCarbohydrates",
-                column: "PatientId",
+                column: "MealId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientCarbohydrates_UserId",
+                table: "PatientCarbohydrates",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PatientExercise_UserId",
+                table: "PatientExercise",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TokenAuth_AuthId",
+                table: "TokenAuth",
+                column: "AuthId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PatientExercise_PatientId",
-                table: "PatientExercise",
-                column: "PatientId",
-                unique: true);
+                name: "IX_TokenAuth_UserId",
+                table: "TokenAuth",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_DoctorId",
@@ -170,12 +214,6 @@ namespace GlucoseTrackerWeb.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Login");
-
-            migrationBuilder.DropTable(
-                name: "MealItem");
-
-            migrationBuilder.DropTable(
                 name: "PatientBloodSugar");
 
             migrationBuilder.DropTable(
@@ -183,6 +221,15 @@ namespace GlucoseTrackerWeb.Migrations
 
             migrationBuilder.DropTable(
                 name: "PatientExercise");
+
+            migrationBuilder.DropTable(
+                name: "TokenAuth");
+
+            migrationBuilder.DropTable(
+                name: "MealItem");
+
+            migrationBuilder.DropTable(
+                name: "Auth");
 
             migrationBuilder.DropTable(
                 name: "User");

@@ -1,11 +1,11 @@
-﻿@model IEnumerable<GlucoseAPI.Models.Entities.User>
+﻿@model IEnumerable<GlucoseAPI.Models.Entities.Patient>
 
 @{
     ViewData["Title"] = "Dashboard";
 }
 
 <h1>Dashboard</h1>
-@*<p>
+<p>
         <a asp-action="Create">Create New</a>
     </p>
     <table class="table">
@@ -13,9 +13,6 @@
             <tr>
                 <th>
                     @Html.DisplayNameFor(model => model.UserId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Password)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.FirstName)
@@ -43,9 +40,6 @@
                         @Html.DisplayFor(modelItem => item.UserId)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Password)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.FirstName)
                     </td>
                     <td>
@@ -68,4 +62,4 @@
                 </tr>
             }
         </tbody>
-    </table>*@
+    </table>

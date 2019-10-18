@@ -13,15 +13,6 @@ namespace GlucoseAPI.Models.Entities
         }
 
         [Required]
-        public int DoctorId
-        {
-            get
-            {
-                return UserId;
-            }
-        }
-
-        [Required]
         public int NumberOfPatients
         {
             get

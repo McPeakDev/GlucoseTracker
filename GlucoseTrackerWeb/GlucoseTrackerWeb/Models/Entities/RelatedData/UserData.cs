@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace GlucoseAPI.Models.Entities
 {
-    public class Register
+    public class UserData
     {
-        public Login Login { get; set; }
+        public UserCredentials UserCredentials { get; set; }
         public string Token { get; set; }
-        public virtual Patient Patient { get; set; }
         public virtual Doctor Doctor { get; set; }
-
     }
 }

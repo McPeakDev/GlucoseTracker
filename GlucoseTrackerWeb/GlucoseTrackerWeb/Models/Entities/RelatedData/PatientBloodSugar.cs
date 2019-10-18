@@ -11,7 +11,7 @@ namespace GlucoseAPI.Models.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BloodId { get; set; }
         [ForeignKey("Patient")]
-        public int PatientId { get; set; }
+        public int UserId { get; set; }
         public float LevelBefore { get; set; }
         public float LevelAfter { get; set; }
         public MealItem Meal { get; set; }

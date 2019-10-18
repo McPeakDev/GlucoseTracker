@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProMan.Services;
 
 namespace GlucoseTrackerWeb
 {
@@ -44,8 +45,9 @@ namespace GlucoseTrackerWeb
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<GlucoseTrackerContext>(options => options.UseMySql(Configuration.GetConnectionString("DevConnection")));
-            services.AddScoped<IDbRepository<Doctor>, DbDoctorRepository>();
-            services.AddScoped<IDbRepository<Patient>, DbPatientRepository>();
+            services.AddScoped<IRepository<Doctor>, GlucoseDbRepository<Doctor>>();
+            services.AddScoped<IRepository<Patient>, GlucoseDbRepository<Patient>>();
+            services.AddScoped<IRepository<Credentials>, GlucoseDbRepository<Credentials>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,19 +68,26 @@ namespace GlucoseTrackerWeb
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
 
                 routes.MapRoute(
-                    name: "login",
-                    template: "Login/{email}/{password}",
-                    defaults: new {Controller = "Home", Action = "Login"} );
+                    name: "default",
+                    template: "/",
+                    defaults: new {Controller = "Home", Action = "Index"} );
 
                 routes.MapRoute(
                     name: "dashboard",
                     template: "Dashboard",
                     defaults: new { Controller = "Home", Action = "Dashboard" });
+
+                routes.MapRoute(
+                    name: "create",
+                    template: "Create",
+                    defaults: new { Controller = "Home", Action = "Create" });
+
+                routes.MapRoute(
+                    name: "login",
+                    template: "Login",
+                    defaults: new { Controller = "Home", Action = "Login" });
 
 
             });

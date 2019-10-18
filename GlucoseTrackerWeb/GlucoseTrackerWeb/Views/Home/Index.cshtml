@@ -1,4 +1,4 @@
-﻿@model GlucoseTrackerWeb.Models.Credentials
+﻿@model GlucoseAPI.Models.Entities.UserCredentials
 @using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
 
 
@@ -11,7 +11,7 @@
         {
             <div class="alert alert-dismissible alert-danger">
                 <h4 class="alert-heading">Error!</h4>
-                <p class="mb-0"> Wrong Email or Password. Please Try Again.</p>
+                <p class="mb-0">Wrong Email or Password. Please Try Again.</p>
             </div>
         }
     }
@@ -32,8 +32,8 @@
                 <label asp-for="Password" for="password">Password</label>
                 <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-primary" method="post">Login</button>
-            <a class="btn btn-secondary" method="get" asp-controller="Home" asp-action="Create">Register</a>
+            <button type="submit" class="btn btn-primary">Login</button>
+            <a class="btn btn-secondary" asp-controller="Home" asp-action="Create">Register</a>
         </fieldset>
     </form>
 </body>

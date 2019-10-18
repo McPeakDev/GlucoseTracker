@@ -10,36 +10,38 @@ using GlucoseAPI.Models.Entities;
 using static BCrypt.Net.BCrypt;
 using Microsoft.AspNetCore.Http;
 using SessionExtensions = GlucoseTrackerWeb.Services.SessionExtensions;
+using ProMan.Services;
 
 namespace GlucoseTrackerWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private IDbRepository<Doctor> _doctorRepo;
-        private IDbRepository<Patient> _patientRepo;
-        private IDbRepository<Login> _loginRepo;
+        private IRepository<Doctor> _doctorRepo;
+        private IRepository<Patient> _patientRepo;
+        private IRepository<Credentials> _credentialsRepo;
 
         private static ISession _session;
 
-        public HomeController(IDbRepository<Doctor> doctorRepo, IDbRepository<Patient> patientRepo)
+        public HomeController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Credentials> credentialsRepo)
         {
             _doctorRepo = doctorRepo;
             _patientRepo = patientRepo;
+            _credentialsRepo = credentialsRepo;
         }
 
         [HttpPost]
-        public IActionResult Login(Credentials creds)
+        public IActionResult Login(UserCredentials userCreds)
         {
             try
             {
-                Doctor doctor = _doctorRepo.Read(creds.Email);
-                Login login = _loginRepo.Read(creds.Email);
+                Doctor doctor = _doctorRepo.Read(d => d.Email == userCreds.Email);
+                Credentials creds = _credentialsRepo.Read(c => c.Email == userCreds.Email);
 
-                if (Verify(creds.Password, login.Password))
+                if (Verify(userCreds.Password, creds.Password))
                 {
                     _session = HttpContext.Session;
                     SessionExtensions.SetBool(_session, "LoggedIn", true);
-                    return RedirectToAction("Dashboard", doctor);
+                    return RedirectToAction(Dashboard(doctor));
                 }
 
                 TempData["BadLogin"] = true;
@@ -78,18 +80,38 @@ namespace GlucoseTrackerWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Doctor doctor)
+        public IActionResult Create(UserData userData)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _doctorRepo.Create(doctor);
+                userData.Doctor.Email = userData.UserCredentials.Email;
+
+                Credentials creds = new Credentials()
+                {
+                    Email = userData.UserCredentials.Email,
+                    Password = HashPassword(userData.UserCredentials.Password),
+                    User = userData.Doctor
+                };
+
+                userData.Doctor.Token = HashPassword(creds.Password);
+
+                _credentialsRepo.Create(creds);
+
+
+
+                //_doctorRepo.Create(userData.Doctor);
                 return RedirectToAction("Index");
             }
-            return View(doctor);
+            catch (Exception)
+            {
+                return View(userData);
+            }
         }
+
+        [HttpPost]
         public IActionResult Dashboard(Doctor doctor)
         {
-            var model = _patientRepo.ReadAll(doctor.UserId);
+            var model = _patientRepo.ReadAll(d => d.UserId == doctor.UserId);
 
             if (SessionExtensions.GetBool(_session, "LoggedIn"))
             {

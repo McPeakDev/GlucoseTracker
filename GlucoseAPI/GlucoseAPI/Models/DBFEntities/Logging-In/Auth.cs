@@ -5,20 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GlucoseAPI.Models.Entities
 {
-    public partial class Login
+    public partial class Auth
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int LoginId { get; set; }
+        public int AuthId { get; set; }
         [Required]
         [StringLength(255)]
         public string Email { get; set; }
         [Required]
         [StringLength(255)]
         public string Password { get; set; }
-        [Required]
-        [StringLength(255)]
-        public string Token { get; set; }
-        public virtual User User { get; set; }
+        public virtual TokenAuth TokenAuth { get; set; }
     }
 }

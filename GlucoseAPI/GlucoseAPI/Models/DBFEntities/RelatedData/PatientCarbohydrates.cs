@@ -16,7 +16,6 @@ namespace GlucoseAPI.Models.Entities
         public int FoodCarbs { get; set; }
         public MealItem Meal { get; set; }
         public DateTime? TimeOfDay { get; set; }
-
         public virtual Patient Patient { get; set; }
     }
 }

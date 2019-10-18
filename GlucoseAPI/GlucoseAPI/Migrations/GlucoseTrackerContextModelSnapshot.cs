@@ -17,9 +17,9 @@ namespace GlucoseAPI.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("GlucoseAPI.Models.Entities.Credentials", b =>
+            modelBuilder.Entity("GlucoseAPI.Models.Entities.Auth", b =>
                 {
-                    b.Property<int>("CredentialsId")
+                    b.Property<int>("AuthId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email")
@@ -30,13 +30,9 @@ namespace GlucoseAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.Property<int>("UserId");
+                    b.HasKey("AuthId");
 
-                    b.HasKey("CredentialsId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Credentials");
+                    b.ToTable("Auth");
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.MealItem", b =>
@@ -119,6 +115,29 @@ namespace GlucoseAPI.Migrations
                     b.ToTable("PatientExercise");
                 });
 
+            modelBuilder.Entity("GlucoseAPI.Models.Entities.TokenAuth", b =>
+                {
+                    b.Property<int>("TokenId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AuthId");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("TokenId");
+
+                    b.HasIndex("AuthId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TokenAuth");
+                });
+
             modelBuilder.Entity("GlucoseAPI.Models.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -128,7 +147,6 @@ namespace GlucoseAPI.Migrations
                         .IsRequired();
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(255);
 
                     b.Property<string>("FirstName")
@@ -145,9 +163,6 @@ namespace GlucoseAPI.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(11);
-
-                    b.Property<string>("Token")
-                        .HasMaxLength(255);
 
                     b.HasKey("UserId");
 
@@ -172,14 +187,6 @@ namespace GlucoseAPI.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasDiscriminator().HasValue("Patient");
-                });
-
-            modelBuilder.Entity("GlucoseAPI.Models.Entities.Credentials", b =>
-                {
-                    b.HasOne("GlucoseAPI.Models.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("GlucoseAPI.Models.Entities.PatientBloodSugar", b =>
@@ -210,6 +217,19 @@ namespace GlucoseAPI.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientExercises")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("GlucoseAPI.Models.Entities.TokenAuth", b =>
+                {
+                    b.HasOne("GlucoseAPI.Models.Entities.Auth", "Auth")
+                        .WithOne("TokenAuth")
+                        .HasForeignKey("GlucoseAPI.Models.Entities.TokenAuth", "AuthId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("GlucoseAPI.Models.Entities.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
