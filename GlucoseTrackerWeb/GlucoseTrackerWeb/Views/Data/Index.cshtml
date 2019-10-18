@@ -1,118 +1,127 @@
 ﻿@model GlucoseTrackerWeb.Models.ViewModels.PatientDataVM
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = $"Data for {@Model.FullName}";
 }
 
-<h1>Data for @Model.FullName</h1>
+<body class="bg-dark">
+    <h1>@ViewData["Title"]</h1>
 
-<p></p>
+    <p></p>
+    <div>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a>
+    </div>
+    <p></p>
 
-<h2>Blood Sugars</h2>
-<table class="table">
-    @foreach (var item in Model.PatientBloodSugars)
-    {
-        <thead>
-            <tr>
-                <th>
-                    Date and Time
-                </th>
-                <th>
-                    Level Before
-                </th>
-                <th>
-                    Level After
-                </th>
-                <th>
-                    Meal
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                </td>
-                <td>
-                    @item.LevelBefore
-                </td>
-                <td>
-                    @item.LevelAfter
-                </td>
-                <td>
-                    @item.Meal.FoodName
-                </td>
-            </tr>
-        </tbody>
-    }
-</table>
+    <h2>Blood Sugars</h2>
+    <table class="table">
+        @foreach (var item in Model.PatientBloodSugars)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Date and Time
+                    </th>
+                    <th>
+                        Level Before
+                    </th>
+                    <th>
+                        Level After
+                    </th>
+                    <th>
+                        Meal
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
+                    </td>
+                    <td>
+                        @item.LevelBefore
+                    </td>
+                    <td>
+                        @item.LevelAfter
+                    </td>
+                    <td>
+                        @item.Meal.FoodName
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
 
-<p></p>
+    <p></p>
 
-<h2>Carbs</h2>
-<table class="table">
-    @foreach (var item in Model.PatientCarbohydrates)
-    {
-        <thead>
-            <tr>
-                <th>
-                    Date and Time
-                </th>
-                <th>
-                    Food Carbs
-                </th>
-                <th>
-                    Total Carbs
-                </th>
-                <th>
-                    Meal
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                </td>
-                <td>
-                    @item.FoodCarbs
-                </td>
-                <td>
-                    @item.TotalCarbs
-                </td>
-                <td>
-                    @item.Meal.FoodName
-                </td>
-            </tr>
-        </tbody>
-    }
-</table>
+    <h2>Carbs</h2>
+    <table class="table">
+        @foreach (var item in Model.PatientCarbohydrates)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Date and Time
+                    </th>
+                    <th>
+                        Food Carbs
+                    </th>
+                    <th>
+                        Total Carbs
+                    </th>
+                    <th>
+                        Meal
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
+                    </td>
+                    <td>
+                        @item.FoodCarbs
+                    </td>
+                    <td>
+                        @item.TotalCarbs
+                    </td>
+                    <td>
+                        @item.Meal.FoodName
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
 
-<p></p>
+    <p></p>
 
-<h2>Exercises</h2>
-<table class="table">
-    @foreach (var item in Model.PatientExercises)
-    {
-        <thead>
-            <tr>
-                <th>
-                    Date and Time
-                </th>
-                <th>
-                    Hours Exercised
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                </td>
-                <td>
-                    @item.HoursExercised
-                </td>
-            </tr>
-        </tbody>
-    }
-</table>
+    <h2>Exercises</h2>
+    <table class="table">
+        @foreach (var item in Model.PatientExercises)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Date and Time
+                    </th>
+                    <th>
+                        Hours Exercised
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
+                    </td>
+                    <td>
+                        @item.HoursExercised
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
+    <div>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a>
+    </div>
+</body>

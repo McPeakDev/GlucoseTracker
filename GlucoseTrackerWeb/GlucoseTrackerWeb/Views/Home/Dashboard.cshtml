@@ -2,48 +2,61 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+    if (!(TempData["BadUser"] is null))
+    {
+        if ((Boolean)TempData["BadUser"])
+        {
+            <div class="alert alert-dismissible alert-danger">
+                <h4 class="alert-heading">Error!</h4>
+                <p class="mb-0">Invalid User</p>
+            </div>
+        }
+    }
 }
-
-<h1>Dashboard</h1>
-<p></p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Full Name
-                </th>
-                <th>
-                    Email
-                </th>
-                <th>
-                    Phone Number
-                </th>
-                <th>
-                    Patient Data
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-            <tr>
-                <td>
-                    @($"{item.LastName}, {item.FirstName}")
-                </td>
-                <td>
-                    @item.Email
-                </td>
-                <td>
-                    @item.PhoneNumber
-                </td>
-                <td>
-                    <form asp-controller="Data" asp-action="Index">
-                        <input type="hidden" name="id" value="@item.UserId" />
-                        <input class="btn btn-primary" type="submit" value="See Data">
-                    </form>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
+            <body class="bg-dark">
+                <h1>Patients</h1>
+                <p></p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Full Name
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Phone Number
+                            </th>
+                            <th>
+                                Patient Data
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @($"{item.LastName}, {item.FirstName}")
+                                </td>
+                                <td>
+                                    @item.Email
+                                </td>
+                                <td>
+                                    @($"({item.PhoneNumber.Substring(0, 3)}) {item.PhoneNumber.Substring(3, 3)}-{item.PhoneNumber.Substring(6, 4)}")
+                                </td>
+                                <td>
+                                    <form method="post">
+                                        <input type="hidden" name="id" value="@item.UserId" />
+                                        <input class="btn btn-warning" asp-controller="Data" asp-action="Index" type="submit" value="See Data">
+                                        <input class="btn btn-danger" asp-action="RemovePatient" type="submit" value="Remove Patient">
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <a class="btn btn-primary" asp-action="AddPatient">Add Patient</a>
+            </body>

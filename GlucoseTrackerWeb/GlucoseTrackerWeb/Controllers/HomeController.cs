@@ -54,6 +54,7 @@ namespace GlucoseTrackerWeb.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -109,6 +110,88 @@ namespace GlucoseTrackerWeb.Controllers
             }
         }
 
+        public IActionResult AddPatient()
+        {
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddPatient([FromForm(Name = "token")] string token)
+        {
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
+            {
+                try
+                {
+                    Patient patient = _tokenAuthRepo.Read(ta => ta.Token == token, ta => ta.User).User as Patient;
+                    Doctor doctor = _tokenAuthRepo.Read(ta => ta.Token == HttpContext.Session.GetString("TokenAuth"), ta => ta.User).User as Doctor;
+
+                    patient.DoctorId = doctor.UserId;
+                    patient.Doctor = doctor;
+
+                    _patientRepo.Update(patient);
+
+                    return RedirectToAction("Dashboard");
+                }
+                catch (Exception)
+                {
+                    TempData["BadUser"] = true;
+                    return RedirectToAction("Dashboard");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public IActionResult RemovePatient()
+        {
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult RemovePatient([FromForm(Name = "id")] int id)
+        {
+            if (!(HttpContext.Session.GetString("TokenAuth") is null))
+            {
+                try
+                {
+                    Patient patient = _patientRepo.Read(p => p.UserId == id);
+
+                    patient.DoctorId = null;
+                    patient.Doctor = null;
+
+                    _patientRepo.Update(patient);
+
+                    return RedirectToAction("Dashboard");
+                }
+                catch (Exception)
+                {
+                    TempData["BadUser"] = true;
+                    return RedirectToAction("Dashboard");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+
+        }
 
         public IActionResult Dashboard()
         {

@@ -80,6 +80,17 @@ namespace GlucoseTrackerWeb
                     defaults: new {Controller = "Home", Action = "Index"} );
 
                 routes.MapRoute(
+                    name: "addPatient",
+                    template: "AddPatient",
+                    defaults: new { Controller = "Home", Action = "AddPatient" });
+
+
+                routes.MapRoute(
+                    name: "removePatient",
+                    template: "removePatient",
+                    defaults: new { Controller = "Home", Action = "RemovePatient" });
+
+                routes.MapRoute(
                     name: "create",
                     template: "Create",
                     defaults: new { Controller = "Home", Action = "Create" });
@@ -98,6 +109,7 @@ namespace GlucoseTrackerWeb
                     name: "login",
                     template: "Login",
                     defaults: new { Controller = "Home", Action = "Login" });
+
                 routes.MapRoute(
                     name: "logout",
                     template: "Logout",

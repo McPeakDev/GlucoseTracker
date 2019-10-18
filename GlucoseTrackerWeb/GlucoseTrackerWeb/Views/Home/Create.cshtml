@@ -1,13 +1,11 @@
 ﻿@model GlucoseAPI.Models.Entities.DoctorCreationBundle
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create a New Doctor";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>Doctor</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">

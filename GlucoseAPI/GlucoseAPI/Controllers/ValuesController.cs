@@ -26,7 +26,7 @@ namespace GlucoseAPI.Controllers
 
         #region User Properties
         [HttpPost("ReadData")]
-        public ActionResult<PatientData> GrabPatientCarbs([FromHeader(Name = "token")]string token)
+        public ActionResult<PatientData> GrabPatientData([FromHeader(Name = "token")]string token)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace GlucoseAPI.Controllers
         }
 
         [HttpPut("UpdateData")]
-        public ActionResult<StringContent> UpdatePatientCarbs([FromHeader(Name = "token")]string token, PatientData patientData)
+        public ActionResult<StringContent> UpdatePatientData([FromHeader(Name = "token")]string token, PatientData patientData)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace GlucoseAPI.Controllers
         }
 
         [HttpPost("CreateData")]
-        public ActionResult<StringContent> CreatePatientCarbs([FromHeader(Name = "token")]string token, PatientData patientData)
+        public ActionResult<StringContent> CreatePatientData([FromHeader(Name = "token")]string token, PatientData patientData)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace GlucoseAPI.Controllers
         }
 
         [HttpDelete("DeleteData")]
-        public ActionResult<StringContent> DeletePatientCarbs([FromHeader(Name = "token")]string token, PatientData patientData)
+        public ActionResult<StringContent> DeletePatientData([FromHeader(Name = "token")]string token, PatientData patientData)
         {
             try
             {
