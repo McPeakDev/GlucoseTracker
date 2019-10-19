@@ -85,7 +85,8 @@ namespace GlucoseTrackerApp
                 };
 
                 User client = await restAPI.LoginAsync(loginCreds);
-                Toast.MakeText(this, $"Hello, {client.LastName}, {client.FirstName}", ToastLength.Long).Show();
+                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+                StartActivity(dashboardActivity);
             }
             catch (Exception)
             {
