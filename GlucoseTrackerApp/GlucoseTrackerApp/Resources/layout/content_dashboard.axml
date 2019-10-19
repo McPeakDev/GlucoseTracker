@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	app:layout_behavior="@string/appbar_scrolling_view_behavior"
+	tools:showIn="@layout/app_bar_dashboard"
+	android:minWidth="25px"
+	android:minHeight="25px">
+	<TextView
+		android:text="This will be the Dashboard"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/ExerciseDashboard"
+		android:gravity="center" />
+	<ImageView
+		android:src="@android:drawable/ic_menu_gallery"
+		android:layout_width="match_parent"
+		android:layout_height="366.5dp"
+		android:id="@+id/FakeGraphImage" />
+	<Button
+		android:text="Add Exercise Time"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/exercise_add_button" />
+	<Button
+		android:text="Logout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/logout_button" />
+	
+
+</LinearLayout>
