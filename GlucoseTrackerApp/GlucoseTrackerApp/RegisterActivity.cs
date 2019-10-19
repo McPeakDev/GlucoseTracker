@@ -14,7 +14,7 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
-
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
@@ -84,7 +84,7 @@ namespace GlucoseTrackerApp
 
                 RestService restAPI = new RestService();
 
-                restAPI.RegisterAsync(patientCreationBundle);
+                restAPI.RegisterAsync(this, patientCreationBundle);
 
                 Intent mainActivity = new Intent(this, typeof(MainActivity));
 

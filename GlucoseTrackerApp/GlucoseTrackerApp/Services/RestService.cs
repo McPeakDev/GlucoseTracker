@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using GlucoseAPI.Models.Entities;
 using Newtonsoft.Json.Linq;
+using Android.Widget;
 
 namespace GlucoseTrackerApp.Services
 {
@@ -25,29 +26,25 @@ namespace GlucoseTrackerApp.Services
         public RestService(string token)
         {
             _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("token", token);
             _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
         }
 
-        public async Task<Patient> LoginAsync(Credentials creds)
+        public async Task<string> LoginAsync(Credentials creds)
         {
-            string credsString = JObject.FromObject(creds).ToString();
-
+            //Retrive the patients's token
             StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
             _response =  await _client.PostAsync(new Uri(_baseAddress) + "Token/", loginContent);
             _data = await _response.Content.ReadAsStringAsync();
 
-            _client.DefaultRequestHeaders.Add("token", _data);
-            _response = await _client.PostAsync(new Uri(_baseAddress) + "Read/", null);
-            _data = await _response.Content.ReadAsStringAsync();
-
-            Patient user = JsonConvert.DeserializeObject<Patient>(_data.ToString());
-            return user;
+            //Return the Token
+            return _data;
         }
 
         public async void RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
-            string test = JObject.FromObject(patientCreationBundle).ToString();
+            //Serialize the patientCreationBundle and send it to the API.
 
             StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Create/"), registerContent);
