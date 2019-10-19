@@ -50,13 +50,13 @@ namespace GlucoseTrackerApp
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
-            drawer.AddDrawerListener(toggle);
-            toggle.SyncState();
+            //DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+            //drawer.AddDrawerListener(toggle);
+            //toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
-            navigationView.SetNavigationItemSelectedListener(this);
+            //NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            //navigationView.SetNavigationItemSelectedListener(this);
         }
 
         public override void OnBackPressed()
@@ -81,7 +81,7 @@ namespace GlucoseTrackerApp
                 Credentials loginCreds = new Credentials()
                 {
                     Email = email,
-                    Password = HashPassword(password)
+                    Password = password
                 };
 
                 User client = await restAPI.LoginAsync(loginCreds);

@@ -59,15 +59,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
-    <Compile Include="Models\Credentials.cs" />
-    <Compile Include="Models\Doctor.cs" />
-    <Compile Include="Models\Login.cs" />
-    <Compile Include="Models\MealItem.cs" />
-    <Compile Include="Models\Patient.cs" />
-    <Compile Include="Models\PatientBloodSugar.cs" />
-    <Compile Include="Models\PatientCarbohydrates.cs" />
-    <Compile Include="Models\PatientExercise.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Entities\Creation\PatientCreationBundle.cs" />
+    <Compile Include="Models\Entities\Logging-In\Auth.cs" />
+    <Compile Include="Models\Entities\Logging-In\Credentials.cs" />
+    <Compile Include="Models\Entities\Logging-In\TokenAuth.cs" />
+    <Compile Include="Models\Entities\RelatedData\MealItem.cs" />
+    <Compile Include="Models\Entities\RelatedData\PatientBloodSugar.cs" />
+    <Compile Include="Models\Entities\RelatedData\PatientCarbohydrates.cs" />
+    <Compile Include="Models\Entities\RelatedData\PatientData.cs" />
+    <Compile Include="Models\Entities\RelatedData\PatientExercise.cs" />
+    <Compile Include="Models\Entities\Users\Doctor.cs" />
+    <Compile Include="Models\Entities\Users\Patient.cs" />
+    <Compile Include="Models\Entities\Users\User.cs" />
     <Compile Include="RegisterActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -151,6 +154,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

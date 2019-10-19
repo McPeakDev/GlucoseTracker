@@ -9,16 +9,7 @@ namespace GlucoseAPI.Models.Entities
     {
         public Doctor()
         {
-            Patient = new List<Patient>();
-        }
-
-        [Required]
-        public int DoctorId
-        {
-            get
-            {
-                return UserId;
-            }
+            Patients = new List<Patient>();
         }
 
         [Required]
@@ -26,10 +17,10 @@ namespace GlucoseAPI.Models.Entities
         {
             get
             {
-                return Patient.Count;
+                return Patients.Count;
             }
         }
 
-        public ICollection<Patient> Patient { get; set; }
+        public virtual ICollection<Patient> Patients { get; set; }
     }
 }

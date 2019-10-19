@@ -53,13 +53,13 @@ namespace GlucoseTrackerApp
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_register);
             SetSupportActionBar(toolbar);
 
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout_register);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
-            drawer.AddDrawerListener(toggle);
-            toggle.SyncState();
+            //DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout_register);
+            //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+            //drawer.AddDrawerListener(toggle);
+            //toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_register);
-            navigationView.SetNavigationItemSelectedListener(this);
+            //NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_register);
+            //navigationView.SetNavigationItemSelectedListener(this);
         }
 
         public void OnRegisterButtonPressed ()
@@ -69,7 +69,6 @@ namespace GlucoseTrackerApp
                 Patient patient = new Patient()
                 {
                     Email = Email.Text.Trim(),
-                    Password = HashPassword(Password.Text.Trim()),
                     FirstName = FirstName.Text.Trim(),
                     MiddleName = MiddleName.Text.Trim(),
                     LastName = LastName.Text.Trim(),
@@ -77,9 +76,15 @@ namespace GlucoseTrackerApp
                     DoctorId = Int32.Parse(DoctorID.Text.Trim())
                 };
 
+                PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
+                {
+                    Password = Password.Text.Trim(),
+                    Patient = patient
+                };
+
                 RestService restAPI = new RestService();
 
-                restAPI.RegisterAsync(patient);
+                restAPI.RegisterAsync(patientCreationBundle);
 
                 Intent mainActivity = new Intent(this, typeof(MainActivity));
 

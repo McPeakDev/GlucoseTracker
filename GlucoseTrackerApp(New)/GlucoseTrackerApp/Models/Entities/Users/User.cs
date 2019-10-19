@@ -11,9 +11,6 @@ namespace GlucoseAPI.Models.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         [Required]
-        [StringLength(255)]
-        public string Password { get; set; }
-        [Required]
         [StringLength(150)]
         public string FirstName { get; set; }
         [StringLength(150)]
@@ -21,7 +18,6 @@ namespace GlucoseAPI.Models.Entities
         [Required]
         [StringLength(150)]
         public string LastName { get; set; }
-        [Required]
         [StringLength(255)]
         public string Email { get; set; }
         [Required]

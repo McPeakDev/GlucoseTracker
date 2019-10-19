@@ -18,24 +18,38 @@ namespace GlucoseTrackerApp.Services
         public RestService()
         {
             _client = new HttpClient();
-            _baseAddress = "http://glucosetracker.duckdns.org:8080/api/values/";
+            _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
+
+        }
+
+        public RestService(string token)
+        {
+            _client = new HttpClient();
+            _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
         }
 
         public async Task<Patient> LoginAsync(Credentials creds)
         {
+            string credsString = JObject.FromObject(creds).ToString();
+
             StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
-            _response =  await _client.PostAsync(new Uri(_baseAddress), loginContent);
+            _response =  await _client.PostAsync(new Uri(_baseAddress) + "Token/", loginContent);
             _data = await _response.Content.ReadAsStringAsync();
+
+            _client.DefaultRequestHeaders.Add("token", _data);
+            _response = await _client.PostAsync(new Uri(_baseAddress) + "Read/", null);
+            _data = await _response.Content.ReadAsStringAsync();
+
             Patient user = JsonConvert.DeserializeObject<Patient>(_data.ToString());
             return user;
         }
 
-        public async void RegisterAsync(Patient patient)
+        public async void RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
-            string test = JObject.FromObject(patient).ToString();
+            string test = JObject.FromObject(patientCreationBundle).ToString();
 
-            StringContent registerContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
+            StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Create/"), registerContent);
             _data = await _response.Content.ReadAsStringAsync();
         }
