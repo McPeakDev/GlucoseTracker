@@ -84,7 +84,7 @@ namespace GlucoseTrackerApp
 
                 RestService restAPI = new RestService();
 
-                restAPI.RegisterAsync(this, patientCreationBundle);
+                restAPI.RegisterAsync(patientCreationBundle);
 
                 Intent mainActivity = new Intent(this, typeof(MainActivity));
 

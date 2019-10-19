@@ -50,5 +50,24 @@ namespace GlucoseTrackerApp.Services
             _response = await _client.PostAsync(new Uri(_baseAddress + "Create/"), registerContent);
             _data = await _response.Content.ReadAsStringAsync();
         }
+
+        public async Task<Patient> ReadPatient()
+        {
+            //Serialize the patientCreationBundle and send it to the API.
+
+            _response = await _client.PostAsync(new Uri(_baseAddress + "Read/"), null);
+            _data = await _response.Content.ReadAsStringAsync();
+
+            Patient patient = JsonConvert.DeserializeObject<Patient>(_data);
+            return patient;
+        }
+
+        public async void CreatePatientData(PatientData patientData)
+        {
+            //Serialize the patientCreationBundle and send it to the API.
+            StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
+            _response = await _client.PostAsync(new Uri(_baseAddress + "CreateData/"),createDataContent);
+            _data = await _response.Content.ReadAsStringAsync();
+        }
     }
 }

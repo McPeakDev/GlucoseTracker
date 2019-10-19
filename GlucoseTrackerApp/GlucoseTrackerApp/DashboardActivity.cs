@@ -23,6 +23,9 @@ namespace GlucoseTrackerApp
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            string token = Intent.GetStringExtra("token");
+           
             SetContentView(Resource.Layout.activity_dashboard);
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
@@ -46,14 +49,16 @@ namespace GlucoseTrackerApp
 
             addExerciseButton.Click += delegate
             {
-                OnAddExercisePressed();
+                OnAddExercisePressed(token);
             };
 
         }
 
-        public async void OnAddExercisePressed()
+        public async void OnAddExercisePressed(string token)
         {
-
+            Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
+            exerciseActivity.PutExtra("token", token);
+            StartActivity(exerciseActivity);
         }
 
 

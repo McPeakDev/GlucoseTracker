@@ -27,6 +27,8 @@ namespace GlucoseTrackerApp
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_exercise_add);
 
+            string token = Intent.GetStringExtra("token");
+
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_exercise_add);
             SetSupportActionBar(toolbar);
 
@@ -43,14 +45,33 @@ namespace GlucoseTrackerApp
 
             addExerciseButton.Click += delegate
             {
-                OnAddExercisePressed();
+                OnAddExercisePressed(token);
             };
 
         }
 
-        public async void OnAddExercisePressed()
+        public async void OnAddExercisePressed(string token)
         {
+            DateTime timeNow = DateTime.Now;
+            RestService restAPI = new RestService(token);
 
+            PatientData patientData = new PatientData();
+            Patient patient = await restAPI.ReadPatient();
+
+            PatientExercise patientExercise = new PatientExercise()
+            { 
+                UserId = patient.UserId,
+                HoursExercised = float.Parse(Hours.Text),
+                TimeOfDay = timeNow
+            };
+
+            patientData.PatientExercises.Add(patientExercise);
+
+            restAPI.CreatePatientData(patientData);
+
+            Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+            dashboardActivity.PutExtra("token", token);
+            StartActivity(dashboardActivity);
         }
 
 
