@@ -282,6 +282,8 @@ namespace GlucoseAPI.Controllers
 
                 TokenAuth tokenEntry = _context.TokenAuth.AsNoTracking().FirstOrDefault(t => t.AuthId == authorization.AuthId);
 
+                Patient patient = tokenEntry.User as Patient;
+
                 return tokenEntry.Token;
             }
             catch (Exception)
