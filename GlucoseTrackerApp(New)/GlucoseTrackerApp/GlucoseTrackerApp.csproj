@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DashboardActivity.cs" />
+    <Compile Include="ExerciseAddActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Models\Entities\Creation\PatientCreationBundle.cs" />
     <Compile Include="Models\Entities\Logging-In\Auth.cs" />
@@ -167,6 +168,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\app_bar_dashboard.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\content_exercise_add.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\app_bar_exercise_add.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_exercise_add.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

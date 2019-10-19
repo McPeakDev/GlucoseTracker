@@ -46,10 +46,17 @@ namespace GlucoseTrackerApp
 
             addExerciseButton.Click += delegate
             {
-                
+                OnAddExercisePressed();
             };
 
         }
+
+        public async void OnAddExercisePressed()
+        {
+
+        }
+
+
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
