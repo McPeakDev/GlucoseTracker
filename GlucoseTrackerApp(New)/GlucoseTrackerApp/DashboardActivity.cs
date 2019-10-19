@@ -35,6 +35,20 @@ namespace GlucoseTrackerApp
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_dashboard);
             navigationView.SetNavigationItemSelectedListener(this);
+
+            AppCompatButton logoutButton = FindViewById<AppCompatButton>(Resource.Id.logout_button);
+            AppCompatButton addExerciseButton = FindViewById<AppCompatButton>(Resource.Id.exercise_add_button);
+
+            logoutButton.Click += delegate
+            {
+                
+            };
+
+            addExerciseButton.Click += delegate
+            {
+                
+            };
+
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
