@@ -18,17 +18,18 @@ using Android.Content;
 namespace GlucoseTrackerApp
 {
     [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar")]
-    public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public class QueryFoodActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private AppCompatEditText Name { get;  set; }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.activity_query_food);
 
             string token = Intent.GetStringExtra("token");
-           
-            SetContentView(Resource.Layout.activity_dashboard);
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_query_food);
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -36,49 +37,24 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_dashboard);
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_query_food);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            AppCompatButton logoutButton = FindViewById<AppCompatButton>(Resource.Id.logout_button);
-            AppCompatButton addExerciseButton = FindViewById<AppCompatButton>(Resource.Id.exercise_add_button);
-            AppCompatButton addFoodButton = FindViewById<AppCompatButton>(Resource.Id.add_food_button);
+            AppCompatButton queryFoodButton = FindViewById<AppCompatButton>(Resource.Id.query_food_button);
+            Name = FindViewById<AppCompatEditText>(Resource.Id.query_food_name);
 
-
-            logoutButton.Click += delegate
+            queryFoodButton.Click += delegate
             {
-                OnLogoutPressed();
+                OnQueryFoodPressed(token);
             };
 
-            addExerciseButton.Click += delegate
-            {
-                OnAddExercisePressed(token);
-            };
-
-            addFoodButton.Click += delegate
-            {
-                OnAddFoodPressed(token);
-            };
         }
 
-        public void OnAddExercisePressed(string token)
+        public async void OnQueryFoodPressed(string token)
         {
-            Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-            exerciseActivity.PutExtra("token", token);
-            StartActivity(exerciseActivity);
+            FinishAfterTransition();
         }
 
-        public void OnAddFoodPressed(string token)
-        {
-            Intent queryFoodActivity = new Intent(this, typeof(QueryFoodActivity));
-            queryFoodActivity.PutExtra("token", token);
-            StartActivity(queryFoodActivity);
-        }
-
-        public void OnLogoutPressed()
-        {
-            Intent loginActivity = new Intent(this, typeof(LoginActivity));
-            StartActivity(loginActivity);
-        }
 
 
         public bool OnNavigationItemSelected(IMenuItem item)
@@ -103,4 +79,5 @@ namespace GlucoseTrackerApp
             return true;
         }
     }
+
 }

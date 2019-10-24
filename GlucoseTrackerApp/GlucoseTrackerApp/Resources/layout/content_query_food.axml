@@ -7,30 +7,23 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	app:layout_behavior="@string/appbar_scrolling_view_behavior"
-	tools:showIn="@layout/app_bar_exercise_add"
+	tools:showIn="@layout/app_bar_query_food"
 	android:minWidth="25px"
 	android:minHeight="25px">
-	<TextView
-		android:text="Enter the hours you have exercised today!"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/hours_prompt"
-		android:layout_gravity="center"
-		android:gravity="center" />
+
 	<EditText
-		android:inputType="numberDecimal"
+		android:inputType="text"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:hint="Hours"
-		android:id="@+id/exercise_hours"/>
+		android:hint="Food Name"
+		android:id="@+id/query_food_name"/>
 	<Button
-		android:text="Button"
+		android:text="Add Food"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/add_exercise_button" />
+		android:id="@+id/query_food_button" />
 
 </LinearLayout>

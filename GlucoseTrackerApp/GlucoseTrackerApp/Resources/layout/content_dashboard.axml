@@ -27,6 +27,11 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/exercise_add_button" />
+		<Button
+		android:text="Add A Food"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/add_food_button" />
 	<Button
 		android:text="Logout"
 		android:layout_width="match_parent"
