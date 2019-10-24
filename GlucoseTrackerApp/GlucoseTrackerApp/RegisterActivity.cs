@@ -62,7 +62,7 @@ namespace GlucoseTrackerApp
             //navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        public void OnRegisterButtonPressed ()
+        public async void OnRegisterButtonPressed ()
         {
             try
             {
@@ -73,7 +73,7 @@ namespace GlucoseTrackerApp
                     MiddleName = MiddleName.Text.Trim(),
                     LastName = LastName.Text.Trim(),
                     PhoneNumber = PhoneNumber.Text.Trim(),
-                    DoctorId = Int32.Parse(DoctorID.Text.Trim())
+                    DoctorId = int.Parse(DoctorID.Text.Trim())
                 };
 
                 PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
@@ -86,9 +86,9 @@ namespace GlucoseTrackerApp
 
                 restAPI.RegisterAsync(patientCreationBundle);
 
-                Intent mainActivity = new Intent(this, typeof(MainActivity));
+                Toast.MakeText(this, "Registered!", ToastLength.Long).Show();
 
-                StartActivity(mainActivity);
+                Finish();
             }
             catch (Exception)
             {

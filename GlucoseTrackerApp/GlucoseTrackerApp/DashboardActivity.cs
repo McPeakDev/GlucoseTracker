@@ -44,23 +44,27 @@ namespace GlucoseTrackerApp
 
             logoutButton.Click += delegate
             {
-                
+                OnLogoutPressed();
             };
 
             addExerciseButton.Click += delegate
             {
                 OnAddExercisePressed(token);
             };
-
         }
 
-        public async void OnAddExercisePressed(string token)
+        public void OnAddExercisePressed(string token)
         {
             Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
             exerciseActivity.PutExtra("token", token);
             StartActivity(exerciseActivity);
         }
 
+        public void OnLogoutPressed()
+        {
+            Intent loginActivity = new Intent(this, typeof(LoginActivity));
+            StartActivity(loginActivity);
+        }
 
 
         public bool OnNavigationItemSelected(IMenuItem item)

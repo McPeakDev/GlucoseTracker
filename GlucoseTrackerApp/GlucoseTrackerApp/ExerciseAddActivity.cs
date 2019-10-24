@@ -60,7 +60,7 @@ namespace GlucoseTrackerApp
 
             PatientExercise patientExercise = new PatientExercise()
             { 
-                UserId = patient.UserId,
+               UserId = patient.UserId,
                 HoursExercised = float.Parse(Hours.Text),
                 TimeOfDay = timeNow
             };
@@ -69,9 +69,7 @@ namespace GlucoseTrackerApp
 
             restAPI.CreatePatientData(patientData);
 
-            Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-            dashboardActivity.PutExtra("token", token);
-            StartActivity(dashboardActivity);
+            FinishAfterTransition();
         }
 
 
