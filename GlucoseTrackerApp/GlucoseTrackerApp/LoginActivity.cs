@@ -9,8 +9,8 @@ using Android.Widget;
 using Android.Content;
 
 namespace GlucoseTrackerApp
-{
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
+{ 
+    [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
         private AppCompatEditText Email { get; set; }
@@ -41,6 +41,7 @@ namespace GlucoseTrackerApp
             AutoLogin = FindViewById<AppCompatCheckBox>(Resource.Id.auto_login);
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            toolbar.Title = "Login to Glucose Tracker";
             SetSupportActionBar(toolbar);
 
         }
@@ -81,7 +82,6 @@ namespace GlucoseTrackerApp
                 {
                     Email.Text = String.Empty;
                     Password.Text = String.Empty;
-                    //Toast.MakeText(this, e.Message, ToastLength.Long).Show();
                     Toast.MakeText(this, "Email / Password Combination Was Invalid. Please Try Again.", ToastLength.Long).Show();
                 }
             }

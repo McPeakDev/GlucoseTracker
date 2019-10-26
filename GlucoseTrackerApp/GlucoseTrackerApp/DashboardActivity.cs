@@ -36,7 +36,7 @@ namespace GlucoseTrackerApp
             SetContentView(Resource.Layout.activity_dashboard);
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
-            toolbar.Title = $"Welcome, {patient.LastName},{patient.FirstName}";
+            toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -52,7 +52,13 @@ namespace GlucoseTrackerApp
         {
             int id = item.ItemId;
 
-            if (id == Resource.Id.nav_exercise)
+            if (id == Resource.Id.nav_dashboard)
+            {
+                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+                dashboardActivity.PutExtra("token", _token);
+                StartActivity(dashboardActivity);
+            }
+            else if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
                 exerciseActivity.PutExtra("token", _token);
@@ -66,7 +72,9 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
-
+                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
+                bloodSugarActivity.PutExtra("token", _token);
+                StartActivity(bloodSugarActivity);
             }
             else if (id == Resource.Id.nav_logout)
             {
@@ -76,6 +84,7 @@ namespace GlucoseTrackerApp
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
+            FinishAfterTransition();
             return true;
         }
     }

@@ -14,13 +14,13 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar")]
-    public class ExerciseAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.Design.NoActionBar")]
+    public class BloodSugarAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private AppCompatEditText Hours { get;  set; }
         private AppCompatEditText LevelBefore { get; set; }
         private AppCompatEditText LevelAfter { get; set; }
         private AppCompatEditText MealName { get; set; }
@@ -30,12 +30,23 @@ namespace GlucoseTrackerApp
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_exercise_add);
+            SetContentView(Resource.Layout.activity_blood_sugar_add);
 
             _token = Intent.GetStringExtra("token");
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_exercise_add);
-            toolbar.Title = "Add a New Exercise Activity";
+            LevelBefore= FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_before_reading);
+            LevelAfter = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_after_reading);
+            MealName = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_meal_name);
+
+            AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
+
+            bloodSugarAddButton.Click += delegate
+            {
+                OnBloodSugarAddButtonPressed();
+            };
+
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_blood_sugar_add);
+            toolbar.Title = "Add A Blood Sugar Reading";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -43,43 +54,40 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_exercise_add);
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_blood_sugar_add);
             navigationView.SetNavigationItemSelectedListener(this);
-
-            AppCompatButton addExerciseButton = FindViewById<AppCompatButton>(Resource.Id.add_exercise_button);
-            Hours = FindViewById<AppCompatEditText>(Resource.Id.exercise_hours);
-
-
-            addExerciseButton.Click += delegate
-            {
-                OnAddExercisePressed(_token);
-            };
-
         }
 
-        public async void OnAddExercisePressed(string token)
+        public async void OnBloodSugarAddButtonPressed()
         {
-            DateTime timeNow = DateTime.Now;
-            RestService restAPI = new RestService(token);
+            try
+            {
+                DateTime timeNow = DateTime.Now;
+                RestService restAPI = new RestService(_token);
 
-            PatientData patientData = new PatientData();
-            Patient patient = await restAPI.ReadPatient();
+                PatientData patientData = new PatientData();
+                Patient patient = await restAPI.ReadPatient();
 
-            PatientExercise patientExercise = new PatientExercise()
-            { 
-               UserId = patient.UserId,
-                HoursExercised = float.Parse(Hours.Text),
-                TimeOfDay = timeNow
-            };
+                PatientBloodSugar patientBlood = new PatientBloodSugar()
+                {
+                    UserId = patient.UserId,
+                    LevelBefore = float.Parse(LevelBefore.Text),
+                    LevelAfter = float.Parse(LevelAfter.Text),
+                    //Meal = query(MealName)
+                    TimeOfDay = timeNow
+                };
 
-            patientData.PatientExercises.Add(patientExercise);
+                patientData.PatientBloodSugars.Add(patientBlood);
 
-            restAPI.CreatePatientData(patientData);
+                restAPI.CreatePatientData(patientData);
 
-            FinishAfterTransition();
+                FinishAfterTransition();
+            }
+            catch (Exception)
+            {
+                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+            }
         }
-
-
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
@@ -121,5 +129,4 @@ namespace GlucoseTrackerApp
             return true;
         }
     }
-
 }

@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace GlucoseTrackerApp
 {
     [Activity(Label = "Register Patient", Theme = "@style/Theme.Design.NoActionBar")]
-    public class RegisterActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public class RegisterActivity : AppCompatActivity
     {
         private AppCompatEditText Email { get; set; }
         private AppCompatEditText Password { get; set; }
@@ -51,15 +51,8 @@ namespace GlucoseTrackerApp
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_register);
+            toolbar.Title = "Register Patient";
             SetSupportActionBar(toolbar);
-
-            //DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout_register);
-            //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
-            //drawer.AddDrawerListener(toggle);
-            //toggle.SyncState();
-
-            //NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_register);
-            //navigationView.SetNavigationItemSelectedListener(this);
         }
 
         public async void OnRegisterButtonPressed ()
@@ -94,28 +87,6 @@ namespace GlucoseTrackerApp
             {
                 Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
             }
-        }
-
-        public bool OnNavigationItemSelected(IMenuItem item)
-        {
-            int id = item.ItemId;
-
-            if (id == Resource.Id.nav_exercise)
-            {
-                // Handle the camera action
-            }
-            else if (id == Resource.Id.nav_food)
-            {
-
-            }
-            else if (id == Resource.Id.nav_bloodsugar)
-            {
-
-            }
-
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            drawer.CloseDrawer(GravityCompat.Start);
-            return true;
         }
     }
 }
