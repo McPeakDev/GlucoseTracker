@@ -17,18 +17,26 @@ using Android.Content;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity( Theme = "@style/Theme.Design.NoActionBar")]
     public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        protected override void OnCreate(Bundle savedInstanceState)
+        private RestService _restApi;
+        private string _token;
+
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            string token = Intent.GetStringExtra("token");
-           
+            _token = Intent.GetStringExtra("token");
+
+            _restApi = new RestService(_token);
+
+            Patient patient = await _restApi.ReadPatient();
+
             SetContentView(Resource.Layout.activity_dashboard);
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
+            toolbar.Title = $"Welcome, {patient.LastName},{patient.FirstName}";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -80,14 +88,15 @@ namespace GlucoseTrackerApp
             StartActivity(loginActivity);
         }
 
-
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
 
             if (id == Resource.Id.nav_exercise)
             {
-                // Handle the camera action
+                Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
+                exerciseActivity.PutExtra("token", _token);
+                StartActivity(exerciseActivity);
             }
             else if (id == Resource.Id.nav_food)
             {
@@ -96,6 +105,11 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_bloodsugar)
             {
 
+            }
+            else if (id == Resource.Id.nav_logout)
+            {
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                StartActivity(loginActivity);
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

@@ -38,6 +38,8 @@ namespace GlucoseTrackerApp.Services
             _response =  await _client.PostAsync(new Uri(_baseAddress) + "Token/", loginContent);
             _data = await _response.Content.ReadAsStringAsync();
 
+            _client.DefaultRequestHeaders.Add("token", _data);
+
             //Return the Token
             return _data;
         }
