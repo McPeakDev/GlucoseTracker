@@ -46,46 +46,6 @@ namespace GlucoseTrackerApp
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_dashboard);
             navigationView.SetNavigationItemSelectedListener(this);
-
-            AppCompatButton logoutButton = FindViewById<AppCompatButton>(Resource.Id.logout_button);
-            AppCompatButton addExerciseButton = FindViewById<AppCompatButton>(Resource.Id.exercise_add_button);
-            AppCompatButton addFoodButton = FindViewById<AppCompatButton>(Resource.Id.add_food_button);
-
-
-            logoutButton.Click += delegate
-            {
-                OnLogoutPressed();
-            };
-
-            addExerciseButton.Click += delegate
-            {
-                OnAddExercisePressed(token);
-            };
-
-            addFoodButton.Click += delegate
-            {
-                OnAddFoodPressed(token);
-            };
-        }
-
-        public void OnAddExercisePressed(string token)
-        {
-            Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-            exerciseActivity.PutExtra("token", token);
-            StartActivity(exerciseActivity);
-        }
-
-        public void OnAddFoodPressed(string token)
-        {
-            Intent queryFoodActivity = new Intent(this, typeof(QueryFoodActivity));
-            queryFoodActivity.PutExtra("token", token);
-            StartActivity(queryFoodActivity);
-        }
-
-        public void OnLogoutPressed()
-        {
-            Intent loginActivity = new Intent(this, typeof(LoginActivity));
-            StartActivity(loginActivity);
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
@@ -100,7 +60,9 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_food)
             {
-
+                Intent queryFoodActivity = new Intent(this, typeof(QueryFoodActivity));
+                queryFoodActivity.PutExtra("token", _token);
+                StartActivity(queryFoodActivity);
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
