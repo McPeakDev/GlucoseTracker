@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseAPI/GlucoseAPI
+//	File Name:         TokenAuth.cs
+//	Description:       An Object to hold Token authentication Information for Users
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GlucoseAPI.Models.Entities
 {
+    /// <summary>
+    /// An Object to hold Token authentication Information for Users
+    /// </summary>
     public class TokenAuth
     {
         [Key]

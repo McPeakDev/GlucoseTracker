@@ -102,10 +102,10 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DashboardActivity.cs" />
-    <Compile Include="QueryFoodActivity.cs" />
-    <Compile Include="ExerciseAddActivity.cs" />
-    <Compile Include="LoginActivity.cs" />
+    <Compile Include="Activities\DashboardActivity.cs" />
+    <Compile Include="Activities\QueryFoodActivity.cs" />
+    <Compile Include="Activities\ExerciseAddActivity.cs" />
+    <Compile Include="Activities\LoginActivity.cs" />
     <Compile Include="Models\Entities\Creation\PatientCreationBundle.cs" />
     <Compile Include="Models\Entities\Logging-In\Auth.cs" />
     <Compile Include="Models\Entities\Logging-In\Credentials.cs" />
@@ -118,8 +118,8 @@
     <Compile Include="Models\Entities\Users\Doctor.cs" />
     <Compile Include="Models\Entities\Users\Patient.cs" />
     <Compile Include="Models\Entities\Users\User.cs" />
-    <Compile Include="BloodSugarAddActivity.cs" />
-    <Compile Include="RegisterActivity.cs" />
+    <Compile Include="Activities\BloodSugarAddActivity.cs" />
+    <Compile Include="Activities\RegisterActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\RestService.cs" />

@@ -1,15 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseAPI/GlucoseAPI
+//	File Name:         Program.cs
+//	Description:       Runs Glucose API
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace GlucoseAPI
 {
+    /// <summary>
+    /// Runs GlucoseAPI
+    /// </summary>
     public class Program
     {
         public static void Main(string[] args)

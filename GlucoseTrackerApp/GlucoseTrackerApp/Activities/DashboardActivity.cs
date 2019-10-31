@@ -14,13 +14,14 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
-    [Activity( Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity(Label = "Dashboard", Theme = "@style/Theme.Design.NoActionBar")]
     public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private RestService _restApi;
+        private RestService _restAPI;
         private string _token;
 
         protected async override void OnCreate(Bundle savedInstanceState)
@@ -29,9 +30,9 @@ namespace GlucoseTrackerApp
 
             _token = Intent.GetStringExtra("token");
 
-            _restApi = new RestService(_token);
+            _restAPI = new RestService(_token);
 
-            Patient patient = await _restApi.ReadPatient();
+            Patient patient =  await _restAPI.ReadPatient();
 
             SetContentView(Resource.Layout.activity_dashboard);
 

@@ -46,6 +46,11 @@ namespace GlucoseTrackerApp
 
         }
 
+        public override void OnBackPressed()
+        {
+            Finish();
+        }
+
         public async void OnLoginPressedAsync(string email, string password)
         {
             try
