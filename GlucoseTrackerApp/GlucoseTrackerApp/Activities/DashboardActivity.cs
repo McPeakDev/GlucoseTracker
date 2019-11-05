@@ -15,6 +15,10 @@ using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
 using System.Threading.Tasks;
+using Microcharts.Droid;
+using Microcharts;
+using System.Collections.Generic;
+using SkiaSharp;
 
 namespace GlucoseTrackerApp
 {
@@ -24,12 +28,15 @@ namespace GlucoseTrackerApp
         private RestService _restAPI;
         private string _token;
         private Android.Support.V7.Widget.Toolbar _toolbar;
+        private ChartView _bloodChart;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.activity_dashboard);
+
+            _bloodChart = FindViewById<ChartView>(Resource.Id.bloodChart);
 
             _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
             SetSupportActionBar(_toolbar);
@@ -54,6 +61,22 @@ namespace GlucoseTrackerApp
             Patient patient = await _restAPI.ReadPatient();
 
             _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
+
+            var entries = new List<ChartEntry>();
+
+            foreach (var bloodSugar in patient.PatientBloodSugars)
+            {
+                entries.Add(new ChartEntry(bloodSugar.LevelBefore)
+                {
+                    Label = bloodSugar.TimeOfDay.ToShortDateString(),
+                    ValueLabel = bloodSugar.LevelBefore.ToString(),
+                    Color = SKColor.Parse("#800020")
+                });
+            }
+
+            var chart = new LineChart() { Entries = entries };
+
+            _bloodChart.Chart = chart;
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
