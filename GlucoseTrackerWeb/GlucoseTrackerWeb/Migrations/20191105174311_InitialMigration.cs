@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GlucoseTrackerWeb.Migrations
 {
-    public partial class GlucoseTracker_FixMeals : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -71,7 +71,7 @@ namespace GlucoseTrackerWeb.Migrations
                     MealId = table.Column<int>(nullable: false),
                     LevelBefore = table.Column<float>(nullable: false),
                     LevelAfter = table.Column<float>(nullable: false),
-                    TimeOfDay = table.Column<DateTime>(nullable: true)
+                    TimeOfDay = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,9 +98,8 @@ namespace GlucoseTrackerWeb.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
                     MealId = table.Column<int>(nullable: false),
-                    TotalCarbs = table.Column<int>(nullable: false),
                     FoodCarbs = table.Column<int>(nullable: false),
-                    TimeOfDay = table.Column<DateTime>(nullable: true)
+                    TimeOfDay = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,7 +126,7 @@ namespace GlucoseTrackerWeb.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(nullable: false),
                     HoursExercised = table.Column<float>(nullable: false),
-                    TimeOfDay = table.Column<DateTime>(nullable: true)
+                    TimeOfDay = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

@@ -60,7 +60,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<int>("MealId");
 
-                    b.Property<DateTime?>("TimeOfDay");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 
@@ -82,9 +82,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<int>("MealId");
 
-                    b.Property<DateTime?>("TimeOfDay");
-
-                    b.Property<int>("TotalCarbs");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 
@@ -104,7 +102,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<float>("HoursExercised");
 
-                    b.Property<DateTime?>("TimeOfDay");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 

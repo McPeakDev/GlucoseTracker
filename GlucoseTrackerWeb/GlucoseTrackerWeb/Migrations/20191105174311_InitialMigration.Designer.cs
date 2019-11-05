@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GlucoseTrackerWeb.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
-    [Migration("20191018201741_GlucoseTracker_FixMeals")]
-    partial class GlucoseTracker_FixMeals
+    [Migration("20191105174311_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,7 +62,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<int>("MealId");
 
-                    b.Property<DateTime?>("TimeOfDay");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 
@@ -84,9 +84,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<int>("MealId");
 
-                    b.Property<DateTime?>("TimeOfDay");
-
-                    b.Property<int>("TotalCarbs");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 
@@ -106,7 +104,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<float>("HoursExercised");
 
-                    b.Property<DateTime?>("TimeOfDay");
+                    b.Property<DateTime>("TimeOfDay");
 
                     b.Property<int>("UserId");
 

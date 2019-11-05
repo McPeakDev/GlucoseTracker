@@ -1,144 +1,153 @@
 ﻿@model GlucoseTrackerWeb.Models.ViewModels.PatientDataVM
 
 @{
+    Layout = "_Layout";
     ViewData["Title"] = $"Data for {@Model.FullName}";
+
+    var bloodSugarsBefore = ViewData["BloodSugarsBefore"] as string;
+    var bloodSugarsAfter = ViewData["BloodSugarsAfter"] as string;
+    var exercises = ViewData["Exercises"] as string;
+    var carbs = ViewData["Carbs"] as string;
+
 }
 
     <body class="bg-dark">
         <h1>@ViewData["Title"]</h1>
 
-        <p></p>
         <div>
-            <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a>
-            <input type="checkbox" onchange="toggle()" data-toggle="toggle" data-off="Show Graphs" data-on="Show Tables" id="toggler" />
+            <input type="hidden" id="bloodSugarsBefore" value="@bloodSugarsBefore" />
+            <input type="hidden" id="bloodSugarsAfter" value="@bloodSugarsAfter" />
+            <input type="hidden" id="exercises" value="@exercises" />
+            <input type="hidden" id="carbs" value="@carbs" />
 
+            <div class="float-left"><a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a></div>
+            <div class="float-right"><input type="checkbox" data-onstyle="success" data-offstyle="danger" onchange="toggle()" data-toggle="toggle" data-off="Graphs Off" data-on="Graphs On" id="toggler" /></div>
         </div>
-        <p></p>
-        <div id="tables">
-            <h2>Blood Sugars</h2>
-            <table class="table">
-                @foreach (var item in Model.PatientBloodSugars)
+
+        <br />
+            <br />
+            <div id="tables">
+                @if (Model.PatientBloodSugars.Count > 0)
                 {
-                    <thead>
-                        <tr>
-                            <th>
-                                Date and Time
-                            </th>
-                            <th>
-                                Level Before
-                            </th>
-                            <th>
-                                Level After
-                            </th>
-                            <th>
-                                Meal
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                            </td>
-                            <td>
-                                @item.LevelBefore
-                            </td>
-                            <td>
-                                @item.LevelAfter
-                            </td>
-                            <td>
-                                @item.Meal.FoodName
-                            </td>
-                        </tr>
-                    </tbody>
+                    <h2>Blood Sugars</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Date and Time
+                                </th>
+                                <th>
+                                    Level Before
+                                </th>
+                                <th>
+                                    Level After
+                                </th>
+                                <th>
+                                    Meal
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PatientBloodSugars)
+                            {
+                                <tr>
+                                    <td>
+                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                    </td>
+                                    <td>
+                                        @item.LevelBefore
+                                    </td>
+                                    <td>
+                                        @item.LevelAfter
+                                    </td>
+                                    <td>
+                                        @item.Meal.FoodName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
-            </table>
-
-            <p></p>
-
-            <h2>Carbs</h2>
-            <table class="table">
-                @foreach (var item in Model.PatientCarbohydrates)
+                <p></p>
+                @if (Model.PatientCarbohydrates.Count > 0)
                 {
-                    <thead>
-                        <tr>
-                            <th>
-                                Date and Time
-                            </th>
-                            <th>
-                                Food Carbs
-                            </th>
-                            <th>
-                                Total Carbs
-                            </th>
-                            <th>
-                                Meal
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                            </td>
-                            <td>
-                                @item.FoodCarbs
-                            </td>
-                            <td>
-                                @item.TotalCarbs
-                            </td>
-                            <td>
-                                @item.Meal.FoodName
-                            </td>
-                        </tr>
-                    </tbody>
+                    <h2>Carbs</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Date and Time
+                                </th>
+                                <th>
+                                    Food Carbs
+                                </th>
+                                <th>
+                                    Meal
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PatientCarbohydrates)
+                            {
+                                <tr>
+                                    <td>
+                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                    </td>
+                                    <td>
+                                        @item.FoodCarbs
+                                    </td>
+                                    <td>
+                                        @item.Meal.FoodName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
-            </table>
-
-            <p></p>
-
-            <h2>Exercises</h2>
-            <table class="table">
-                @foreach (var item in Model.PatientExercises)
+                <p></p>
+                @if (Model.PatientExercises.Count > 0)
                 {
-                    <thead>
-                        <tr>
-                            <th>
-                                Date and Time
-                            </th>
-                            <th>
-                                Hours Exercised
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                @($"{item.TimeOfDay.Value.ToShortDateString()}, {item.TimeOfDay.Value.ToShortTimeString()} ")
-                            </td>
-                            <td>
-                                @item.HoursExercised
-                            </td>
-                        </tr>
-                    </tbody>
+                    <h2>Exercises</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Date and Time
+                                </th>
+                                <th>
+                                    Hours Exercised
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PatientExercises)
+                            {
+                                <tr>
+                                    <td>
+                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                    </td>
+                                    <td>
+                                        @item.HoursExercised
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
-            </table>
-            <div>
-                <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a>
-            </div>
-        </div>
+                </div>
 
         <div id="charts" style="display: none">
-            <canvas id="bloodChart" width="400" height="100"></canvas>
+            <canvas id="bloodChart" width="400" style="height: 25%"></canvas>
             <br />
-            <canvas id="exerciseChart" width="400" height="100"></canvas>
+            <canvas id="exerciseChart" width="400" style="height: 25%"></canvas>
             <br />
-            <canvas id="carbChart" width="400" height="100"></canvas>
+            <canvas id="carbChart" width="400" style="height: 25%"></canvas>
 
         </div>
 
         @section Scripts
         {
+
             <script src="~/js/Chart.bundle.js"></script>
             <script src="~/js/ChartBuilder.js"></script>
         }
