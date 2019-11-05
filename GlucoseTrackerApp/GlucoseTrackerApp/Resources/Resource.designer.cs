@@ -26,6 +26,7 @@ namespace GlucoseTrackerApp
 		
 		public static void UpdateIdValues()
 		{
+			global::Microcharts.Droid.Resource.String.library_name = global::GlucoseTrackerApp.Resource.String.library_name;
 		}
 		
 		public partial class Animation
@@ -3440,31 +3441,34 @@ namespace GlucoseTrackerApp
 			public const int character_counter_pattern = 2131558433;
 			
 			// aapt resource value: 0x7F0D0022
-			public const int navigation_drawer_close = 2131558434;
+			public const int library_name = 2131558434;
 			
 			// aapt resource value: 0x7F0D0023
-			public const int navigation_drawer_open = 2131558435;
+			public const int navigation_drawer_close = 2131558435;
 			
 			// aapt resource value: 0x7F0D0024
-			public const int password_toggle_content_description = 2131558436;
+			public const int navigation_drawer_open = 2131558436;
 			
 			// aapt resource value: 0x7F0D0025
-			public const int path_password_eye = 2131558437;
+			public const int password_toggle_content_description = 2131558437;
 			
 			// aapt resource value: 0x7F0D0026
-			public const int path_password_eye_mask_strike_through = 2131558438;
+			public const int path_password_eye = 2131558438;
 			
 			// aapt resource value: 0x7F0D0027
-			public const int path_password_eye_mask_visible = 2131558439;
+			public const int path_password_eye_mask_strike_through = 2131558439;
 			
 			// aapt resource value: 0x7F0D0028
-			public const int path_password_strike_through = 2131558440;
+			public const int path_password_eye_mask_visible = 2131558440;
 			
 			// aapt resource value: 0x7F0D0029
-			public const int search_menu_title = 2131558441;
+			public const int path_password_strike_through = 2131558441;
 			
 			// aapt resource value: 0x7F0D002A
-			public const int status_bar_notification_info_overflow = 2131558442;
+			public const int search_menu_title = 2131558442;
+			
+			// aapt resource value: 0x7F0D002B
+			public const int status_bar_notification_info_overflow = 2131558443;
 			
 			static String()
 			{

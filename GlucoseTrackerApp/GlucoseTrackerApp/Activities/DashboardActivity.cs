@@ -23,30 +23,37 @@ namespace GlucoseTrackerApp
     {
         private RestService _restAPI;
         private string _token;
+        private Android.Support.V7.Widget.Toolbar _toolbar;
 
-        protected async override void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            _token = Intent.GetStringExtra("token");
-
-            _restAPI = new RestService(_token);
-
-            Patient patient =  await _restAPI.ReadPatient();
-
             SetContentView(Resource.Layout.activity_dashboard);
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
-            toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
-            SetSupportActionBar(toolbar);
+            _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
+            SetSupportActionBar(_toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, _toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_dashboard);
             navigationView.SetNavigationItemSelectedListener(this);
+        }
+
+        protected async override void OnStart()
+        {
+            base.OnStart();
+
+            _token = Intent.GetStringExtra("token");
+
+            _restAPI = new RestService(_token);
+
+            Patient patient = await _restAPI.ReadPatient();
+
+            _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
