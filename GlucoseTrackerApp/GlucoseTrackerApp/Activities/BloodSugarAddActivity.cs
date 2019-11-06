@@ -1,20 +1,16 @@
 ﻿using System;
-using Android;
 using Android.App;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
-using static BCrypt.Net.BCrypt;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
-using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
@@ -73,9 +69,45 @@ namespace GlucoseTrackerApp
                     UserId = patient.UserId,
                     LevelBefore = float.Parse(LevelBefore.Text),
                     LevelAfter = float.Parse(LevelAfter.Text),
-                    //Meal =
                     TimeOfDay = timeNow
                 };
+
+                MealItem mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
+
+                if(!(mealItem is null))
+                {
+                    patientBlood.MealId = mealItem.MealId;
+                    patientBlood.Meal = mealItem;
+                }
+                else 
+                {
+                    int fdcId = await restAPI.FindMealDataAsync(MealName.Text);
+                    int carbs = (int)await restAPI.ReadMealDataAsync(fdcId);
+
+                    mealItem = new MealItem()
+                    {
+                        Carbs = carbs,
+                        FoodName = MealName.Text.ToUpper()
+                    };
+
+                    restAPI.CreateMealItemAsync(mealItem);
+
+                }
+
+                mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
+                patientBlood.MealId = mealItem.MealId;
+
+
+                PatientCarbohydrates patientCarbohydrate = new PatientCarbohydrates()
+                {
+                    UserId = patient.UserId,
+                    MealId = mealItem.MealId,
+                    Patient = patient,
+                    TimeOfDay = timeNow,
+                    FoodCarbs = mealItem.Carbs
+                };
+
+                patientData.PatientCarbohydrates.Add(patientCarbohydrate);
 
                 patientData.PatientBloodSugars.Add(patientBlood);
 

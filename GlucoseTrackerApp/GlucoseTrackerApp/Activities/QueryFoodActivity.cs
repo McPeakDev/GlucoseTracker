@@ -64,7 +64,7 @@ namespace GlucoseTrackerApp
 
             restAPI = new RestService(token);
 
-            restAPI.CreateMealItem(mealItem);
+            restAPI.CreateMealItemAsync(mealItem);
 
             Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
             dashboardActivity.PutExtra("token", _token);
