@@ -66,20 +66,24 @@ namespace GlucoseTrackerApp
                 RestService restAPI = new RestService(_token);
 
                 PatientData patientData = new PatientData();
-                Patient patient = await restAPI.ReadPatient();
+                Patient patient = await restAPI.ReadPatientAsync();
 
                 PatientBloodSugar patientBlood = new PatientBloodSugar()
                 {
                     UserId = patient.UserId,
                     LevelBefore = float.Parse(LevelBefore.Text),
                     LevelAfter = float.Parse(LevelAfter.Text),
-                    //Meal = query(MealName)
+                    //Meal =
                     TimeOfDay = timeNow
                 };
 
                 patientData.PatientBloodSugars.Add(patientBlood);
 
                 restAPI.CreatePatientData(patientData);
+
+                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+                dashboardActivity.PutExtra("token", _token);
+                StartActivity(dashboardActivity);
 
                 FinishAfterTransition();
             }

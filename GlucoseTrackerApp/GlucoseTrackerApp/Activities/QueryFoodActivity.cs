@@ -1,18 +1,14 @@
-﻿using System;
-using Android;
+﻿
 using Android.App;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
-using static BCrypt.Net.BCrypt;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
-using Android.Widget;
 using Android.Content;
 
 namespace GlucoseTrackerApp
@@ -31,7 +27,7 @@ namespace GlucoseTrackerApp
             _token = Intent.GetStringExtra("token");
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_query_food);
-            toolbar.Title = "Find a Food Item";
+            toolbar.Title = "Add a Food Item";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -54,7 +50,26 @@ namespace GlucoseTrackerApp
 
         public async void OnQueryFoodPressed(string token)
         {
-            FinishAfterTransition();
+            RestService restAPI = new RestService();
+
+            int id = await restAPI.FindMealDataAsync(Name.Text);
+
+            int carbs = (int)await restAPI.ReadMealDataAsync(id);
+
+            MealItem mealItem = new MealItem()
+            {
+                Carbs = carbs,
+                FoodName = Name.Text.ToUpper()
+            };
+
+            restAPI = new RestService(token);
+
+            restAPI.CreateMealItem(mealItem);
+
+            Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+            dashboardActivity.PutExtra("token", _token);
+            StartActivity(dashboardActivity);
+
         }
 
 

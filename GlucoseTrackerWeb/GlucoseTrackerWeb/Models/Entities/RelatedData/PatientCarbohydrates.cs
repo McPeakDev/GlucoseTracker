@@ -15,8 +15,10 @@ namespace GlucoseAPI.Models.Entities
         [ForeignKey("MealItem")]
         public int MealId { get; set; }
         public int FoodCarbs { get; set; }
-        public MealItem Meal { get; set; }
         public DateTime TimeOfDay { get; set; }
+
         public virtual Patient Patient { get; set; }
+        public virtual MealItem Meal { get; set; }
+
     }
 }

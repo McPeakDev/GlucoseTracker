@@ -64,7 +64,7 @@ namespace GlucoseTrackerApp
 
             _restAPI = new RestService(_token);
 
-            Patient patient = await _restAPI.ReadPatient();
+            Patient patient = await _restAPI.ReadPatientAsync();
 
             _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
 

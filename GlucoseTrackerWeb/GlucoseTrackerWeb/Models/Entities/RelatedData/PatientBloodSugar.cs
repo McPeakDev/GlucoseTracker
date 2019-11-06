@@ -16,9 +16,10 @@ namespace GlucoseAPI.Models.Entities
         public int MealId { get; set; }
         public float LevelBefore { get; set; }
         public float LevelAfter { get; set; }
-        public MealItem Meal { get; set; }
         public DateTime TimeOfDay { get; set; }
 
         public virtual Patient Patient { get; set; }
+        public virtual MealItem Meal { get; set; }
+
     }
 }

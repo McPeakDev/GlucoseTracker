@@ -63,7 +63,7 @@ namespace GlucoseTrackerApp
             RestService restAPI = new RestService(token);
 
             PatientData patientData = new PatientData();
-            Patient patient = await restAPI.ReadPatient();
+            Patient patient = await restAPI.ReadPatientAsync();
 
             PatientExercise patientExercise = new PatientExercise()
             { 
@@ -75,6 +75,10 @@ namespace GlucoseTrackerApp
             patientData.PatientExercises.Add(patientExercise);
 
             restAPI.CreatePatientData(patientData);
+
+            Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+            dashboardActivity.PutExtra("token", _token);
+            StartActivity(dashboardActivity);
 
             FinishAfterTransition();
         }

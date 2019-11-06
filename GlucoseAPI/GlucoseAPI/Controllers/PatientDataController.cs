@@ -168,7 +168,7 @@ namespace GlucoseAPI.Controllers
         /// <param name="token">A User's Identity</param>
         /// <param name="patientData">A Patient's Data</param>
         /// <returns></returns>
-        [HttpDelete("Delete")]
+        [HttpPost("Delete")]
         public ActionResult<StringContent> DeletePatientData([FromHeader(Name = "token")]string token, PatientData patientData)
         {
             try
