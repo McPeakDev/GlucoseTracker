@@ -68,7 +68,11 @@
                         </tbody>
                     </table>
                 }
-                <p></p>
+                else
+                {
+                    <div class="text-center">No Blood Sugar Data</div>
+                }
+                <br />
                 @if (Model.PatientCarbohydrates.Count > 0)
                 {
                     <h2>Carbs</h2>
@@ -104,7 +108,11 @@
                         </tbody>
                     </table>
                 }
-                <p></p>
+                else
+                {
+                    <div class="text-center">No Carbohydrate Data</div>
+                }
+                <br />
                 @if (Model.PatientExercises.Count > 0)
                 {
                     <h2>Exercises</h2>
@@ -134,20 +142,43 @@
                         </tbody>
                     </table>
                 }
-                </div>
+                else
+                {
+                    <div class="text-center">No Exercise Data</div>
+                }
+            </div>
 
-        <div id="charts" style="display: none">
-            <canvas id="bloodChart" width="400" style="height: 25%"></canvas>
-            <br />
-            <canvas id="exerciseChart" width="400" style="height: 25%"></canvas>
-            <br />
-            <canvas id="carbChart" width="400" style="height: 25%"></canvas>
-
-        </div>
+            <div id="charts" style="display: none">
+                @if (Model.PatientBloodSugars.Count > 0)
+                {
+                    <canvas id="bloodChart" width="400" style="height: 25%"></canvas>
+                }
+                else
+                {
+                    <div class="text-center">No Blood Sugar Data</div>
+                }
+                <br />
+                @if (Model.PatientCarbohydrates.Count > 0)
+                {
+                    <canvas id="carbChart" width="400" style="height: 25%"></canvas>
+                }
+                else
+                {
+                    <div class="text-center">No Carbohydrate Data</div>
+                }
+                <br />
+                @if (Model.PatientExercises.Count > 0)
+                {
+                    <canvas id="exerciseChart" width="400" style="height: 25%"></canvas>
+                }
+                else
+                {
+                    <div class="text-center">No Exercise Data</div>
+                }
+            </div>
 
         @section Scripts
         {
-
             <script src="~/js/Chart.bundle.js"></script>
             <script src="~/js/ChartBuilder.js"></script>
         }

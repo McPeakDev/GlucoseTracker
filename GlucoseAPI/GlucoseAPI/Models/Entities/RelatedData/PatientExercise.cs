@@ -25,7 +25,7 @@ namespace GlucoseAPI.Models.Entities
         [ForeignKey("Patient")]
         public int UserId { get; set; }
         public float HoursExercised { get; set; }
-        public DateTime? TimeOfDay { get; set; }
+        public DateTime TimeOfDay { get; set; }
         public virtual Patient Patient { get; set; }
     }
 }

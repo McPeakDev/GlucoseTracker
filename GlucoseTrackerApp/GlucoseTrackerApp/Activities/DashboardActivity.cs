@@ -19,6 +19,7 @@ using Microcharts.Droid;
 using Microcharts;
 using System.Collections.Generic;
 using SkiaSharp;
+using Android.Graphics;
 
 namespace GlucoseTrackerApp
 {
@@ -29,6 +30,9 @@ namespace GlucoseTrackerApp
         private string _token;
         private Android.Support.V7.Widget.Toolbar _toolbar;
         private ChartView _bloodChart;
+        private ChartView _exerciseChart;
+        private ChartView _carbChart;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -37,6 +41,8 @@ namespace GlucoseTrackerApp
             SetContentView(Resource.Layout.activity_dashboard);
 
             _bloodChart = FindViewById<ChartView>(Resource.Id.bloodChart);
+            _exerciseChart = FindViewById<ChartView>(Resource.Id.exerciseChart);
+            _carbChart = FindViewById<ChartView>(Resource.Id.carbChart);
 
             _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
             SetSupportActionBar(_toolbar);
@@ -62,21 +68,73 @@ namespace GlucoseTrackerApp
 
             _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
 
-            var entries = new List<ChartEntry>();
+            var bloodEntries = new List<ChartEntry>();
+            var exerciseEntries = new List<ChartEntry>();
+            var carbEntries = new List<ChartEntry>();
 
             foreach (var bloodSugar in patient.PatientBloodSugars)
             {
-                entries.Add(new ChartEntry(bloodSugar.LevelBefore)
+                bloodEntries.Add(new ChartEntry((bloodSugar.LevelBefore + bloodSugar.LevelAfter) /2)
                 {
                     Label = bloodSugar.TimeOfDay.ToShortDateString(),
-                    ValueLabel = bloodSugar.LevelBefore.ToString(),
-                    Color = SKColor.Parse("#800020")
+                    ValueLabel = ((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2).ToString(),
+                    Color = SKColors.Maroon
                 });
             }
 
-            var chart = new LineChart() { Entries = entries };
+            foreach (var exercise in patient.PatientExercises)
+            {
+                exerciseEntries.Add(new ChartEntry(exercise.HoursExercised)
+                {
+                    Label = exercise.TimeOfDay.ToShortDateString(),
+                    ValueLabel = exercise.HoursExercised.ToString(),
+                    Color = SKColors.DarkGreen
+                });
+            }
 
-            _bloodChart.Chart = chart;
+            foreach (var carb in patient.PatientCarbs)
+            {
+                carbEntries.Add(new ChartEntry(carb.FoodCarbs)
+                {
+                    Label = carb.TimeOfDay.ToShortDateString(),
+                    ValueLabel = carb.FoodCarbs.ToString(),
+                    Color = SKColors.Yellow
+                });
+            }
+
+            var bloodChart = new LineChart() 
+            {
+                Entries = bloodEntries,
+                BackgroundColor = SKColors.Transparent,
+                LabelTextSize = 25,
+                LabelOrientation = Microcharts.Orientation.Horizontal,
+                ValueLabelOrientation = Microcharts.Orientation.Horizontal
+
+            };
+
+            var exerciseChart = new LineChart()
+            {
+                Entries = exerciseEntries,
+                BackgroundColor = SKColors.Transparent,
+                LabelTextSize = 25,
+                LabelOrientation = Microcharts.Orientation.Horizontal,
+                ValueLabelOrientation = Microcharts.Orientation.Horizontal
+
+            };
+            
+            var carbChart = new LineChart()
+            {
+                Entries = carbEntries,
+                BackgroundColor = SKColors.Transparent,
+                LabelTextSize = 25,
+                LabelOrientation = Microcharts.Orientation.Horizontal,
+                ValueLabelOrientation = Microcharts.Orientation.Horizontal
+            };
+
+            _bloodChart.Chart = bloodChart;
+            _exerciseChart.Chart = exerciseChart;
+            _carbChart.Chart = carbChart;
+
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
