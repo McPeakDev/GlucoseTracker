@@ -83,8 +83,9 @@ namespace GlucoseTrackerApp.Services
         #region Create, Read, Update, and Delete Patient Data
         public async void CreatePatientData(PatientData patientData)
         {
+            string json = JObject.FromObject(patientData).ToString();
             //Serialize the patientCreationBundle and send it to the API.
-            StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
+            StringContent createDataContent = new StringContent(json, Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent);
             _data = await _response.Content.ReadAsStringAsync();
         }
@@ -148,13 +149,23 @@ namespace GlucoseTrackerApp.Services
         }
         #endregion
 
-        #region Add MealItem
-        public async void CreateMealItem(MealItem mealItem)
+        #region Create and Read MealItem
+        public async void CreateMealItemAsync(MealItem mealItem)
         {
             //Serialize the patientCreationBundle and send it to the API.
             StringContent mealItemContent = new StringContent(JObject.FromObject(mealItem).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Meal/Create/"), mealItemContent);
             _data = await _response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<MealItem> ReadMealItemAsync(string query)
+        {
+            //Serialize the patientCreationBundle and send it to the API.
+            _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query}"), null);
+            _data = await _response.Content.ReadAsStringAsync();
+
+            MealItem mealItem = JsonConvert.DeserializeObject<MealItem>(_data);
+            return mealItem;
         }
         #endregion
     }
