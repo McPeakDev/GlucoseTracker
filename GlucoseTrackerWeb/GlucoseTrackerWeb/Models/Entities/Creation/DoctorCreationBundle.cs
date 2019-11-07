@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseTrackerWeb/GlucoseTrackerWeb
+//	File Name:         DoctorCreationBundle.cs
+//	Description:       A Bundle of Doctor Data
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using static BCrypt.Net.BCrypt;
 
 namespace GlucoseAPI.Models.Entities
 {
+    /// <summary>
+    /// A Bundle of Doctor Data
+    /// </summary>
     public class DoctorCreationBundle
     {
         [Required]

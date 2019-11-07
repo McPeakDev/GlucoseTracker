@@ -18,15 +18,9 @@ namespace GlucoseAPI.Models.Entities
     /// </summary>
     public partial class Patient : User
     {
-        /// <summary>
-        /// Possible DoctorID for Assigning a Doctor to a Patient
-        /// </summary>
         [ForeignKey("Doctor")]
         public int? DoctorId { get; set; }
 
-        /// <summary>
-        /// Virtual Navigation Properties
-        /// </summary>
         public virtual Doctor Doctor { get; set; }
         public virtual ICollection<PatientBloodSugar> PatientBloodSugars { get; set; }
         public virtual ICollection<PatientCarbohydrates> PatientCarbs { get; set; }

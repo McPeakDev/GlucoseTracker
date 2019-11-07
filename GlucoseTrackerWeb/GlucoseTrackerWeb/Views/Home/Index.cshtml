@@ -1,21 +1,25 @@
 ﻿@model GlucoseAPI.Models.Entities.Credentials
 
 @{
-            ViewData["Title"] = "Login to GlucoseTracker";
+    //Title
+    ViewData["Title"] = "Login to GlucoseTracker";
 
-            var loginStatus = TempData["BadLogin"];
+    //Assign the TempData BadLogin var.
+    var loginStatus = TempData["BadLogin"];
 
-            if (!(loginStatus is null))
-            {
-                if ((Boolean)loginStatus)
-                {
-    <div class="alert alert-danger alert-dismissible">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <h4 class="alert-heading">Error!</h4>
-        <p class="mb-0">Wrong Email or Password. Please Try Again.</p>
-    </div>
+    //Verify this is set.
+    if (!(loginStatus is null))
+    {
+        //If it was a bad login attemmpt show an error.
+        if ((Boolean)loginStatus)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <h4 class="alert-heading">Error!</h4>
+                <p class="mb-0">Wrong Email or Password. Please Try Again.</p>
+            </div>
         }
-}
+    }
 }
 <body class="bg-dark">
     <div class="text-center">

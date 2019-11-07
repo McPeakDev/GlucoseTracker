@@ -1,12 +1,16 @@
 ﻿@model GlucoseAPI.Models.Entities.Patient
 
 @{
+    //Title.
     ViewData["Title"] = "Track Patient";
 
+    //Assign tokenStatus
     var tokenStatus = TempData["BadUser"];
 
+    //If tokenStatus is set.
     if (!(tokenStatus is null))
     {
+        //If the Token was bad. Display an error.
         if ((Boolean)tokenStatus)
         {
             <div class="alert alert-danger alert-dismissible">
