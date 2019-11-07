@@ -2,26 +2,40 @@
 
 @{
     ViewData["Title"] = "Track Patient";
-}
-<body class="bg-dark">
 
-    <h1>Add A Patient</h1>
+    var tokenStatus = TempData["BadUser"];
 
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="AddPatient">
-                <div class="form-group">
-                    <label class="control-label">Token</label>
-                    <input name="token" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Add" class="btn btn-primary" />
-                </div>
-            </form>
+    if (!(tokenStatus is null))
+    {
+        if ((Boolean)tokenStatus)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <h4 class="alert-heading">Error!</h4>
+                <p class="mb-0">Invalid Token</p>
+            </div>
+            }
+        }
+    }
+    <body class="bg-dark">
+
+        <h1>Add A Patient</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="AddPatient">
+                    <div class="form-group">
+                        <label class="control-label">Token</label>
+                        <input name="token" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div>
-        <a asp-action="Index">Back to Dashboard</a>
-    </div>
-</body>
+        <div>
+            <a asp-action="Index">Back to Dashboard</a>
+        </div>
+    </body>

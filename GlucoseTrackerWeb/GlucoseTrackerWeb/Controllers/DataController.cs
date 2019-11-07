@@ -29,6 +29,11 @@ namespace GlucoseTrackerWeb.Controllers
             Patient patient = _patientRepo.Read(p => p.UserId == id, p => p.PatientBloodSugars, p => p.PatientCarbs, p => p.PatientExercises);
             List<MealItem> meals = _mealRepo.ReadAll().ToList();
 
+            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay).ToList();
+            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay).ToList();
+            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay).ToList();
+
+
             Dictionary<DateTime, float> bloodSugarsBefore = new Dictionary<DateTime, float>();
             Dictionary<DateTime, float> bloodSugarsAfter = new Dictionary<DateTime, float>();
             Dictionary<DateTime, float> exercises = new Dictionary<DateTime, float>();

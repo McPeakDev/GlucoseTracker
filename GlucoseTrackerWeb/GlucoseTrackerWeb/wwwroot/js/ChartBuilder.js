@@ -69,11 +69,12 @@ function createCharts(levelsBefore, levelsAfter, exercises, carbs) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                    distribution: 'series',
                     position: 'bottom',
                     time: {
                         unit: 'day',
                         displayFormats: {
-                            day: 'MMM D'
+                            day: 'MMM D h:mm a'
                         }
                     }
                 }]
@@ -94,11 +95,12 @@ function createCharts(levelsBefore, levelsAfter, exercises, carbs) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                    distribution: 'series',
                     position: 'bottom',
                     time: {
                         unit: 'day',
                         displayFormats: {
-                            day: 'MMM D'
+                            day: 'MMM D h:mm a'
                         }
                     }
                 }]
@@ -119,11 +121,12 @@ function createCharts(levelsBefore, levelsAfter, exercises, carbs) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                    distribution: 'series',
                     position: 'bottom',
                     time: {
                         unit: 'day',
-                         displayFormats: {
-                            day: 'MMM D'
+                        displayFormats: {
+                            day: 'MMM D h:mm a'
                         }
                     }
                 }]

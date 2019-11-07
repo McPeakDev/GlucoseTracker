@@ -10,6 +10,7 @@ using GlucoseAPI.Services;
 using static BCrypt.Net.BCrypt;
 using SessionExtensions = GlucoseAPI.Services.SessionExtensions;
 using GlucoseAPI.Models;
+using System.Text.RegularExpressions;
 
 namespace GlucoseTrackerWeb.Controllers
 {
@@ -37,7 +38,7 @@ namespace GlucoseTrackerWeb.Controllers
                 TokenAuth tokenAuthorization = _tokenAuthRepo.Read(ta => ta.AuthId == authorization.AuthId);
                 Doctor doctor = _doctorRepo.Read(d => d.Email == creds.Email);
 
-                if (Verify(creds.Password, authorization.Password))
+                if (!(doctor is null) && Verify(creds.Password, authorization.Password))
                 {
                     HttpContext.Session.SetString("TokenAuth", tokenAuthorization.Token);
 
@@ -46,12 +47,12 @@ namespace GlucoseTrackerWeb.Controllers
                 }
 
                 TempData["BadLogin"] = true;
-                return RedirectToAction("Index");
+                return View("Index");
             }
             catch (Exception)
             {
                 TempData["BadLogin"] = true;
-                return RedirectToAction("Index");
+                return View("Index");
             }
         }
 
@@ -83,28 +84,34 @@ namespace GlucoseTrackerWeb.Controllers
         [HttpPost]
         public IActionResult Create(DoctorCreationBundle doctorCreationBundle)
         {
-            try
+            if (ModelState.IsValid)
             {
-
-                Auth authEntry = new Auth()
+                try
                 {
-                    Email = doctorCreationBundle.Doctor.Email,
-                    Password = doctorCreationBundle.Password
-                };
+                    Auth authEntry = new Auth()
+                    {
+                        Email = doctorCreationBundle.Doctor.Email,
+                        Password = doctorCreationBundle.Password
+                    };
 
-                TokenAuth TokenAuthEntry = new TokenAuth()
+                    TokenAuth TokenAuthEntry = new TokenAuth()
+                    {
+                        Token = HashPassword(authEntry.Password),
+                        Auth = authEntry,
+                        User = doctorCreationBundle.Doctor
+                    };
+
+                    _authRepo.Create(authEntry);
+                    _tokenAuthRepo.Create(TokenAuthEntry);
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception)
                 {
-                    Token = HashPassword(authEntry.Password), 
-                    Auth = authEntry,
-                    User = doctorCreationBundle.Doctor
-                };
-
-                _authRepo.Create(authEntry);
-                _tokenAuthRepo.Create(TokenAuthEntry);
-
-                return RedirectToAction("Index");
+                    return View(doctorCreationBundle);
+                }
             }
-            catch (Exception)
+            else
             {
                 return View(doctorCreationBundle);
             }
@@ -130,6 +137,7 @@ namespace GlucoseTrackerWeb.Controllers
                 try
                 {
                     Patient patient = _tokenAuthRepo.Read(ta => ta.Token == token, ta => ta.User).User as Patient;
+
                     Doctor doctor = _tokenAuthRepo.Read(ta => ta.Token == HttpContext.Session.GetString("TokenAuth"), ta => ta.User).User as Doctor;
 
                     patient.DoctorId = doctor.UserId;
@@ -142,7 +150,7 @@ namespace GlucoseTrackerWeb.Controllers
                 catch (Exception)
                 {
                     TempData["BadUser"] = true;
-                    return RedirectToAction("Dashboard");
+                    return View();
                 }
             }
             else

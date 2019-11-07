@@ -1,20 +1,22 @@
 ﻿@model GlucoseAPI.Models.Entities.Credentials
 
 @{
-    ViewData["Title"] = "Login to GlucoseTracker";
+            ViewData["Title"] = "Login to GlucoseTracker";
 
-    if (!(TempData["BadLogin"] is null))
-    {
-        if ((Boolean)TempData["BadLogin"])
-        {
-            <div class="alert alert-dismissible alert-danger">
-                <h4 class="alert-heading">Error!</h4>
-                <p class="mb-0">Wrong Email or Password. Please Try Again.</p>
-            </div>
+            var loginStatus = TempData["BadLogin"];
+
+            if (!(loginStatus is null))
+            {
+                if ((Boolean)loginStatus)
+                {
+    <div class="alert alert-danger alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <h4 class="alert-heading">Error!</h4>
+        <p class="mb-0">Wrong Email or Password. Please Try Again.</p>
+    </div>
         }
-    }
 }
-<html>
+}
 <body class="bg-dark">
     <div class="text-center">
         <h1 class="display-4">Welcome to Glucose Tracker</h1>
@@ -35,4 +37,3 @@
         </fieldset>
     </form>
 </body>
-</html>
