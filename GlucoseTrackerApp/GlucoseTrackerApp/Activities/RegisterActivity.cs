@@ -15,6 +15,7 @@ using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace GlucoseTrackerApp
 {
@@ -27,7 +28,7 @@ namespace GlucoseTrackerApp
         private AppCompatEditText MiddleName { get; set; }
         private AppCompatEditText LastName { get; set; }
         private AppCompatEditText PhoneNumber { get; set; }
-        private AppCompatEditText DoctorID { get; set; }
+        private AppCompatEditText DoctorToken { get; set; }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,7 +41,7 @@ namespace GlucoseTrackerApp
             MiddleName = FindViewById<AppCompatEditText>(Resource.Id.middle_name);
             LastName = FindViewById<AppCompatEditText>(Resource.Id.last_name);
             PhoneNumber = FindViewById<AppCompatEditText>(Resource.Id.phone_number);
-            DoctorID = FindViewById<AppCompatEditText>(Resource.Id.doctor_id);
+            DoctorToken = FindViewById<AppCompatEditText>(Resource.Id.doctor_token);
 
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
@@ -59,33 +60,92 @@ namespace GlucoseTrackerApp
         {
             try
             {
-                Patient patient = new Patient()
+                if (!String.IsNullOrEmpty(Email.Text) && !String.IsNullOrEmpty(Password.Text) && !String.IsNullOrEmpty(FirstName.Text) && !String.IsNullOrEmpty(LastName.Text) && !String.IsNullOrEmpty(PhoneNumber.Text))
                 {
-                    Email = Email.Text.Trim(),
-                    FirstName = FirstName.Text.Trim(),
-                    MiddleName = MiddleName.Text.Trim(),
-                    LastName = LastName.Text.Trim(),
-                    PhoneNumber = PhoneNumber.Text.Trim(),
-                    DoctorId = int.Parse(DoctorID.Text.Trim())
-                };
+                    RestService restAPI;
 
-                PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
+                    Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
+                    Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+                    Regex phoneRegex = new Regex(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
+
+                    if(!emailRegex.IsMatch(Email.Text.Trim()))
+                    {
+                        throw new Exception("Must match the form of example@example.com");
+                    }
+
+                    if (!passwordRegex.IsMatch(Password.Text.Trim()))
+                    {
+                        throw new Exception("Must be at least 8 characters long, 1 uppercase letter, 1 lowercase letter, 1 special character, and 1 number");
+                    }
+
+                    if (PhoneNumber.Text.Length != 10)
+                    {
+                        if(!phoneRegex.IsMatch(PhoneNumber.Text.Trim()))
+                        {
+                            throw new Exception("Invalid Phone Number");
+                        }
+                        throw new Exception("Must be 10 digits long");
+                    }
+
+                    Patient patient = new Patient()
+                    {
+                        Email = Email.Text.Trim(),
+                        FirstName = FirstName.Text.Trim(),
+                        LastName = LastName.Text.Trim(),
+                        PhoneNumber = PhoneNumber.Text.Trim(),
+                    };
+
+                    if (!String.IsNullOrEmpty(MiddleName.Text))
+                    {
+                        patient.MiddleName = MiddleName.Text.Trim();
+                    }
+
+                    if (!String.IsNullOrEmpty(DoctorToken.Text))
+                    {
+                        restAPI = new RestService(DoctorToken.Text.Trim());
+                        Doctor doctor = await restAPI.ReadDoctorAsync();
+
+                        if (!(doctor is null))
+                        {
+                            patient.DoctorId = doctor.UserId;
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid Doctor Token");
+                        }
+                    }
+
+                    PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
+                    {
+                        Password = Password.Text.Trim(),
+                        Patient = patient
+                    };
+
+                    restAPI = new RestService();
+
+                    string status = await restAPI.RegisterAsync(patientCreationBundle);
+
+                    if (status != "Invalid User")
+                    {
+                        Toast.MakeText(this, "Registered!", ToastLength.Long).Show();
+
+                        Finish();
+                    }
+                    else 
+                    {
+                        throw new Exception("User Already Exists");
+                    }
+                }
+                else
                 {
-                    Password = Password.Text.Trim(),
-                    Patient = patient
-                };
-
-                RestService restAPI = new RestService();
-
-                restAPI.RegisterAsync(patientCreationBundle);
-
-                Toast.MakeText(this, "Registered!", ToastLength.Long).Show();
-
-                Finish();
+                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                    Password.Text = String.Empty;
+                }
             }
-            catch (Exception)
+            catch(Exception e)
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                Toast.MakeText(this, e.Message, ToastLength.Long).Show();
+                Password.Text = String.Empty;
             }
         }
     }

@@ -20,6 +20,7 @@ using Microcharts;
 using System.Collections.Generic;
 using SkiaSharp;
 using Android.Graphics;
+using System.Linq;
 
 namespace GlucoseTrackerApp
 {
@@ -68,13 +69,25 @@ namespace GlucoseTrackerApp
 
             _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
 
+            PopulateCharts();
+
+        }
+
+        private async void PopulateCharts()
+        {
+            Patient patient = await _restAPI.ReadPatientAsync();
+
             var bloodEntries = new List<ChartEntry>();
             var exerciseEntries = new List<ChartEntry>();
             var carbEntries = new List<ChartEntry>();
 
+            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay).Where(bs => bs.TimeOfDay.Date == DateTime.Today).ToList();
+            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay).Where(pc => pc.TimeOfDay.Date == DateTime.Today).ToList();
+            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay).Where(pe => pe.TimeOfDay.Date == DateTime.Today).ToList();
+
             foreach (var bloodSugar in patient.PatientBloodSugars)
             {
-                bloodEntries.Add(new ChartEntry((bloodSugar.LevelBefore + bloodSugar.LevelAfter) /2)
+                bloodEntries.Add(new ChartEntry((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2)
                 {
                     Label = bloodSugar.TimeOfDay.ToShortDateString(),
                     ValueLabel = ((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2).ToString(),
@@ -102,13 +115,13 @@ namespace GlucoseTrackerApp
                 });
             }
 
-            var bloodChart = new LineChart() 
+            var bloodChart = new LineChart()
             {
                 Entries = bloodEntries,
                 BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 25,
+                LabelTextSize = 30,
                 LabelOrientation = Microcharts.Orientation.Horizontal,
-                ValueLabelOrientation = Microcharts.Orientation.Horizontal
+                ValueLabelOrientation = Microcharts.Orientation.Horizontal,
 
             };
 
@@ -116,17 +129,17 @@ namespace GlucoseTrackerApp
             {
                 Entries = exerciseEntries,
                 BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 25,
+                LabelTextSize = 30,
                 LabelOrientation = Microcharts.Orientation.Horizontal,
                 ValueLabelOrientation = Microcharts.Orientation.Horizontal
 
             };
-            
+
             var carbChart = new LineChart()
             {
                 Entries = carbEntries,
                 BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 25,
+                LabelTextSize = 30,
                 LabelOrientation = Microcharts.Orientation.Horizontal,
                 ValueLabelOrientation = Microcharts.Orientation.Horizontal
             };
@@ -134,18 +147,14 @@ namespace GlucoseTrackerApp
             _bloodChart.Chart = bloodChart;
             _exerciseChart.Chart = exerciseChart;
             _carbChart.Chart = carbChart;
-
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-
-            if (id == Resource.Id.nav_dashboard)
+            if(id == Resource.Id.nav_dashboard)
             {
-                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-                dashboardActivity.PutExtra("token", _token);
-                StartActivity(dashboardActivity);
+                PopulateCharts();
             }
             else if (id == Resource.Id.nav_exercise)
             {
@@ -169,11 +178,11 @@ namespace GlucoseTrackerApp
             {
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
                 StartActivity(loginActivity);
+                FinishAfterTransition();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
-            FinishAfterTransition();
             return true;
         }
     }

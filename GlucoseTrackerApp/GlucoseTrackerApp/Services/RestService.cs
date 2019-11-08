@@ -48,18 +48,21 @@ namespace GlucoseTrackerApp.Services
         #endregion
 
         #region Registration
-        public async void RegisterAsync(PatientCreationBundle patientCreationBundle)
+        public async Task<string> RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
             //Serialize the patientCreationBundle and send it to the API.
             StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
-            await _client.PostAsync(new Uri(_baseAddress + "Patient/Create/"), registerContent);
+            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent);
+            _data = await _response.Content.ReadAsStringAsync();
+
+            return _data;
         }
         #endregion
 
         #region Read, Update, and Delete Patient
         public async Task<Patient> ReadPatientAsync()
         {
-            _response = await _client.PostAsync(new Uri(_baseAddress + "Patient/Read/"), null);
+            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
             _data = await _response.Content.ReadAsStringAsync();
 
             Patient patient = JsonConvert.DeserializeObject<Patient>(_data);
@@ -70,22 +73,36 @@ namespace GlucoseTrackerApp.Services
         {
             //Serialize the patientCreationBundle and send it to the API.
             StringContent patientContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
-            await _client.PutAsync(new Uri(_baseAddress + "Patient/Update/"), patientContent);
+            await _client.PutAsync(new Uri(_baseAddress + "User/Update/"), patientContent);
         }
 
         public async void DeletePatientAsync()
         {
             //Serialize the patientCreationBundle and send it to the API.
-            await _client.DeleteAsync(new Uri(_baseAddress + "Patient/Delete/"));
+            await _client.DeleteAsync(new Uri(_baseAddress + "User/Delete/"));
+        }
+        #endregion
+
+        #region Read Doctor
+        /// <summary>
+        /// Reads a Doctor
+        /// </summary>
+        /// <returns>A Doctor</returns>
+        public async Task<Doctor> ReadDoctorAsync()
+        {
+            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
+            _data = await _response.Content.ReadAsStringAsync();
+
+            Doctor doctor = JsonConvert.DeserializeObject<Doctor>(_data);
+            return doctor;
         }
         #endregion
 
         #region Create, Read, Update, and Delete Patient Data
         public async void CreatePatientData(PatientData patientData)
         {
-            string json = JObject.FromObject(patientData).ToString();
             //Serialize the patientCreationBundle and send it to the API.
-            StringContent createDataContent = new StringContent(json, Encoding.UTF8, "application/json");
+            StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent);
             _data = await _response.Content.ReadAsStringAsync();
         }

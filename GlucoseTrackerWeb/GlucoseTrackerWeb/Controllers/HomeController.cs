@@ -148,7 +148,7 @@ namespace GlucoseTrackerWeb.Controllers
                     Auth authEntry = new Auth()
                     {
                         Email = doctorCreationBundle.Doctor.Email,
-                        Password = doctorCreationBundle.Password
+                        Password = HashPassword(doctorCreationBundle.Password)
                     };
 
                     TokenAuth TokenAuthEntry = new TokenAuth()

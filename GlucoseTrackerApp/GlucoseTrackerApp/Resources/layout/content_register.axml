@@ -45,7 +45,7 @@
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:hint="MIddle Name"
+		android:hint="Middle Name"
 		android:layout_below="@id/first_name"
 		android:id="@+id/middle_name" />
 	<EditText
@@ -69,15 +69,15 @@
 		android:layout_below="@id/last_name"
 		android:id="@+id/phone_number" />
 	<EditText
-		android:inputType="number"
+		android:inputType="text"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:hint="Doctor ID"
+		android:hint="Doctor Token"
 		android:layout_below="@id/phone_number"
-		android:id="@+id/doctor_id" />
+		android:id="@+id/doctor_token" />
 	<Button
 		android:text="Register"
 		android:layout_width="fill_parent"
@@ -85,6 +85,6 @@
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:layout_below="@id/doctor_id"
+		android:layout_below="@id/doctor_token"
 		android:id="@+id/register_button"/>
 </RelativeLayout>

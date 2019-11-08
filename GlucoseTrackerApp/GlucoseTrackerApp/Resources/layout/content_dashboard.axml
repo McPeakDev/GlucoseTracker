@@ -1,26 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/app_bar_dashboard"
-    android:minWidth="25px"
-    android:minHeight="25px">
-    <Microcharts.Droid.ChartView
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/bloodChart" />
-    <Microcharts.Droid.ChartView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/exerciseChart" />
-    <Microcharts.Droid.ChartView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/carbChart" />
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/app_bar_dashboard"
+        android:minWidth="25px"
+        android:minHeight="25px" >
+        <TextView
+            android:text="Average Blood Sugar"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/blood_sugar_label"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="12.0dp" />
+        <Microcharts.Droid.ChartView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/bloodChart"
+            android:layout_below="@id/blood_sugar_label" />
+        <TextView
+            android:text="Exercise"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/exercise_label"
+            android:layout_below="@id/bloodChart"
+            android:layout_marginBottom="12.0dp"/>
+        <Microcharts.Droid.ChartView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/exerciseChart"
+            android:layout_below="@id/exercise_label"/>
+        <TextView
+            android:text="Carb Intake"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/carb_label"
+            android:layout_below="@id/exerciseChart"
+            android:layout_marginBottom="12.0dp"/>
+        <Microcharts.Droid.ChartView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/carbChart"
+            android:layout_below="@id/carb_label"/>
+    </LinearLayout>
+</ScrollView>
 
-</LinearLayout>

@@ -48,12 +48,17 @@ namespace GlucoseTrackerApp
 
         public override void OnBackPressed()
         {
-            Finish();
+            FinishAndRemoveTask();
         }
 
         public async void OnLoginPressedAsync(string email, string password)
         {
-            try
+
+            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
+            {
+                Toast.MakeText(this, "Both Fields Are Required", ToastLength.Long).Show();
+            }
+            else
             {
                 RestService restAPI = new RestService();
 
@@ -74,24 +79,11 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
-                    throw new Exception();
-                }
-            }
-            catch (Exception)
-            {
-                if (email is null || password is null)
-                {
-                    Toast.MakeText(this, "Both Fields Are Required", ToastLength.Long).Show();
-                }
-                else
-                {
-                    Email.Text = String.Empty;
                     Password.Text = String.Empty;
                     Toast.MakeText(this, "Email / Password Combination Was Invalid. Please Try Again.", ToastLength.Long).Show();
                 }
-            }
 
-            return;
+            }
         }
 
         public void OnRegisterPressedAsync(string email, string password)

@@ -1,8 +1,7 @@
 ﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Solution/Project:  GlucoseAPI/GlucoseAPI
-//	File Name:         PatientController.cs
-//	Description:       API Interface for CRUD operations on Patients
+//	Solution/Project:  UserController.cs
+//	Description:       API Interface for CRUD operations on Users
 //	Author:            Matthew McPeak, McPeakML@etsu.edu
 //  Copyright:         Matthew McPeak, 2019
 //  Team:              Sour Patch Kids
@@ -17,11 +16,11 @@ using static BCrypt.Net.BCrypt;
 namespace GlucoseAPI.Controllers
 {
     /// <summary>
-    /// API Interface for CRUD operations on Patients
+    /// API Interface for CRUD operations on Users
     /// </summary>
-    [Route("API/Patient")]
+    [Route("API/User")]
     [ApiController]
-    public class PatientController : ControllerBase
+    public class UserController : ControllerBase
     {
         #region Dependency Injection
         private readonly IRepository<Doctor> _doctorRepo;
@@ -32,7 +31,7 @@ namespace GlucoseAPI.Controllers
         private readonly IRepository<Auth> _authRepo;
         private readonly IRepository<TokenAuth> _tokenAuthRepo;
 
-        public PatientController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Auth> authRepo, IRepository<TokenAuth> tokenAuthRepo, IRepository<PatientBloodSugar> bloodSugarRepo, IRepository<PatientExercise> exerciseRepo, IRepository<PatientCarbohydrates> carbRepo)
+        public UserController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Auth> authRepo, IRepository<TokenAuth> tokenAuthRepo, IRepository<PatientBloodSugar> bloodSugarRepo, IRepository<PatientExercise> exerciseRepo, IRepository<PatientCarbohydrates> carbRepo)
         {
             _doctorRepo = doctorRepo;
             _patientRepo = patientRepo;
@@ -46,28 +45,41 @@ namespace GlucoseAPI.Controllers
 
         #region CRUD
         /// <summary>
-        /// Reads a Patient from the Database.
+        /// Reads a User from the Database.
         /// </summary>
         /// <param name="token">A Users Identity</param>
         /// <returns>The Patient</returns>
         [HttpPost("Read")]
-        public ActionResult<Patient> GrabPatient([FromHeader(Name = "token")]string token)
+        public ActionResult<User> GrabUser([FromHeader(Name = "token")]string token)
         {
             //Grab the User's Id
-            int userId = _tokenAuthRepo.Read(a => a.Token == token).UserId;
+            int? userId = _tokenAuthRepo.Read(a => a.Token == token).UserId;
 
-            //Try to find the patient
-            Patient patient = _patientRepo.Read(p => p.UserId == userId, p => p.PatientBloodSugars, p => p.PatientCarbs, p => p.PatientExercises, p => p.Doctor);
-
-            //If the patient was found then return the patient
-            if (!(patient is null))
+            if (!(userId is null))
             {
-                return patient;
+                //Try to find the patient
+                User user = _patientRepo.Read(p => p.UserId == userId.Value, p => p.PatientBloodSugars, p => p.PatientCarbs, p => p.PatientExercises, p => p.Doctor);
+
+                //If the patient was found then return the patient
+                if (!(user is null))
+                {
+                    return user;
+                }
+                //Otherwise.. the user is a doctor
+                else
+                {
+                    user = _doctorRepo.Read(d => d.UserId == userId.Value);
+                    if (user is null)
+                    {
+                        return Content("Invalid Token");
+                    }
+                    return user;
+
+                }
             }
-            //...Otherwise return an error message
-            else 
+            else
             {
-                return Content("Invalid Token");            
+                return Content("Invalid Token");
             }
         }
 
@@ -116,6 +128,13 @@ namespace GlucoseAPI.Controllers
             try
             {
                 Patient patient = patientCreationBundle.Patient;
+
+                Auth auth = _authRepo.Read(a => a.Email.Equals(patient.Email, StringComparison.InvariantCultureIgnoreCase));
+
+                if (!(auth is null))
+                {
+                    throw new Exception();
+                }
 
                 //Generate a Auth Entry
                 Auth authEntry = new Auth()
@@ -168,7 +187,7 @@ namespace GlucoseAPI.Controllers
             try
             {
                 //Find the user based on the token
-                Patient patient = GrabPatient(token).Value;
+                Patient patient = GrabUser(token).Value as Patient;
 
                 if (!(patient is null))
                 {
