@@ -92,25 +92,32 @@ namespace GlucoseTrackerApp
 
                     MealItem mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
 
-                    if (!(mealItem is null))
+                    try
                     {
-                        patientBlood.MealId = mealItem.MealId;
-                    }
-                    else
-                    {
-                        int fdcId = await restAPI.FindMealDataAsync(MealName.Text);
-                        int carbs = (int)await restAPI.ReadMealDataAsync(fdcId);
-
-                        mealItem = new MealItem()
+                        if (!(mealItem is null))
                         {
-                            Carbs = carbs,
-                            FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
-                        };
+                            patientBlood.MealId = mealItem.MealId;
+                        }
+                        else
+                        {
+                            int fdcId = await restAPI.FindMealDataAsync(MealName.Text);
+                            int carbs = (int)await restAPI.ReadMealDataAsync(fdcId);
 
-                        await restAPI.CreateMealItemAsync(mealItem);
+                            mealItem = new MealItem()
+                            {
+                                Carbs = carbs,
+                                FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
+                            };
 
-                        mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
-                        patientBlood.MealId = mealItem.MealId;
+                            await restAPI.CreateMealItemAsync(mealItem);
+
+                            mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
+                            patientBlood.MealId = mealItem.MealId;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return "Invalid Food Name";
                     }
 
                     PatientCarbohydrate patientCarbohydrate = new PatientCarbohydrate()

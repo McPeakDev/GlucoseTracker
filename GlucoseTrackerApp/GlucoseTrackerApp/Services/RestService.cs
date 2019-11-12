@@ -183,7 +183,7 @@ namespace GlucoseTrackerApp.Services
         public async Task<MealItem> ReadMealItemAsync(string query)
         {
             //Serialize the patientCreationBundle and send it to the API.
-            _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query}"), null);
+            _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query.Replace(" ", "+")}"), null);
             _data = await _response.Content.ReadAsStringAsync();
 
             MealItem mealItem = JsonConvert.DeserializeObject<MealItem>(_data);

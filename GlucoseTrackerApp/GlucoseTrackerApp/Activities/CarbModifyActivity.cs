@@ -144,25 +144,32 @@ namespace GlucoseTrackerApp
 
                     MealItem mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
 
-                    if (!(mealItem is null))
-                    {
-                        patientCarb.MealId = mealItem.MealId;
-                    }
-                    else
-                    {
-                        int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
-                        int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
-
-                        mealItem = new MealItem()
+                    try
+                    { 
+                        if (!(mealItem is null))
                         {
-                            Carbs = carbs,
-                            FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
-                        };
+                            patientCarb.MealId = mealItem.MealId;
+                        }
+                        else
+                        {
+                            int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
+                            int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
 
-                        await _restAPI.CreateMealItemAsync(mealItem);
+                            mealItem = new MealItem()
+                            {
+                                Carbs = carbs,
+                                FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
+                            };
 
-                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
-                        patientCarb.MealId = mealItem.MealId;
+                            await _restAPI.CreateMealItemAsync(mealItem);
+
+                            mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                            patientCarb.MealId = mealItem.MealId;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return "Invalid Food Name";
                     }
 
                     patientData.PatientCarbohydrates.Add(patientCarb);
