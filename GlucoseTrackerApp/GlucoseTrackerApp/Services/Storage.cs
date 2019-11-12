@@ -43,7 +43,7 @@ namespace GlucoseTrackerApp.Services
             }
         }
 
-        public static async Task<string> ReadEmail()
+        public static string ReadEmail()
         {
             if (!File.Exists(_filename))
             {
@@ -86,7 +86,7 @@ namespace GlucoseTrackerApp.Services
             return null;
         }
 
-        public static async void DeleteFile()
+        public static void DeleteFile()
         {
             File.Delete(_filename);
         }

@@ -13,12 +13,11 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
-        private string _token;
         private AppCompatEditText _email;
         private AppCompatEditText _password;
         private AppCompatCheckBox _autoEmail;
 
-        protected async override void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
@@ -28,7 +27,7 @@ namespace GlucoseTrackerApp
             _password = FindViewById<AppCompatEditText>(Resource.Id.password);
             _autoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
 
-            string email = await Storage.ReadEmail();
+            string email = Storage.ReadEmail();
 
             if (!(email is null))
             {

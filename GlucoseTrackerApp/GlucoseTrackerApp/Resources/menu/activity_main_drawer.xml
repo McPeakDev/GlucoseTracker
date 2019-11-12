@@ -11,6 +11,10 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Dashboard" />
         <item
+              android:id="@+id/nav_token"
+              android:icon="@drawable/ic_menu_slideshow"
+              android:title="Token" />
+        <item
               android:id="@+id/nav_logout"
               android:icon="@drawable/ic_menu_slideshow"
               android:title="Logout" />

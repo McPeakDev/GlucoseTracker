@@ -101,6 +101,14 @@ namespace GlucoseTrackerApp
             Carbs.SetAdapter(adapter);
         }
 
+        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        {
+            base.OnRestoreInstanceState(savedInstanceState);
+            Intent loginActivity = new Intent(this, typeof(LoginActivity));
+            StartActivity(loginActivity);
+            Finish();
+        }
+
         public async void OnCarbEditButtonPressed()
         {
             try
@@ -223,6 +231,19 @@ namespace GlucoseTrackerApp
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
                 StartActivity(loginActivity);
                 Finish();
+            }
+            else if (id == Resource.Id.nav_token)
+            {
+                var alert = new Android.App.AlertDialog.Builder(this);
+
+                alert.SetTitle("Patient Token");
+                alert.SetMessage(_token);
+                alert.SetPositiveButton("Ok", (c, ev) =>
+                {
+                    //Do nothing
+                });
+
+                alert.Show();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
