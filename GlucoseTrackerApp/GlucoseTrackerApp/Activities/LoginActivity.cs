@@ -14,9 +14,10 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
-        private AppCompatEditText _email;
-        private AppCompatEditText _password;
-        private AppCompatCheckBox _autoEmail;
+        private string Token;
+        private AppCompatEditText Email;
+        private AppCompatEditText Password;
+        private AppCompatCheckBox AutoEmail;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -24,16 +25,16 @@ namespace GlucoseTrackerApp
 
             SetContentView(Resource.Layout.activity_main);
 
-            _email = FindViewById<AppCompatEditText>(Resource.Id.email);
-            _password = FindViewById<AppCompatEditText>(Resource.Id.password);
-            _autoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
+            Email = FindViewById<AppCompatEditText>(Resource.Id.email);
+            Password = FindViewById<AppCompatEditText>(Resource.Id.password);
+            AutoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
 
             string email = Storage.ReadEmail();
 
             if (!(email is null))
             {
-                _email.Text = email;
-                _autoEmail.Checked = true;
+                Email.Text = email;
+                AutoEmail.Checked = true;
             }
 
             AppCompatButton loginButton = FindViewById<AppCompatButton>(Resource.Id.login_button);
@@ -41,7 +42,15 @@ namespace GlucoseTrackerApp
 
             loginButton.Click += async delegate
             {
-                await Task.Run(() => OnLoginPressedAsync(_email.Text, _password.Text));
+                string status = await OnLoginPressedAsync(Email.Text, Password.Text);
+                Toast.MakeText(this, status, ToastLength.Long).Show();
+                if (status == "Success")
+                {
+                    Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+                    dashboardActivity.PutExtra("token", Token);
+                    StartActivity(dashboardActivity);
+                    Finish();
+                }
             };
 
             registerButton.Click += async delegate
@@ -61,12 +70,12 @@ namespace GlucoseTrackerApp
             FinishAndRemoveTask();
         }
 
-        public async void OnLoginPressedAsync(string email, string password)
+        public async Task<string> OnLoginPressedAsync(string email, string password)
         {
 
             if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
             {
-                Toast.MakeText(this, "Both Fields Are Required", ToastLength.Long).Show();
+                return "Both Fields Are Required";
             }
             else
             {
@@ -78,11 +87,11 @@ namespace GlucoseTrackerApp
                     Password = password
                 };
 
-                string token = await restAPI.LoginAsync(loginCreds);
+                Token = await restAPI.LoginAsync(loginCreds);
 
-                if (token != "Invalid Credentials")
+                if (Token != "Invalid Credentials")
                 {
-                    if (_autoEmail.Checked)
+                    if (AutoEmail.Checked)
                     {
                         Storage.SaveEmail(email);
                     }
@@ -90,16 +99,12 @@ namespace GlucoseTrackerApp
                     {
                         Storage.DeleteFile();
                     }
-
-                    Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-                    dashboardActivity.PutExtra("token", token);
-                    StartActivity(dashboardActivity);
-                    FinishAfterTransition();
+                    return "Success";
                 }
                 else
                 {
-                    _password.Text = String.Empty;
-                    Toast.MakeText(this, "_email / _password Combination Was Invalid. Please Try Again.", ToastLength.Long).Show();
+                    Password.Text = String.Empty;
+                    return "Email / Password Combination Was Invalid. Please Try Again.";
                 }
 
             }

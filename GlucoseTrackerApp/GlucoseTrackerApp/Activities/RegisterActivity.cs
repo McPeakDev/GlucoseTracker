@@ -45,11 +45,10 @@ namespace GlucoseTrackerApp
 
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
-
             registerButton.Click += async delegate
             {
                 string status = await OnRegisterButtonPressedAsync();
-                Toast.MakeText(this, status, ToastLength.Long);
+                Toast.MakeText(this, status, ToastLength.Long).Show();
                 if(status == "Registered!")
                 {
                     Finish();

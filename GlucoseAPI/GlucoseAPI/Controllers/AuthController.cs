@@ -62,7 +62,14 @@ namespace GlucoseAPI.Controllers
             //If the user assigned to the Token Entry is a patient.... Log them in.
             if (_patientRepo.ReadAll().Any(p => p.UserId == tokenEntry.UserId))
             {
-                return tokenEntry.Token;
+		if(Verify(creds.Password, authorization.Password))
+		{
+            	    return tokenEntry.Token;
+		}
+            	else
+            	{
+                    return Content("Invalid Credentials");
+            	}
             }
             else
             {
