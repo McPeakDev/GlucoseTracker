@@ -120,10 +120,23 @@ namespace GlucoseTrackerApp
                             int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
                             int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
 
+                            var words = MealName.Text.Split(" ");
+
+                            string mealName;
+
+                            for (int i = 0; i < words.Length; i++)
+                            {
+                                string word = words[i];
+
+                                words[i] = (word.Substring(0, 1).ToUpper() + word.Substring(1, word.Length - 1).ToLower());
+                            }
+
+                            mealName = String.Join(" ", words);
+
                             mealItem = new MealItem()
                             {
                                 Carbs = carbs,
-                                FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
+                                FoodName = mealName
                             };
 
                             await _restAPI.CreateMealItemAsync(mealItem);

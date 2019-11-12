@@ -10,14 +10,6 @@
 	tools:showIn="@layout/app_bar_exercise_add"
 	android:minWidth="25px"
 	android:minHeight="25px">
-	<TextView
-		android:text="Enter the hours you have exercised today!"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/hours_prompt"
-		android:layout_gravity="center"
-		android:gravity="center" />
 	<EditText
 		android:inputType="numberDecimal"
 		android:layout_width="fill_parent"
@@ -28,7 +20,7 @@
 		android:hint="Hours"
 		android:id="@+id/exercise_hours"/>
 	<Button
-		android:text="Button"
+		android:text="Add Exercise Entry"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/add_exercise_button" />
