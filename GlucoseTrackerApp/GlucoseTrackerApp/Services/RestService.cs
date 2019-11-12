@@ -35,6 +35,8 @@ namespace GlucoseTrackerApp.Services
         #region Authentication
         public async Task<string> LoginAsync(Credentials creds)
         {
+
+            string json = JObject.FromObject(creds).ToString();
             //Retrive the patients's token
             StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
             _response =  await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent);
@@ -50,7 +52,6 @@ namespace GlucoseTrackerApp.Services
         #region Registration
         public async Task<string> RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
-            string json = JObject.FromObject(patientCreationBundle).ToString();
             //Serialize the patientCreationBundle and send it to the API.
             StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent);

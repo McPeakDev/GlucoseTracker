@@ -43,7 +43,6 @@ namespace GlucoseTrackerApp
             loginButton.Click += async delegate
             {
                 string status = await OnLoginPressedAsync(Email.Text, Password.Text);
-                Toast.MakeText(this, status, ToastLength.Long).Show();
                 if (status == "Success")
                 {
                     Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
@@ -51,6 +50,11 @@ namespace GlucoseTrackerApp
                     StartActivity(dashboardActivity);
                     Finish();
                 }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
+
             };
 
             registerButton.Click += async delegate

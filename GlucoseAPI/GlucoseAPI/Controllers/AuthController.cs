@@ -54,22 +54,22 @@ namespace GlucoseAPI.Controllers
         public ActionResult<string> GrabToken(Credentials creds)
         {
             //Load the Auth Entry for the User
-            Auth authorization = _authRepo.Read(c => c.Email.Equals(creds.Email, StringComparison.InvariantCultureIgnoreCase) && Verify(creds.Password, c.Password));
+            Auth authorization = _authRepo.Read(c => c.Email.Equals(creds.Email, StringComparison.InvariantCultureIgnoreCase));
 
-            //Load the Token Entry for the User
-            TokenAuth tokenEntry = _tokenAuthRepo.Read(t => t.AuthId == authorization.AuthId);
-
-            //If the user assigned to the Token Entry is a patient.... Log them in.
-            if (_patientRepo.ReadAll().Any(p => p.UserId == tokenEntry.UserId))
+            if (Verify(creds.Password, authorization.Password))
             {
-		if(Verify(creds.Password, authorization.Password))
-		{
-            	    return tokenEntry.Token;
-		}
-            	else
-            	{
+                //Load the Token Entry for the User
+                TokenAuth tokenEntry = _tokenAuthRepo.Read(t => t.AuthId == authorization.AuthId);
+
+                //If the user assigned to the Token Entry is a patient.... Log them in.
+                if (_patientRepo.ReadAll().Any(p => p.UserId == tokenEntry.UserId))
+                {
+                    return tokenEntry.Token;
+                }
+                else
+                {
                     return Content("Invalid Credentials");
-            	}
+                }
             }
             else
             {

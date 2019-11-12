@@ -28,7 +28,7 @@ namespace GlucoseAPI.Models.Entities
             set
             {
                 //Salt and Hash the password.
-                _password = HashPassword(value , GenerateSalt(BCrypt.Net.SaltRevision.Revision2X));
+                _password = HashPassword(value);
             }
         }
     }
