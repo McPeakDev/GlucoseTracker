@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -56,9 +56,17 @@ namespace GlucoseTrackerApp
             carbCreateButton.Text = "Add Carb Reading";
             carbDeleteButton.Visibility = ViewStates.Gone;
 
-            carbCreateButton.Click += delegate
+            carbCreateButton.Click += async delegate
             {
-                OnCarbCreateButtonPressed();
+                string status = await OnCarbCreateButtonPressed();
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
@@ -82,9 +90,9 @@ namespace GlucoseTrackerApp
             Finish();
         }
 
-        public async void OnCarbCreateButtonPressed()
+        public async Task<string> OnCarbCreateButtonPressed()
         {
-            try
+            if(!String.IsNullOrEmpty(FoodCarbs.Text))
             {
                 if (int.Parse(FoodCarbs.Text) > 0 && int.Parse(FoodCarbs.Text) <= 1000)
                     {
@@ -127,16 +135,16 @@ namespace GlucoseTrackerApp
 
                     _restAPI.CreatePatientData(patientData);
 
-                    Finish();
+                    return "Success";
                 }
                 else 
                 {
-                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                    return "That Number Is Invalid";
                 }
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "The Form Is Not Filled Out";
             }
         }
 

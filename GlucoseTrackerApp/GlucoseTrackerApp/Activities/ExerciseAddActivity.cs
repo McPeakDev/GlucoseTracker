@@ -14,6 +14,7 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
@@ -47,44 +48,56 @@ namespace GlucoseTrackerApp
             Hours = FindViewById<AppCompatEditText>(Resource.Id.exercise_hours);
 
 
-            addExerciseButton.Click += delegate
+            addExerciseButton.Click += async delegate
             {
-                OnAddExercisePressed(_token);
+                string status = await OnAddExercisePressed(_token);
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
         }
 
-        public async void OnAddExercisePressed(string token)
+        public async Task<string> OnAddExercisePressed(string token)
         {
-            if (float.Parse(Hours.Text) > 0 && float.Parse(Hours.Text) <= 4)
+            if (!String.IsNullOrEmpty(Hours.Text))
             {
-                DateTime timeNow = DateTime.Now.ToLocalTime();
-                RestService restAPI = new RestService(token);
-
-                PatientData patientData = new PatientData();
-                Patient patient = await restAPI.ReadPatientAsync();
-
-                PatientExercise patientExercise = new PatientExercise()
+                if (float.Parse(Hours.Text) > 0 && float.Parse(Hours.Text) <= 4)
                 {
-                    UserId = patient.UserId,
-                    HoursExercised = float.Parse(Hours.Text),
-                    TimeOfDay = timeNow
-                };
+                    DateTime timeNow = DateTime.Now.ToLocalTime();
+                    RestService restAPI = new RestService(token);
 
-                patientData.PatientExercises.Add(patientExercise);
+                    PatientData patientData = new PatientData();
+                    Patient patient = await restAPI.ReadPatientAsync();
 
-                restAPI.CreatePatientData(patientData);
+                    PatientExercise patientExercise = new PatientExercise()
+                    {
+                        UserId = patient.UserId,
+                        HoursExercised = float.Parse(Hours.Text),
+                        TimeOfDay = timeNow
+                    };
 
-                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-                dashboardActivity.PutExtra("token", _token);
-                StartActivity(dashboardActivity);
+                    patientData.PatientExercises.Add(patientExercise);
 
-                FinishAfterTransition();
+                    restAPI.CreatePatientData(patientData);
+
+                    return "Success";
+                }
+                else
+                {
+                    return "That Number Is Not Valid";
+                }
             }
             else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "The form is not filled out";
             }
+
         }
 
         protected override void OnRestoreInstanceState(Bundle savedInstanceState)

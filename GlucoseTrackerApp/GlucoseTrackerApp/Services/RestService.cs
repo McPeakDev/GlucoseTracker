@@ -36,7 +36,6 @@ namespace GlucoseTrackerApp.Services
         public async Task<string> LoginAsync(Credentials creds)
         {
 
-            string json = JObject.FromObject(creds).ToString();
             //Retrive the patients's token
             StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
             _response =  await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent);

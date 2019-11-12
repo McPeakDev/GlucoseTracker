@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -55,14 +55,31 @@ namespace GlucoseTrackerApp
             LevelAfter.Visibility = ViewStates.Gone;
             MealName.Visibility = ViewStates.Gone;
 
-            bloodSugarEditButton.Click += delegate
+            bloodSugarEditButton.Click += async delegate
             {
-                OnBloodSugarEditButtonPressed();
+                string status = await OnBloodSugarEditButtonPressed();
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
-            bloodSugarDeleteButton.Click += delegate
+            bloodSugarDeleteButton.Click += async delegate
             {
-                OnBloodSugarDeleteButtonPressed();
+                string status = await Task.Run(() => OnBloodSugarDeleteButtonPressed());
+                if(status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
+
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
@@ -103,14 +120,12 @@ namespace GlucoseTrackerApp
             Readings.Adapter = adapter;
         }
 
-        public async void OnBloodSugarEditButtonPressed()
+        public async Task<string> OnBloodSugarEditButtonPressed()
         {
-            try
-            {
+            if (!String.IsNullOrEmpty(LevelBefore.Text) && !String.IsNullOrEmpty(LevelAfter.Text) && !String.IsNullOrEmpty(MealName.Text))
+            { 
                 if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0)
                 {
-                    DateTime timeNow = DateTime.Now.ToLocalTime();
-
                     PatientData patientData = new PatientData();
                     Patient patient = await _restAPI.ReadPatientAsync();
 
@@ -150,22 +165,22 @@ namespace GlucoseTrackerApp
 
                     _restAPI.UpdatePatientDataAsync(patientData);
 
-                    Finish();
+                    return "Success";
                 }
                 else
                 {
-                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                    return "Invalid Range";
                 }
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "Form Is Not Filled Out";
             }
         }
 
-        public void OnBloodSugarDeleteButtonPressed()
+        public string OnBloodSugarDeleteButtonPressed()
         {
-            try
+            if(!(Readings.SelectedItem is null))
             {
                 PatientData patientData = new PatientData();
 
@@ -173,11 +188,12 @@ namespace GlucoseTrackerApp
 
                 _restAPI.DeletePatientDataAsync(patientData);
 
-                Finish();
+                return "Success";
+
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "Invalid Selection";
             }
         }
 

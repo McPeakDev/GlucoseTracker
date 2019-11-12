@@ -11,6 +11,7 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
@@ -35,9 +36,17 @@ namespace GlucoseTrackerApp
 
             AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
 
-            bloodSugarAddButton.Click += delegate
+            bloodSugarAddButton.Click += async delegate
             {
-                OnBloodSugarAddButtonPressed();
+                string status = await OnBloodSugarAddButtonPressed();
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_blood_sugar_add);
@@ -61,11 +70,11 @@ namespace GlucoseTrackerApp
             Finish();
         }
 
-        public async void OnBloodSugarAddButtonPressed()
+        public async Task<string> OnBloodSugarAddButtonPressed()
         {
-            try
+            if (!String.IsNullOrEmpty(LevelBefore.Text) && !String.IsNullOrEmpty(LevelAfter.Text) && !String.IsNullOrEmpty(MealName.Text))
             {
-                if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0)
+                if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0 && !String.IsNullOrEmpty(MealName.Text))
                 {
                     DateTime timeNow = DateTime.Now.ToLocalTime();
                     RestService restAPI = new RestService(_token);
@@ -114,22 +123,19 @@ namespace GlucoseTrackerApp
                     };
 
                     patientData.PatientCarbohydrates.Add(patientCarbohydrate);
-
                     patientData.PatientBloodSugars.Add(patientBlood);
-
                     restAPI.CreatePatientData(patientData);
 
-                    Finish();
+                    return "Success";
                 }
                 else
                 {
-                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                    return "Invalid Range";
                 }
-
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "Form Is Not Filled Out";
             }
         }
 

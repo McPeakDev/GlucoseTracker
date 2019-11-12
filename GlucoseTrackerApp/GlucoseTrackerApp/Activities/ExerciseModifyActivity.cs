@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -57,14 +57,30 @@ namespace GlucoseTrackerApp
             Hours.Visibility = ViewStates.Gone;
 
 
-            bloodSugarEditButton.Click += delegate
+            bloodSugarEditButton.Click += async delegate
             {
-                OnExerciseEditButtonPressed();
+                string status = await OnExerciseEditButtonPressed();
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
-            bloodSugarDeleteButton.Click += delegate
+            bloodSugarDeleteButton.Click += async delegate
             {
-                OnExerciseDeleteButtonPressed();
+                string status = await Task.Run(() => OnExerciseDeleteButtonPressed());
+                if (status == "Success")
+                {
+                    Finish();
+                }
+                else
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                }
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
@@ -100,13 +116,12 @@ namespace GlucoseTrackerApp
             Entries.Adapter = adapter;
         }
 
-        public async void OnExerciseEditButtonPressed()
+        public async Task<string> OnExerciseEditButtonPressed()
         {
-            try
+            if (!String.IsNullOrEmpty(Hours.Text))
             {
                 if (float.Parse(Hours.Text) > 0 && float.Parse(Hours.Text) <= 4)
                 {
-                    DateTime timeNow = DateTime.Now.ToLocalTime();
 
                     PatientData patientData = new PatientData();
                     Patient patient = await _restAPI.ReadPatientAsync();
@@ -119,28 +134,26 @@ namespace GlucoseTrackerApp
                         TimeOfDay = Entries.SelectedItem.Cast<PatientExercise>().TimeOfDay
                     };
 
-                    MealItem mealItem = await _restAPI.ReadMealItemAsync(BottomField.Text);
-
                     patientData.PatientExercises.Add(patientExercise);
 
                     _restAPI.UpdatePatientDataAsync(patientData);
 
-                    Finish();
+                    return "Success";
                 }
                 else
                 {
-                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                    return "That Number is Invalid"; ;
                 }
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "Form Is Not Filled Out";
             }
         }
 
-        public void OnExerciseDeleteButtonPressed()
+        public string OnExerciseDeleteButtonPressed()
         {
-            try
+            if (!(Entries.SelectedItem is null))
             {
                 PatientData patientData = new PatientData();
 
@@ -148,11 +161,11 @@ namespace GlucoseTrackerApp
 
                 _restAPI.DeletePatientDataAsync(patientData);
 
-                Finish();
+                return "Success";
             }
-            catch (Exception)
+            else
             {
-                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+                return "Invalid Selection";
             }
         }
 
