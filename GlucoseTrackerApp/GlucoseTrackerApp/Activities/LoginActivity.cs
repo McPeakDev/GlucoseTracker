@@ -7,6 +7,7 @@ using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
+using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 { 
@@ -38,14 +39,14 @@ namespace GlucoseTrackerApp
             AppCompatButton loginButton = FindViewById<AppCompatButton>(Resource.Id.login_button);
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
-            loginButton.Click += delegate
+            loginButton.Click += async delegate
             {
-                OnLoginPressedAsync(_email.Text, _password.Text);
+                await Task.Run(() => OnLoginPressedAsync(_email.Text, _password.Text));
             };
 
-            registerButton.Click += delegate
+            registerButton.Click += async delegate
             {
-                OnRegisterPressedAsync(_email.Text, _password.Text);
+                await Task.Run(OnRegisterPressed);
             };
 
 
@@ -104,7 +105,7 @@ namespace GlucoseTrackerApp
             }
         }
 
-        public void OnRegisterPressedAsync(string _email, string _password)
+        public void OnRegisterPressed()
         {
             Intent registerActivity = new Intent(this, typeof(RegisterActivity));
             StartActivity(registerActivity);

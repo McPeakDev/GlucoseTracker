@@ -26,7 +26,6 @@ namespace GlucoseAPI.Controllers
     public class PatientDataController : ControllerBase
     {
         #region Dependency Injection
-        private readonly IRepository<MealItem> _mealRepo;
         private readonly IRepository<PatientBloodSugar> _bloodSugarRepo;
         private readonly IRepository<PatientExercise> _exerciseRepo;
         private readonly IRepository<PatientCarbohydrates> _carbRepo;
@@ -35,9 +34,8 @@ namespace GlucoseAPI.Controllers
 
 
 
-        public PatientDataController(IRepository<MealItem> mealRepo, IRepository<PatientBloodSugar> bloodSugarRepo, IRepository<PatientExercise> exerciseRepo, IRepository<PatientCarbohydrates> carbRepo, IRepository<Patient> patientRepo, IRepository<TokenAuth> tokenAuthRepo)
+        public PatientDataController(IRepository<PatientBloodSugar> bloodSugarRepo, IRepository<PatientExercise> exerciseRepo, IRepository<PatientCarbohydrates> carbRepo, IRepository<Patient> patientRepo, IRepository<TokenAuth> tokenAuthRepo)
         {
-            _mealRepo = mealRepo;
             _bloodSugarRepo = bloodSugarRepo;
             _exerciseRepo = exerciseRepo;
             _carbRepo = carbRepo;

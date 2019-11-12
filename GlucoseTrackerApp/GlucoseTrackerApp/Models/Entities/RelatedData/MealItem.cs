@@ -1,10 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseAPI/GlucoseAPI
+//	File Name:         MealItem.cs
+//	Description:       A Representation of a Meal Item for Glucose Tracker
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GlucoseAPI.Models.Entities
 {
+    /// <summary>
+    /// A Representation of a Meal Item for Glucose Tracker
+    /// </summary>
     public partial class MealItem
     {
         [Key]

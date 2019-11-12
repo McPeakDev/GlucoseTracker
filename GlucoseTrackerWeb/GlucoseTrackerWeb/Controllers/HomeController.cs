@@ -26,10 +26,10 @@ namespace GlucoseTrackerWeb.Controllers
     public class HomeController : Controller
     {
         #region Dependency Injection
-        private IRepository<Doctor> _doctorRepo;
-        private IRepository<Patient> _patientRepo;
-        private IRepository<Auth> _authRepo;
-        private IRepository<TokenAuth> _tokenAuthRepo;
+        private readonly IRepository<Doctor> _doctorRepo;
+        private readonly IRepository<Patient> _patientRepo;
+        private readonly IRepository<Auth> _authRepo;
+        private readonly IRepository<TokenAuth> _tokenAuthRepo;
 
         public HomeController(IRepository<Doctor> doctorRepo, IRepository<Patient> patientRepo, IRepository<Auth> authRepo, IRepository<TokenAuth> tokenAuthRepo)
         {
@@ -213,7 +213,7 @@ namespace GlucoseTrackerWeb.Controllers
                 try
                 {
                     //Query the Patient
-                    Patient patient = _tokenAuthRepo.Read(ta => ta.Token == token, ta => ta.User).User as Patient;
+                    Patient patient = _tokenAuthRepo.Read(ta => ta.Token.Contains(token), ta => ta.User).User as Patient;
 
                     //Query the Doctor
                     Doctor doctor = _tokenAuthRepo.Read(ta => ta.Token == HttpContext.Session.GetString("TokenAuth"), ta => ta.User).User as Doctor;

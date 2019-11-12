@@ -157,11 +157,11 @@ namespace GlucoseAPI.Controllers
                 if (!(patientCreationBundle.DoctorToken is null))
                 {
                     //Assign the appropriate doctor if found.
-                    int userId = _tokenAuthRepo.Read(t => t.Token == patientCreationBundle.DoctorToken).UserId;
+                    int userId = _tokenAuthRepo.Read(t => t.Token.Contains(patientCreationBundle.DoctorToken)).UserId;
                     patient.Doctor = _doctorRepo.Read(d => d.UserId == userId);
                     patient.Doctor.Patients.Add(patient);
                 }
-
+                
                 //Create new Entries in the Patient, Auth and TokenAuth tables.
                 _patientRepo.Create(patient);
                 _authRepo.Create(authEntry);
@@ -187,9 +187,7 @@ namespace GlucoseAPI.Controllers
             try
             {
                 //Find the user based on the token
-                Patient patient = GrabUser(token).Value as Patient;
-
-                if (!(patient is null))
+                if (!(!(GrabUser(token).Value is Patient patient)))
                 {
                     //Find the entries for the user based on the token
                     TokenAuth tokenAuth = _tokenAuthRepo.Read(ta => ta.UserId == patient.UserId);

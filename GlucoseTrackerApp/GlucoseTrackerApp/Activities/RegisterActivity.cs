@@ -46,9 +46,14 @@ namespace GlucoseTrackerApp
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
 
-            registerButton.Click += delegate
+            registerButton.Click += async delegate
             {
-                OnRegisterButtonPressed();
+                string status = await OnRegisterButtonPressedAsync();
+                Toast.MakeText(this, status, ToastLength.Long);
+                if(status == "Registered!")
+                {
+                    Finish();
+                }
             };
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_register);
@@ -56,96 +61,80 @@ namespace GlucoseTrackerApp
             SetSupportActionBar(toolbar);
         }
 
-        public async void OnRegisterButtonPressed ()
+        public async Task<string> OnRegisterButtonPressedAsync()
         {
-            try
+            if (!String.IsNullOrEmpty(Email.Text) && !String.IsNullOrEmpty(Password.Text) && !String.IsNullOrEmpty(FirstName.Text) && !String.IsNullOrEmpty(LastName.Text) && !String.IsNullOrEmpty(PhoneNumber.Text))
             {
-                if (!String.IsNullOrEmpty(Email.Text) && !String.IsNullOrEmpty(Password.Text) && !String.IsNullOrEmpty(FirstName.Text) && !String.IsNullOrEmpty(LastName.Text) && !String.IsNullOrEmpty(PhoneNumber.Text))
+                RestService restAPI = new RestService();
+
+                Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
+                Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&]{8,}$");
+                Regex phoneRegex = new Regex(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
+
+                if (!emailRegex.IsMatch(Email.Text.Trim()))
                 {
-                    RestService restAPI;
+                    Password.Text = String.Empty;
+                    return "Must match the form of example@example.com";
 
-                    Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
-                    Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
-                    Regex phoneRegex = new Regex(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
+                }
 
-                    if(!emailRegex.IsMatch(Email.Text.Trim()))
+                if (!passwordRegex.IsMatch(Password.Text.Trim()))
+                {
+                    Password.Text = String.Empty;
+                    return "Must be at least 8 characters long, 1 uppercase letter, 1 lowercase letter, 1 special character, and 1 number";
+                }
+
+                if (PhoneNumber.Text.Length != 10)
+                {
+                    if (!phoneRegex.IsMatch(PhoneNumber.Text.Trim()))
                     {
-                        throw new Exception("Must match the form of example@example.com");
+                        Password.Text = String.Empty;
+                        return "Invalid Phone Number";
                     }
+                    Password.Text = String.Empty;
+                    return "Phone Number must be 10 digits long";
+                }
 
-                    if (!passwordRegex.IsMatch(Password.Text.Trim()))
-                    {
-                        throw new Exception("Must be at least 8 characters long, 1 uppercase letter, 1 lowercase letter, 1 special character, and 1 number");
-                    }
+                Patient patient = new Patient()
+                {
+                    Email = Email.Text.Trim(),
+                    FirstName = FirstName.Text.Trim(),
+                    LastName = LastName.Text.Trim(),
+                    PhoneNumber = PhoneNumber.Text.Trim(),
+                };
 
-                    if (PhoneNumber.Text.Length != 10)
-                    {
-                        if(!phoneRegex.IsMatch(PhoneNumber.Text.Trim()))
-                        {
-                            throw new Exception("Invalid Phone Number");
-                        }
-                        throw new Exception("Must be 10 digits long");
-                    }
+                if (!String.IsNullOrEmpty(MiddleName.Text))
+                {
+                    patient.MiddleName = MiddleName.Text.Trim();
+                }
 
-                    Patient patient = new Patient()
-                    {
-                        Email = Email.Text.Trim(),
-                        FirstName = FirstName.Text.Trim(),
-                        LastName = LastName.Text.Trim(),
-                        PhoneNumber = PhoneNumber.Text.Trim(),
-                    };
+                PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
+                {
+                    Password = Password.Text.Trim(),
+                    Patient = patient
+                };
 
-                    if (!String.IsNullOrEmpty(MiddleName.Text))
-                    {
-                        patient.MiddleName = MiddleName.Text.Trim();
-                    }
+                if (!String.IsNullOrEmpty(DoctorToken.Text))
+                {
+                    patientCreationBundle.DoctorToken = DoctorToken.Text.Trim();
+                }
 
-                    if (!String.IsNullOrEmpty(DoctorToken.Text))
-                    {
-                        restAPI = new RestService(DoctorToken.Text.Trim());
-                        Doctor doctor = await restAPI.ReadDoctorAsync();
+                string status = await restAPI.RegisterAsync(patientCreationBundle);
 
-                        if (!(doctor is null))
-                        {
-                            patient.DoctorId = doctor.UserId;
-                        }
-                        else
-                        {
-                            throw new Exception("Invalid Doctor Token");
-                        }
-                    }
-
-                    PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
-                    {
-                        Password = Password.Text.Trim(),
-                        Patient = patient
-                    };
-
-                    restAPI = new RestService();
-
-                    string status = await restAPI.RegisterAsync(patientCreationBundle);
-
-                    if (status != "Invalid User")
-                    {
-                        Toast.MakeText(this, "Registered!", ToastLength.Long).Show();
-
-                        Finish();
-                    }
-                    else 
-                    {
-                        throw new Exception("User Already Exists");
-                    }
+                if (status != "Invalid User")
+                {
+                    return "Registered!";
                 }
                 else
                 {
-                    Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
                     Password.Text = String.Empty;
+                    return "User Already Exists or Invalid Doctor Token";
                 }
             }
-            catch(Exception e)
+            else
             {
-                Toast.MakeText(this, e.Message, ToastLength.Long).Show();
                 Password.Text = String.Empty;
+                return "Form Is Not Filled";
             }
         }
     }

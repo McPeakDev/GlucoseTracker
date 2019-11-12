@@ -166,11 +166,8 @@ namespace GlucoseTrackerApp
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            if (id == Resource.Id.nav_dashboard)
-            {
-                PopulateCharts();
-            }
-            else if (id == Resource.Id.nav_exercise)
+
+            if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
                 exerciseActivity.PutExtra("token", _token);
@@ -212,18 +209,19 @@ namespace GlucoseTrackerApp
                 StartActivity(loginActivity);
                 Finish();
             }
-                        else if (id == Resource.Id.nav_token)
+            else if (id == Resource.Id.nav_token)
             {
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token);
+                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing
                 });
 
                 alert.Show();
+                alert.Dispose();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

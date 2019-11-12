@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using GlucoseAPI.Models.Entities;
-
+@{ 
+    string token = Context.Session.GetString("TokenAuth");
+}
 
 <!DOCTYPE html>
 <html>
@@ -31,7 +33,7 @@
                     <div class="collapse navbar-collapse justify-content-end" id="navbarColor02">
                         <ul class="navbar-nav">
                             <li id="token" style="display: none" class="nav-item">
-                                <a class="navbar-text" style="color: dimgrey;" color="grey">@Context.Session.GetString("TokenAuth")</a>
+                                <a class="navbar-text" style="color: dimgrey;" color="grey">Token: @token.Substring(token.Length - 6, 6)</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-action="Logout" asp-controller="Home">Logout</a>

@@ -98,7 +98,7 @@ namespace GlucoseTrackerApp
 
             ArrayAdapter<PatientCarbohydrate> adapter = new ArrayAdapter<PatientCarbohydrate>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientCarbohydrates.Where(pc => pc.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pc => pc.TimeOfDay.ToLocalTime()).ToList());
 
-            Carbs.SetAdapter(adapter);
+            Carbs.Adapter = adapter;
         }
 
         protected override void OnRestoreInstanceState(Bundle savedInstanceState)
@@ -190,41 +190,51 @@ namespace GlucoseTrackerApp
         {
             int id = item.ItemId;
 
-            if (id == Resource.Id.nav_exercise)
+            if (id == Resource.Id.nav_dashboard)
+            {
+                Finish();
+            }
+            else if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
                 exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_exercise_modify)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
                 exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
                 bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
                 bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_carbs)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
                 carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_carbs_modify)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
                 carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
+                Finish();
             }
             else if (id == Resource.Id.nav_logout)
             {
@@ -237,18 +247,18 @@ namespace GlucoseTrackerApp
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token);
+                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing
                 });
 
                 alert.Show();
+                alert.Dispose();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
-            Finish();
             return true;
         }
     }

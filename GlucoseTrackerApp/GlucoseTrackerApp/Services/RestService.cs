@@ -10,7 +10,7 @@ namespace GlucoseTrackerApp.Services
 {
     public class RestService
     {
-        private HttpClient _client;
+        private readonly HttpClient _client;
         private readonly string  _baseAddress;
         private HttpResponseMessage _response;
         private string _data;
@@ -50,6 +50,7 @@ namespace GlucoseTrackerApp.Services
         #region Registration
         public async Task<string> RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
+            string json = JObject.FromObject(patientCreationBundle).ToString();
             //Serialize the patientCreationBundle and send it to the API.
             StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent);
@@ -118,8 +119,6 @@ namespace GlucoseTrackerApp.Services
 
         public async void UpdatePatientDataAsync(PatientData patientData)
         {
-            string json = JObject.FromObject(patientData).ToString();
-
             //Serialize the patientCreationBundle and send it to the API.
             StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
