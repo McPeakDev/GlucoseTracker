@@ -63,9 +63,9 @@ namespace GlucoseAPI.Controllers
 
                 if (!(patient is null))
                 {
-                    patientData.PatientCarbohydrates = _carbRepo.ReadAll().Where(pc => pc.UserId == patient.UserId).ToList();
+                    patientData.PatientCarbohydrates = _carbRepo.ReadAll(pc => pc.Meal).Where(pc => pc.UserId == patient.UserId).ToList();
                     patientData.PatientExercises = _exerciseRepo.ReadAll().Where(pe => pe.UserId == patient.UserId).ToList();
-                    patientData.PatientBloodSugars = _bloodSugarRepo.ReadAll().Where(bs => bs.UserId == patient.UserId).ToList();
+                    patientData.PatientBloodSugars = _bloodSugarRepo.ReadAll(bs => bs.Meal).Where(bs => bs.UserId == patient.UserId).ToList();
 
                     return patientData;
                 }

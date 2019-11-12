@@ -116,18 +116,23 @@ namespace GlucoseTrackerApp.Services
             return patientData;
         }
 
-        public async void UpdatePatientAsync(PatientData patientData)
+        public async void UpdatePatientDataAsync(PatientData patientData)
         {
+            string json = JObject.FromObject(patientData).ToString();
+
             //Serialize the patientCreationBundle and send it to the API.
             StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-            await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
+            _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
+            _data = await _response.Content.ReadAsStringAsync();
+
         }
 
-        public async void DeletePatientAsync(PatientData patientData)
+        public async void DeletePatientDataAsync(PatientData patientData)
         {
             //Serialize the patientCreationBundle and send it to the API.
             StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-            await _client.PostAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
+            _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Delete/"), patientContent);
+            _data = await _response.Content.ReadAsStringAsync();
         }
         #endregion
 
@@ -155,8 +160,8 @@ namespace GlucoseTrackerApp.Services
 
             foreach (var nutrient in nutrients)
             {
-                string nutrentName = (string)(nutrient.SelectToken("nutrient.name"));
-                if (nutrentName.Contains("Carbohydrate"))
+                string nutrientName = (string)(nutrient.SelectToken("nutrient.name"));
+                if (nutrientName.Contains("Carbohydrate"))
                 {
                     return ((float)nutrient.SelectToken("amount"));
                 }
@@ -167,12 +172,13 @@ namespace GlucoseTrackerApp.Services
         #endregion
 
         #region Create and Read MealItem
-        public async void CreateMealItemAsync(MealItem mealItem)
+        public async Task<string> CreateMealItemAsync(MealItem mealItem)
         {
             //Serialize the patientCreationBundle and send it to the API.
             StringContent mealItemContent = new StringContent(JObject.FromObject(mealItem).ToString(), Encoding.UTF8, "application/json");
             _response = await _client.PostAsync(new Uri(_baseAddress + "Meal/Create/"), mealItemContent);
             _data = await _response.Content.ReadAsStringAsync();
+            return _data;
         }
 
         public async Task<MealItem> ReadMealItemAsync(string query)

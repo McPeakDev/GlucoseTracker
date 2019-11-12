@@ -13,32 +13,42 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
-        private AppCompatEditText Email { get; set; }
-        private AppCompatEditText Password { get; set; }
-        private AppCompatCheckBox AutoLogin { get; set; }
+        private string _token;
+        private AppCompatEditText _email;
+        private AppCompatEditText _password;
+        private AppCompatCheckBox _autoEmail;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
             SetContentView(Resource.Layout.activity_main);
 
-            Email = FindViewById<AppCompatEditText>(Resource.Id.email);
-            Password = FindViewById<AppCompatEditText>(Resource.Id.password);
+            _email = FindViewById<AppCompatEditText>(Resource.Id.email);
+            _password = FindViewById<AppCompatEditText>(Resource.Id.password);
+            _autoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
+
+            string email = await Storage.ReadEmail();
+
+            if (!(email is null))
+            {
+                _email.Text = email;
+                _autoEmail.Checked = true;
+            }
 
             AppCompatButton loginButton = FindViewById<AppCompatButton>(Resource.Id.login_button);
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
             loginButton.Click += delegate
             {
-                OnLoginPressedAsync(Email.Text, Password.Text);
+                OnLoginPressedAsync(_email.Text, _password.Text);
             };
 
             registerButton.Click += delegate
             {
-                OnRegisterPressedAsync(Email.Text, Password.Text);
+                OnRegisterPressedAsync(_email.Text, _password.Text);
             };
 
-            AutoLogin = FindViewById<AppCompatCheckBox>(Resource.Id.auto_login);
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             toolbar.Title = "Login to Glucose Tracker";
@@ -72,6 +82,15 @@ namespace GlucoseTrackerApp
 
                 if (token != "Invalid Credentials")
                 {
+                    if (_autoEmail.Checked)
+                    {
+                        Storage.SaveEmail(email);
+                    }
+                    else
+                    {
+                        Storage.DeleteFile();
+                    }
+
                     Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
                     dashboardActivity.PutExtra("token", token);
                     StartActivity(dashboardActivity);
@@ -79,14 +98,14 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
-                    Password.Text = String.Empty;
-                    Toast.MakeText(this, "Email / Password Combination Was Invalid. Please Try Again.", ToastLength.Long).Show();
+                    _password.Text = String.Empty;
+                    Toast.MakeText(this, "_email / _password Combination Was Invalid. Please Try Again.", ToastLength.Long).Show();
                 }
 
             }
         }
 
-        public void OnRegisterPressedAsync(string email, string password)
+        public void OnRegisterPressedAsync(string _email, string _password)
         {
             Intent registerActivity = new Intent(this, typeof(RegisterActivity));
             StartActivity(registerActivity);

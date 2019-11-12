@@ -2,28 +2,64 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
-    <group android:checkableBehavior="single">
+  <item android:title="Home">
+    <menu>
+      <group android:checkableBehavior="single"
+             android:id="@+id/gp_one">
         <item
-          android:id="@+id/nav_dashboard"
-          android:icon="@drawable/ic_menu_camera"
-          android:title="Dashboard" />
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Dashboard" />
+        <item
+              android:id="@+id/nav_logout"
+              android:icon="@drawable/ic_menu_slideshow"
+              android:title="Logout" />
+      </group>
+    </menu>
+  </item>
+  <item android:title="Blood Sugar">
+    <menu>
+      <group android:checkableBehavior="single"
+             android:id="@+id/gp_two">
+        <item
+            android:id="@+id/nav_bloodsugar"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Add Blood Sugar Reading" />
+        <item
+            android:id="@+id/nav_bloodsugar_modify"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Modify BloodSugar Readings" />
+      </group>
+    </menu>
+  </item>
+  <item android:title="Exercise">
+    <menu>
+      <group android:checkableBehavior="single"
+             android:id="@+id/gp_three">
         <item
             android:id="@+id/nav_exercise"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Exercise" />
+            android:title="Add Exercise Entry" />
         <item
-            android:id="@+id/nav_food"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Food" />
+            android:id="@+id/nav_exercise_modify"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Modify Exercise Entries" />
+      </group>
+    </menu>
+  </item>
+  <item android:title="Food">
+    <menu>
+      <group android:checkableBehavior="single"
+             android:id="@+id/gp_four">
         <item
-            android:id="@+id/nav_bloodsugar"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Blood Sugar" />
+            android:id="@+id/nav_carbs"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Add Carb Reading" />
         <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Logout" />
-    </group>
-
+            android:id="@+id/nav_carbs_modify"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Modify Carb Reading" />
+      </group>
+    </menu>
+  </item>
 </menu>

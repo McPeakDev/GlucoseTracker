@@ -21,9 +21,6 @@ namespace GlucoseTrackerApp
     public class ExerciseAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private AppCompatEditText Hours { get;  set; }
-        private AppCompatEditText LevelBefore { get; set; }
-        private AppCompatEditText LevelAfter { get; set; }
-        private AppCompatEditText MealName { get; set; }
 
         private string _token;
 
@@ -59,28 +56,35 @@ namespace GlucoseTrackerApp
 
         public async void OnAddExercisePressed(string token)
         {
-            DateTime timeNow = DateTime.Now;
-            RestService restAPI = new RestService(token);
+            if (float.Parse(Hours.Text) > 0 && float.Parse(Hours.Text) <= 4)
+            {
+                DateTime timeNow = DateTime.Now.ToLocalTime();
+                RestService restAPI = new RestService(token);
 
-            PatientData patientData = new PatientData();
-            Patient patient = await restAPI.ReadPatientAsync();
+                PatientData patientData = new PatientData();
+                Patient patient = await restAPI.ReadPatientAsync();
 
-            PatientExercise patientExercise = new PatientExercise()
-            { 
-               UserId = patient.UserId,
-                HoursExercised = float.Parse(Hours.Text),
-                TimeOfDay = timeNow
-            };
+                PatientExercise patientExercise = new PatientExercise()
+                {
+                    UserId = patient.UserId,
+                    HoursExercised = float.Parse(Hours.Text),
+                    TimeOfDay = timeNow
+                };
 
-            patientData.PatientExercises.Add(patientExercise);
+                patientData.PatientExercises.Add(patientExercise);
 
-            restAPI.CreatePatientData(patientData);
+                restAPI.CreatePatientData(patientData);
 
-            Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-            dashboardActivity.PutExtra("token", _token);
-            StartActivity(dashboardActivity);
+                Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
+                dashboardActivity.PutExtra("token", _token);
+                StartActivity(dashboardActivity);
 
-            FinishAfterTransition();
+                FinishAfterTransition();
+            }
+            else
+            {
+                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+            }
         }
 
 
@@ -95,17 +99,35 @@ namespace GlucoseTrackerApp
                 exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
             }
-            else if (id == Resource.Id.nav_food)
+            else if (id == Resource.Id.nav_exercise_modify)
             {
-                Intent queryFoodActivity = new Intent(this, typeof(QueryFoodActivity));
-                queryFoodActivity.PutExtra("token", _token);
-                StartActivity(queryFoodActivity);
+                Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
+                exerciseActivity.PutExtra("token", _token);
+                StartActivity(exerciseActivity);
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
                 bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
+            }
+            else if (id == Resource.Id.nav_bloodsugar_modify)
+            {
+                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
+                bloodSugarActivity.PutExtra("token", _token);
+                StartActivity(bloodSugarActivity);
+            }
+            else if (id == Resource.Id.nav_carbs)
+            {
+                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
+                carbActivity.PutExtra("token", _token);
+                StartActivity(carbActivity);
+            }
+            else if (id == Resource.Id.nav_carbs_modify)
+            {
+                Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
+                carbActivity.PutExtra("token", _token);
+                StartActivity(carbActivity);
             }
             else if (id == Resource.Id.nav_logout)
             {

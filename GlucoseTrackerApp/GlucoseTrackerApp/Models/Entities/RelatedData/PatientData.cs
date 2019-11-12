@@ -11,11 +11,11 @@ namespace GlucoseAPI.Models.Entities
         {
             PatientExercises = new List<PatientExercise>();
             PatientBloodSugars = new List<PatientBloodSugar>();
-            PatientCarbohydrates = new List<PatientCarbohydrates>();
+            PatientCarbohydrates = new List<PatientCarbohydrate>();
         }
         public List<PatientExercise> PatientExercises { get; set; }
         public List<PatientBloodSugar> PatientBloodSugars { get; set; }
-        public List<PatientCarbohydrates> PatientCarbohydrates { get; set; }
+        public List<PatientCarbohydrate> PatientCarbohydrates { get; set; }
 
     }
 }

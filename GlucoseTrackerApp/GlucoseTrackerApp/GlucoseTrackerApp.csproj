@@ -103,8 +103,11 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\CarbAddActivity.cs" />
+    <Compile Include="Activities\CarbModifyActivity.cs" />
+    <Compile Include="Activities\ExerciseModifyActivity.cs" />
+    <Compile Include="Activities\BloodSugarModifyActivity.cs" />
     <Compile Include="Activities\DashboardActivity.cs" />
-    <Compile Include="Activities\QueryFoodActivity.cs" />
     <Compile Include="Activities\ExerciseAddActivity.cs" />
     <Compile Include="Activities\LoginActivity.cs" />
     <Compile Include="Models\Entities\Creation\PatientCreationBundle.cs" />
@@ -113,7 +116,7 @@
     <Compile Include="Models\Entities\Logging-In\TokenAuth.cs" />
     <Compile Include="Models\Entities\RelatedData\MealItem.cs" />
     <Compile Include="Models\Entities\RelatedData\PatientBloodSugar.cs" />
-    <Compile Include="Models\Entities\RelatedData\PatientCarbohydrates.cs" />
+    <Compile Include="Models\Entities\RelatedData\PatientCarbohydrate.cs" />
     <Compile Include="Models\Entities\RelatedData\PatientData.cs" />
     <Compile Include="Models\Entities\RelatedData\PatientExercise.cs" />
     <Compile Include="Models\Entities\Users\Doctor.cs" />
@@ -123,7 +126,9 @@
     <Compile Include="Activities\RegisterActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ObjectTypeHelper.cs" />
     <Compile Include="Services\RestService.cs" />
+    <Compile Include="Services\Storage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -221,29 +226,12 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\app_bar_query_food.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_exercise_add.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\app_bar_exercise_add.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_query_food.axml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\content_query_food.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -271,6 +259,24 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\content_dashboard.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_modify.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\app_bar_modify.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\content_modify.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

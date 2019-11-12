@@ -1,57 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	app:layout_behavior="@string/appbar_scrolling_view_behavior"
-	tools:showIn="@layout/app_bar_main"
+	tools:showIn="@layout/app_bar_modify"
 	android:minWidth="25px"
 	android:minHeight="25px">
+      <Spinner
+        android:layout_width="match_parent"
+        android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+        android:layout_height="45dp"
+        android:id="@+id/spinner" />
 	<EditText
-		android:inputType="textEmailAddress"
+		android:inputType="numberDecimal"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:hint="E-mail"
-		android:id="@+id/email"/>
-	<EditText
-		android:inputType="textPassword"
+		android:hint="Top"
+		android:id="@+id/top_field"/>
+    <EditText
+		android:inputType="numberDecimal"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
 		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:hint="Password"
-		android:layout_below="@id/email"
-		android:id="@+id/password"/>
-	<CheckBox
-		android:text="Remember Email"
-		android:layout_width="wrap_content"
+		android:hint="Middle"
+		android:id="@+id/middle_field"/>
+    <EditText
+		android:inputType="text"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
 		android:layout_marginTop = "10px"
-		android:layout_below="@id/password"
-		android:id="@+id/auto_email" />
+		android:hint="Bottom"
+		android:id="@+id/bottom_field"/>
 	<Button
-		android:text="Login"
-		android:layout_width="fill_parent"
+		android:text="Edit"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft= "15px"
-		android:layout_marginRight= "15px"
-		android:layout_marginTop = "10px"
-		android:layout_below="@id/auto_email"
-		android:id="@+id/login_button"/>
-	<Button
-		android:text="Register"
-		android:layout_width="fill_parent"
+		android:id="@+id/submit_button" />
+    <Button
+		android:text="Delete"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft= "15px"
-		android:layout_marginRight= "15px"
-		android:layout_marginTop = "10px"
-		android:layout_below="@id/login_button"
-		android:id="@+id/register_button"/>
-</RelativeLayout>
+		android:id="@+id/delete_button" />
+
+</LinearLayout>

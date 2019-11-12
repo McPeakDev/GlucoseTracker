@@ -49,7 +49,7 @@
                             {
                                 <tr>
                                     <td>
-                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
                                     </td>
                                     <td>
                                         @item.LevelBefore
@@ -86,7 +86,7 @@
                             {
                                 <tr>
                                     <td>
-                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
                                     </td>
                                     <td>
                                         @item.FoodCarbs
@@ -120,7 +120,7 @@
                             {
                                 <tr>
                                     <td>
-                                        @($"{item.TimeOfDay.ToShortDateString()}, {item.TimeOfDay.ToShortTimeString()} ")
+                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
                                     </td>
                                     <td>
                                         @item.HoursExercised

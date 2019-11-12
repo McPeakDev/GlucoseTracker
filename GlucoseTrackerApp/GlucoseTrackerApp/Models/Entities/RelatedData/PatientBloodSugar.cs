@@ -21,5 +21,10 @@ namespace GlucoseAPI.Models.Entities
         public virtual Patient Patient { get; set; }
         public virtual MealItem Meal { get; set; }
 
+        public override string ToString()
+        {
+            return $"Time: {TimeOfDay.ToLocalTime().ToShortTimeString()}, Before: {LevelBefore}, After: {LevelAfter}, Meal: {Meal.FoodName}";
+        }
+
     }
 }

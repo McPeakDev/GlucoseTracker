@@ -1,47 +1,72 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
 using Android.App;
+using Android.Content;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Android.Widget;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
-using Android.Widget;
-using Android.Content;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.Design.NoActionBar")]
-    public class BloodSugarAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    [Activity(Label = "BloodSugarModifyActivity")]
+    public class BloodSugarModifyActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private AppCompatSpinner Readings;
         private AppCompatEditText LevelBefore;
         private AppCompatEditText LevelAfter;
         private AppCompatEditText MealName;
+
+        RestService _restAPI;
         private string _token;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_blood_sugar_add);
+            SetContentView(Resource.Layout.activity_modify);
 
             _token = Intent.GetStringExtra("token");
+            _restAPI = new RestService(_token);
 
-            LevelBefore= FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_before_reading);
-            LevelAfter = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_after_reading);
-            MealName = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_meal_name);
+            Readings = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
+            LevelBefore = FindViewById<AppCompatEditText>(Resource.Id.top_field);
+            LevelAfter = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
+            MealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
 
-            AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
+            AppCompatButton bloodSugarEditButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
+            AppCompatButton bloodSugarDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
 
-            bloodSugarAddButton.Click += delegate
+
+            LevelBefore.Hint = "Reading Before";
+            LevelAfter.Hint = "Reading After";
+            MealName.Hint = "Meal Name";
+
+            LevelBefore.Visibility = ViewStates.Gone;
+            LevelAfter.Visibility = ViewStates.Gone;
+            MealName.Visibility = ViewStates.Gone;
+
+            bloodSugarEditButton.Click += delegate
             {
-                OnBloodSugarAddButtonPressed();
+                OnBloodSugarEditButtonPressed();
             };
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_blood_sugar_add);
-            toolbar.Title = "Add A Blood Sugar Reading";
+            bloodSugarDeleteButton.Click += delegate
+            {
+                OnBloodSugarDeleteButtonPressed();
+            };
+
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
+            toolbar.Title = "Modify A Blood Sugar Reading";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -49,31 +74,56 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_blood_sugar_add);
+            Readings.ItemSelected += delegate
+            {
+                LevelBefore.Visibility = ViewStates.Visible;
+                LevelAfter.Visibility = ViewStates.Visible;
+                MealName.Visibility = ViewStates.Visible;
+
+                PatientBloodSugar bs = Readings.SelectedItem.Cast<PatientBloodSugar>();
+
+                LevelBefore.Text = bs.LevelBefore.ToString();
+                LevelAfter.Text = bs.LevelAfter.ToString();
+                MealName.Text = bs.Meal.FoodName;
+
+            };
+
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_modify);
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        public async void OnBloodSugarAddButtonPressed()
+        protected async override void OnStart()
+        {
+            base.OnStart();
+
+            PatientData patientData = await _restAPI.ReadPatientDataAsync();
+
+            ArrayAdapter<PatientBloodSugar> adapter = new ArrayAdapter<PatientBloodSugar>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientBloodSugars.Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(bs => bs.TimeOfDay.ToLocalTime()).ToList());
+
+            Readings.SetAdapter(adapter);
+        }
+
+        public async void OnBloodSugarEditButtonPressed()
         {
             try
             {
                 if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0)
                 {
                     DateTime timeNow = DateTime.Now.ToLocalTime();
-                    RestService restAPI = new RestService(_token);
 
                     PatientData patientData = new PatientData();
-                    Patient patient = await restAPI.ReadPatientAsync();
+                    Patient patient = await _restAPI.ReadPatientAsync();
 
                     PatientBloodSugar patientBlood = new PatientBloodSugar()
                     {
+                        BloodId = Readings.SelectedItem.Cast<PatientBloodSugar>().BloodId,
                         UserId = patient.UserId,
                         LevelBefore = float.Parse(LevelBefore.Text),
                         LevelAfter = float.Parse(LevelAfter.Text),
-                        TimeOfDay = timeNow
+                        TimeOfDay = Readings.SelectedItem.Cast<PatientBloodSugar>().TimeOfDay
                     };
 
-                    MealItem mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
+                    MealItem mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
 
                     if (!(mealItem is null))
                     {
@@ -81,8 +131,8 @@ namespace GlucoseTrackerApp
                     }
                     else
                     {
-                        int fdcId = await restAPI.FindMealDataAsync(MealName.Text);
-                        int carbs = (int)await restAPI.ReadMealDataAsync(fdcId);
+                        int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
+                        int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
 
                         mealItem = new MealItem()
                         {
@@ -90,26 +140,15 @@ namespace GlucoseTrackerApp
                             FoodName = (MealName.Text.Substring(0, 1).ToUpper() + MealName.Text.Substring(1, MealName.Text.Length - 1).ToLower())
                         };
 
-                        await restAPI.CreateMealItemAsync(mealItem);
+                        await _restAPI.CreateMealItemAsync(mealItem);
 
-                        mealItem = await restAPI.ReadMealItemAsync(MealName.Text);
+                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
                         patientBlood.MealId = mealItem.MealId;
                     }
 
-                    PatientCarbohydrate patientCarbohydrate = new PatientCarbohydrate()
-                    {
-                        UserId = patient.UserId,
-                        MealId = mealItem.MealId,
-                        Patient = patient,
-                        TimeOfDay = timeNow,
-                        FoodCarbs = mealItem.Carbs
-                    };
-
-                    patientData.PatientCarbohydrates.Add(patientCarbohydrate);
-
                     patientData.PatientBloodSugars.Add(patientBlood);
 
-                    restAPI.CreatePatientData(patientData);
+                    _restAPI.UpdatePatientDataAsync(patientData);
 
                     Finish();
                 }
@@ -117,7 +156,24 @@ namespace GlucoseTrackerApp
                 {
                     Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
                 }
+            }
+            catch (Exception)
+            {
+                Toast.MakeText(this, "What Has Been Entered Is Invalid. Please Try Again.", ToastLength.Long).Show();
+            }
+        }
 
+        public void OnBloodSugarDeleteButtonPressed()
+        {
+            try
+            {
+                PatientData patientData = new PatientData();
+
+                patientData.PatientBloodSugars.Add(Readings.SelectedItem.Cast<PatientBloodSugar>());
+
+                _restAPI.DeletePatientDataAsync(patientData);
+
+                Finish();
             }
             catch (Exception)
             {

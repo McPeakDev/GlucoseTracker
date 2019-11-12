@@ -15,5 +15,10 @@ namespace GlucoseAPI.Models.Entities
         public float HoursExercised { get; set; }
         public DateTime TimeOfDay { get; set; }
         public virtual Patient Patient { get; set; }
+
+        public override string ToString()
+        {
+            return $"Time: {TimeOfDay.ToLocalTime().ToShortTimeString()}, Hours Exercised: {HoursExercised}";
+        }
     }
 }

@@ -73,6 +73,12 @@ namespace GlucoseTrackerApp
 
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+            PopulateCharts();
+        }
+
         private async void PopulateCharts()
         {
             Patient patient = await _restAPI.ReadPatientAsync();
@@ -81,15 +87,15 @@ namespace GlucoseTrackerApp
             var exerciseEntries = new List<ChartEntry>();
             var carbEntries = new List<ChartEntry>();
 
-            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay).Where(bs => bs.TimeOfDay.Date == DateTime.Today).ToList();
-            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay).Where(pc => pc.TimeOfDay.Date == DateTime.Today).ToList();
-            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay).Where(pe => pe.TimeOfDay.Date == DateTime.Today).ToList();
+            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay.ToLocalTime()).Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
+            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay.ToLocalTime()).Where(pc => pc.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
+            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay.ToLocalTime()).Where(pe => pe.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
 
             foreach (var bloodSugar in patient.PatientBloodSugars)
             {
                 bloodEntries.Add(new ChartEntry((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2)
                 {
-                    Label = bloodSugar.TimeOfDay.ToShortDateString(),
+                    Label = bloodSugar.TimeOfDay.ToLocalTime().ToShortTimeString(),
                     ValueLabel = ((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2).ToString(),
                     Color = SKColors.Maroon
                 });
@@ -99,7 +105,7 @@ namespace GlucoseTrackerApp
             {
                 exerciseEntries.Add(new ChartEntry(exercise.HoursExercised)
                 {
-                    Label = exercise.TimeOfDay.ToShortDateString(),
+                    Label = exercise.TimeOfDay.ToLocalTime().ToShortTimeString(),
                     ValueLabel = exercise.HoursExercised.ToString(),
                     Color = SKColors.DarkGreen
                 });
@@ -109,7 +115,7 @@ namespace GlucoseTrackerApp
             {
                 carbEntries.Add(new ChartEntry(carb.FoodCarbs)
                 {
-                    Label = carb.TimeOfDay.ToShortDateString(),
+                    Label = carb.TimeOfDay.ToLocalTime().ToShortTimeString(),
                     ValueLabel = carb.FoodCarbs.ToString(),
                     Color = SKColors.Yellow
                 });
@@ -152,7 +158,7 @@ namespace GlucoseTrackerApp
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            if(id == Resource.Id.nav_dashboard)
+            if (id == Resource.Id.nav_dashboard)
             {
                 PopulateCharts();
             }
@@ -162,11 +168,11 @@ namespace GlucoseTrackerApp
                 exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
             }
-            else if (id == Resource.Id.nav_food)
+            else if (id == Resource.Id.nav_exercise_modify)
             {
-                Intent queryFoodActivity = new Intent(this, typeof(QueryFoodActivity));
-                queryFoodActivity.PutExtra("token", _token);
-                StartActivity(queryFoodActivity);
+                Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
+                exerciseActivity.PutExtra("token", _token);
+                StartActivity(exerciseActivity);
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
@@ -174,11 +180,29 @@ namespace GlucoseTrackerApp
                 bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
             }
+            else if (id == Resource.Id.nav_bloodsugar_modify)
+            {
+                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
+                bloodSugarActivity.PutExtra("token", _token);
+                StartActivity(bloodSugarActivity);
+            }
+            else if (id == Resource.Id.nav_carbs)
+            {
+                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
+                carbActivity.PutExtra("token", _token);
+                StartActivity(carbActivity);
+            }
+            else if (id == Resource.Id.nav_carbs_modify)
+            {
+                Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
+                carbActivity.PutExtra("token", _token);
+                StartActivity(carbActivity);
+            }
             else if (id == Resource.Id.nav_logout)
             {
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
                 StartActivity(loginActivity);
-                FinishAfterTransition();
+                Finish();
             }
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
