@@ -18,18 +18,6 @@ namespace GlucoseAPI.Models.Entities
 
         public string DoctorToken { get; set; }
 
-        private string _password;
-        public string Password
-        {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                //Salt and Hash the password.
-                _password = HashPassword(value);
-            }
-        }
+        public string Password { get; set; }
     }
 }
