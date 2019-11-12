@@ -76,7 +76,7 @@ namespace GlucoseTrackerApp
             {
                 if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0 && !String.IsNullOrEmpty(MealName.Text))
                 {
-                    DateTime timeNow = DateTime.Now.ToLocalTime();
+                    DateTime timeNow = DateTime.Now;
                     RestService restAPI = new RestService(_token);
 
                     PatientData patientData = new PatientData();
