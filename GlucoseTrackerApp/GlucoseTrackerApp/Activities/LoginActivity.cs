@@ -93,7 +93,12 @@ namespace GlucoseTrackerApp
 
                 Token = await restAPI.LoginAsync(loginCreds);
 
-                if (Token != "Invalid Credentials" && !(Token is null))
+                if (Token is null)
+                {
+                    Password.Text = String.Empty;
+                    return "No Connection";
+                }
+                else if (Token != "Invalid Credentials")
                 {
                     if (AutoEmail.Checked)
                     {
@@ -108,7 +113,7 @@ namespace GlucoseTrackerApp
                 else
                 {
                     Password.Text = String.Empty;
-                    return "Email / Password Combination Was Invalid. Please Try Again.";
+                    return "Email / Password Combination Was Invalid. Please Try Again";
                 }
 
             }

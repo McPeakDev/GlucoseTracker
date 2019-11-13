@@ -118,7 +118,7 @@ namespace GlucoseTrackerApp
             }
             else
             {
-
+                Toast.MakeText(this, "No Connection", ToastLength.Long).Show();
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
                 StartActivity(loginActivity);
                 Finish();

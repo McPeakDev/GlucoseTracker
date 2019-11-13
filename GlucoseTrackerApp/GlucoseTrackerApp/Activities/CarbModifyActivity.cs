@@ -62,6 +62,13 @@ namespace GlucoseTrackerApp
                 {
                     Finish();
                 }
+                else if (status == "No Connection")
+                {
+                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                    StartActivity(loginActivity);
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    Finish();
+                }
                 else
                 {
                     Toast.MakeText(this, status, ToastLength.Long).Show();
@@ -119,6 +126,7 @@ namespace GlucoseTrackerApp
             }
             else
             {
+                Toast.MakeText(this, "No Connection", ToastLength.Long).Show();
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
                 StartActivity(loginActivity);
                 Finish();

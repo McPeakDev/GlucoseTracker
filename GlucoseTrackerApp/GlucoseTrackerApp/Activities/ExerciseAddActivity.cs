@@ -55,6 +55,13 @@ namespace GlucoseTrackerApp
                 {
                     Finish();
                 }
+                else if(status == "No Connection")
+                {
+                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                    StartActivity(loginActivity);
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    Finish();
+                }
                 else
                 {
                     Toast.MakeText(this, status, ToastLength.Long).Show();
@@ -73,7 +80,16 @@ namespace GlucoseTrackerApp
                     RestService restAPI = new RestService(token);
 
                     PatientData patientData = new PatientData();
-                    Patient patient = await restAPI.ReadPatientAsync();
+                    Patient patient;
+
+                    try
+                    {
+                        patient = await restAPI.ReadPatientAsync();
+                    }
+                    catch (Exception)
+                    {
+                        return "No Connection";
+                    }
 
                     PatientExercise patientExercise = new PatientExercise()
                     {
@@ -84,16 +100,8 @@ namespace GlucoseTrackerApp
 
                     patientData.PatientExercises.Add(patientExercise);
 
-                    try
-                    {
-                        restAPI.CreatePatientData(patientData);
-                    }
-                    catch (Exception)
-                    {
-                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                        StartActivity(loginActivity);
-                        Finish();
-                    }
+                    restAPI.CreatePatientData(patientData);
+                    
                     return "Success";
                 }
                 else

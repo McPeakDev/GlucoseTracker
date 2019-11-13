@@ -71,14 +71,30 @@ namespace GlucoseTrackerApp
             {
                 _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
 
-                PopulateCharts();
+                string status = await PopulateCharts();
+
+                if (status == "No Connection")
+                {
+                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                    StartActivity(loginActivity);
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    Finish();
+                }
             }
         }
 
-        protected override void OnResume()
+        protected async override void OnResume()
         {
             base.OnResume();
-            PopulateCharts();
+            string status = await PopulateCharts();
+            
+            if (status == "No Connection")
+            {
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                StartActivity(loginActivity);
+                Toast.MakeText(this, status, ToastLength.Long).Show();
+                Finish();
+            }
         }
 
         protected override void OnRestoreInstanceState(Bundle savedInstanceState)
@@ -89,9 +105,14 @@ namespace GlucoseTrackerApp
             Finish();
         }
 
-        private async void PopulateCharts()
+        private async Task<string> PopulateCharts()
         {
             Patient patient = await _restAPI.ReadPatientAsync();
+
+            if(patient is null)
+            {
+                return "No Connection";
+            }
 
             var bloodEntries = new List<ChartEntry>();
             var exerciseEntries = new List<ChartEntry>();
@@ -163,6 +184,7 @@ namespace GlucoseTrackerApp
             _bloodChart.Chart = bloodChart;
             _exerciseChart.Chart = exerciseChart;
             _carbChart.Chart = carbChart;
+            return "Success";
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)

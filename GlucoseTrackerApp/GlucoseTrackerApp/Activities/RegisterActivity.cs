@@ -120,7 +120,11 @@ namespace GlucoseTrackerApp
 
                 string status = await restAPI.RegisterAsync(patientCreationBundle);
 
-                if (status != "Invalid User" && !(status is null) )
+                if (status is null)
+                {
+                    return "No Connection";
+                }
+                else if (status != "Invalid User" && !(status is null) )
                 {
                     return "Registered!";
                 }

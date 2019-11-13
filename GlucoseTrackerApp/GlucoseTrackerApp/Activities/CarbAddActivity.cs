@@ -63,6 +63,13 @@ namespace GlucoseTrackerApp
                 {
                     Finish();
                 }
+                else if (status == "No Connection")
+                {
+                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                    StartActivity(loginActivity);
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    Finish();
+                }
                 else
                 {
                     Toast.MakeText(this, status, ToastLength.Long).Show();
@@ -99,7 +106,16 @@ namespace GlucoseTrackerApp
                     DateTime timeNow = DateTime.Now.ToLocalTime();
 
                     PatientData patientData = new PatientData();
-                    Patient patient = await _restAPI.ReadPatientAsync();
+                    Patient patient;
+
+                    try
+                    {
+                        patient = await _restAPI.ReadPatientAsync();
+                    }
+                    catch (Exception)
+                    {
+                        return "No Connection";
+                    }
 
                     PatientCarbohydrate patientCarb = new PatientCarbohydrate()
                     {
@@ -153,6 +169,7 @@ namespace GlucoseTrackerApp
                     {
                         return "Invalid Food Name";
                     }
+
                     patientData.PatientCarbohydrates.Add(patientCarb);
 
                     try
@@ -161,9 +178,7 @@ namespace GlucoseTrackerApp
                     }
                     catch(Exception)
                     {
-                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                        StartActivity(loginActivity);
-                        Finish();
+                        return "No Connection";
                     }
                     return "Success";
                 }
