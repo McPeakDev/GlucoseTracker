@@ -112,9 +112,17 @@ namespace GlucoseTrackerApp
 
             PatientData patientData = await _restAPI.ReadPatientDataAsync();
 
-            ArrayAdapter<PatientCarbohydrate> adapter = new ArrayAdapter<PatientCarbohydrate>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientCarbohydrates.Where(pc => pc.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pc => pc.TimeOfDay.ToLocalTime()).ToList());
-
-            Carbs.Adapter = adapter;
+            if (!(patientData is null))
+            {
+                ArrayAdapter<PatientCarbohydrate> adapter = new ArrayAdapter<PatientCarbohydrate>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientCarbohydrates.Where(pc => pc.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pc => pc.TimeOfDay.ToLocalTime()).ToList());
+                Carbs.Adapter = adapter;
+            }
+            else
+            {
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                StartActivity(loginActivity);
+                Finish();
+            }
         }
 
         protected override void OnRestoreInstanceState(Bundle savedInstanceState)
@@ -142,10 +150,13 @@ namespace GlucoseTrackerApp
                         TimeOfDay = Carbs.SelectedItem.Cast<PatientCarbohydrate>().TimeOfDay
                     };
 
-                    MealItem mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+
+                    MealItem mealItem;
 
                     try
-                    { 
+                    {
+                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+
                         if (!(mealItem is null))
                         {
                             patientCarb.MealId = mealItem.MealId;
@@ -187,8 +198,16 @@ namespace GlucoseTrackerApp
 
                     patientData.PatientCarbohydrates.Add(patientCarb);
 
-                    _restAPI.UpdatePatientDataAsync(patientData);
-
+                    try
+                    {
+                        _restAPI.UpdatePatientDataAsync(patientData);
+                    }
+                    catch (Exception)
+                    {
+                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                        StartActivity(loginActivity);
+                        Finish();
+                    }
                     return "Success";
                 }
                 else

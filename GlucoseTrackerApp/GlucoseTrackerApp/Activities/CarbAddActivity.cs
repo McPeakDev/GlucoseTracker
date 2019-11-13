@@ -108,9 +108,13 @@ namespace GlucoseTrackerApp
                         TimeOfDay = timeNow
                     };
 
-                    MealItem mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+
+                    MealItem mealItem;
+
                     try
-                    { 
+                    {
+                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+
                         if (!(mealItem is null))
                         {
                             patientCarb.MealId = mealItem.MealId;
@@ -151,8 +155,16 @@ namespace GlucoseTrackerApp
                     }
                     patientData.PatientCarbohydrates.Add(patientCarb);
 
-                    _restAPI.CreatePatientData(patientData);
-
+                    try
+                    {
+                        _restAPI.CreatePatientData(patientData);
+                    }
+                    catch(Exception)
+                    {
+                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                        StartActivity(loginActivity);
+                        Finish();
+                    }
                     return "Success";
                 }
                 else 

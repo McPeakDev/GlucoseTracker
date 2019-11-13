@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using GlucoseAPI.Models.Entities;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace GlucoseTrackerApp.Services
 {
@@ -18,14 +19,20 @@ namespace GlucoseTrackerApp.Services
         #region Constructors
         public RestService()
         {
-            _client = new HttpClient();
+            _client = new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
             _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
         }
 
         public RestService(string token)
         {
-            _client = new HttpClient();
+            _client = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
             _client.DefaultRequestHeaders.Add("token", token);
             _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
@@ -35,52 +42,87 @@ namespace GlucoseTrackerApp.Services
         #region Authentication
         public async Task<string> LoginAsync(Credentials creds)
         {
+            try
+            {
+                //Retrive the patients's token
+                StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            //Retrive the patients's token
-            StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
-            _response =  await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent);
-            _data = await _response.Content.ReadAsStringAsync();
+                _client.DefaultRequestHeaders.Add("token", _data);
 
-            _client.DefaultRequestHeaders.Add("token", _data);
+                //Return the Token
+                return _data;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
-            //Return the Token
-            return _data;
         }
         #endregion
 
         #region Registration
         public async Task<string> RegisterAsync(PatientCreationBundle patientCreationBundle)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
-            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            return _data;
+                return _data;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
 
         #region Read, Update, and Delete Patient
         public async Task<Patient> ReadPatientAsync()
         {
-            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            Patient patient = JsonConvert.DeserializeObject<Patient>(_data);
-            return patient;
+                Patient patient = JsonConvert.DeserializeObject<Patient>(_data);
+                return patient;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async void UpdatePatientAsync(Patient patient)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent patientContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
-            await _client.PutAsync(new Uri(_baseAddress + "User/Update/"), patientContent);
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent patientContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
+                await _client.PutAsync(new Uri(_baseAddress + "User/Update/"), patientContent);
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         public async void DeletePatientAsync()
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            await _client.DeleteAsync(new Uri(_baseAddress + "User/Delete/"));
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                await _client.DeleteAsync(new Uri(_baseAddress + "User/Delete/"));
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
         #endregion
 
@@ -91,47 +133,82 @@ namespace GlucoseTrackerApp.Services
         /// <returns>A Doctor</returns>
         public async Task<Doctor> ReadDoctorAsync()
         {
-            _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            Doctor doctor = JsonConvert.DeserializeObject<Doctor>(_data);
-            return doctor;
+                Doctor doctor = JsonConvert.DeserializeObject<Doctor>(_data);
+                return doctor;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
 
         #region Create, Read, Update, and Delete Patient Data
         public async void CreatePatientData(PatientData patientData)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-            _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent);
+                _data = await _response.Content.ReadAsStringAsync();
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         public async Task<PatientData> ReadPatientDataAsync()
         {
-            _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Read/"), null);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Read/"), null);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            PatientData patientData = JsonConvert.DeserializeObject<PatientData>(_data);
-            return patientData;
+                PatientData patientData = JsonConvert.DeserializeObject<PatientData>(_data);
+                return patientData;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async void UpdatePatientDataAsync(PatientData patientData)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-            _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
-            _data = await _response.Content.ReadAsStringAsync();
-
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent);
+                _data = await _response.Content.ReadAsStringAsync();
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         public async void DeletePatientDataAsync(PatientData patientData)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-            _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Delete/"), patientContent);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Delete/"), patientContent);
+                _data = await _response.Content.ReadAsStringAsync();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
         }
         #endregion
 
@@ -173,21 +250,35 @@ namespace GlucoseTrackerApp.Services
         #region Create and Read MealItem
         public async Task<string> CreateMealItemAsync(MealItem mealItem)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            StringContent mealItemContent = new StringContent(JObject.FromObject(mealItem).ToString(), Encoding.UTF8, "application/json");
-            _response = await _client.PostAsync(new Uri(_baseAddress + "Meal/Create/"), mealItemContent);
-            _data = await _response.Content.ReadAsStringAsync();
-            return _data;
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                StringContent mealItemContent = new StringContent(JObject.FromObject(mealItem).ToString(), Encoding.UTF8, "application/json");
+                _response = await _client.PostAsync(new Uri(_baseAddress + "Meal/Create/"), mealItemContent);
+                _data = await _response.Content.ReadAsStringAsync();
+                return _data;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<MealItem> ReadMealItemAsync(string query)
         {
-            //Serialize the patientCreationBundle and send it to the API.
-            _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query.Replace(" ", "+")}"), null);
-            _data = await _response.Content.ReadAsStringAsync();
+            try
+            {
+                //Serialize the patientCreationBundle and send it to the API.
+                _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query.Replace(" ", "+")}"), null);
+                _data = await _response.Content.ReadAsStringAsync();
 
-            MealItem mealItem = JsonConvert.DeserializeObject<MealItem>(_data);
-            return mealItem;
+                MealItem mealItem = JsonConvert.DeserializeObject<MealItem>(_data);
+                return mealItem;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
     }

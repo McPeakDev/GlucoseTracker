@@ -115,9 +115,17 @@ namespace GlucoseTrackerApp
 
             PatientData patientData = await _restAPI.ReadPatientDataAsync();
 
-            ArrayAdapter<PatientBloodSugar> adapter = new ArrayAdapter<PatientBloodSugar>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientBloodSugars.Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(bs => bs.TimeOfDay.ToLocalTime()).ToList());
-
-            Readings.Adapter = adapter;
+            if (!(patientData is null))
+            {
+                ArrayAdapter<PatientBloodSugar> adapter = new ArrayAdapter<PatientBloodSugar>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientBloodSugars.Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(bs => bs.TimeOfDay.ToLocalTime()).ToList());
+                Readings.Adapter = adapter;
+            }
+            else
+            {
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                StartActivity(loginActivity);
+                Finish();
+            }
         }
 
         public async Task<string> OnBloodSugarEditButtonPressed()
@@ -138,9 +146,12 @@ namespace GlucoseTrackerApp
                         TimeOfDay = Readings.SelectedItem.Cast<PatientBloodSugar>().TimeOfDay
                     };
 
-                    MealItem mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                    MealItem mealItem;
+
                     try
-                    { 
+                    {
+                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+
                         if (!(mealItem is null))
                         {
                             patientBlood.MealId = mealItem.MealId;
@@ -180,9 +191,18 @@ namespace GlucoseTrackerApp
                         return "Invalid Food Name";
                     }
 
-                patientData.PatientBloodSugars.Add(patientBlood);
+                    patientData.PatientBloodSugars.Add(patientBlood);
 
-                    _restAPI.UpdatePatientDataAsync(patientData);
+                    try
+                    {
+                        _restAPI.UpdatePatientDataAsync(patientData);
+                    }
+                    catch (Exception)
+                    {
+                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                        StartActivity(loginActivity);
+                        Finish();
+                    }
 
                     return "Success";
                 }

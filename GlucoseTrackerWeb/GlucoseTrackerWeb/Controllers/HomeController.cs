@@ -213,7 +213,7 @@ namespace GlucoseTrackerWeb.Controllers
                 try
                 {
                     //Query the Patient
-                    Patient patient = _tokenAuthRepo.Read(ta => ta.Token.Contains(token), ta => ta.User).User as Patient;
+                    Patient patient = _tokenAuthRepo.Read(ta => ta.Token.Substring(ta.Token.Length -6, 6) == token , ta => ta.User).User as Patient;
 
                     //Query the Doctor
                     Doctor doctor = _tokenAuthRepo.Read(ta => ta.Token == HttpContext.Session.GetString("TokenAuth"), ta => ta.User).User as Doctor;

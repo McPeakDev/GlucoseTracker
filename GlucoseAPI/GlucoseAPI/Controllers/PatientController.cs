@@ -157,7 +157,7 @@ namespace GlucoseAPI.Controllers
                 if (!(patientCreationBundle.DoctorToken is null))
                 {
                     //Assign the appropriate doctor if found.
-                    int userId = _tokenAuthRepo.Read(t => t.Token.Contains(patientCreationBundle.DoctorToken)).UserId;
+                    int userId = _tokenAuthRepo.Read(t => t.Token.Substring(t.Token.Length - 6, 6) == patientCreationBundle.DoctorToken).UserId;
                     patient.Doctor = _doctorRepo.Read(d => d.UserId == userId);
                     patient.Doctor.Patients.Add(patient);
                 }

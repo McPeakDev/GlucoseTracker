@@ -111,9 +111,18 @@ namespace GlucoseTrackerApp
 
             PatientData patientData = await _restAPI.ReadPatientDataAsync();
 
-            ArrayAdapter<PatientExercise> adapter = new ArrayAdapter<PatientExercise>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientExercises.Where(pe => pe.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pe => pe.TimeOfDay.ToLocalTime()).ToList());
+            if (!(patientData is null))
+            {
+                ArrayAdapter<PatientExercise> adapter = new ArrayAdapter<PatientExercise>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientExercises.Where(pe => pe.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pe => pe.TimeOfDay.ToLocalTime()).ToList());
+                Entries.Adapter = adapter;
+            }
+            else
+            {
 
-            Entries.Adapter = adapter;
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                StartActivity(loginActivity);
+                Finish();
+            }
         }
 
         public async Task<string> OnExerciseEditButtonPressed()
@@ -136,8 +145,16 @@ namespace GlucoseTrackerApp
 
                     patientData.PatientExercises.Add(patientExercise);
 
-                    _restAPI.UpdatePatientDataAsync(patientData);
-
+                    try
+                    {
+                        _restAPI.UpdatePatientDataAsync(patientData);
+                    }
+                    catch (Exception)
+                    {
+                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                        StartActivity(loginActivity);
+                        Finish();
+                    }
                     return "Success";
                 }
                 else

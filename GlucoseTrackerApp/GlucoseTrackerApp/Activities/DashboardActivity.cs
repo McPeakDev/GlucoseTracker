@@ -67,10 +67,12 @@ namespace GlucoseTrackerApp
 
             Patient patient = await _restAPI.ReadPatientAsync();
 
-            _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
+            if (!(patient is null))
+            {
+                _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
 
-            PopulateCharts();
-
+                PopulateCharts();
+            }
         }
 
         protected override void OnResume()

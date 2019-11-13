@@ -84,8 +84,16 @@ namespace GlucoseTrackerApp
 
                     patientData.PatientExercises.Add(patientExercise);
 
-                    restAPI.CreatePatientData(patientData);
-
+                    try
+                    {
+                        restAPI.CreatePatientData(patientData);
+                    }
+                    catch (Exception)
+                    {
+                        Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                        StartActivity(loginActivity);
+                        Finish();
+                    }
                     return "Success";
                 }
                 else

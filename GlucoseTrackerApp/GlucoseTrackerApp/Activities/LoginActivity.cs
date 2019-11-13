@@ -93,7 +93,7 @@ namespace GlucoseTrackerApp
 
                 Token = await restAPI.LoginAsync(loginCreds);
 
-                if (Token != "Invalid Credentials")
+                if (Token != "Invalid Credentials" && !(Token is null))
                 {
                     if (AutoEmail.Checked)
                     {
