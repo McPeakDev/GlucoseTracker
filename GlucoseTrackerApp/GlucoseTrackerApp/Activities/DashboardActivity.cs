@@ -124,10 +124,10 @@ namespace GlucoseTrackerApp
 
             foreach (var bloodSugar in patient.PatientBloodSugars)
             {
-                bloodEntries.Add(new ChartEntry((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2)
+                bloodEntries.Add(new ChartEntry(bloodSugar.Level)
                 {
-                    Label = bloodSugar.TimeOfDay.ToLocalTime().ToShortTimeString(),
-                    ValueLabel = ((bloodSugar.LevelBefore + bloodSugar.LevelAfter) / 2).ToString(),
+                    Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + " " + bloodSugar.TimeOfDay.ToLocalTime().ToShortTimeString(),
+                    ValueLabel = (bloodSugar.Level).ToString(),
                     Color = SKColors.Maroon
                 });
             }

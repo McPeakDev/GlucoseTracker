@@ -3154,19 +3154,19 @@ namespace GlucoseTrackerApp
 			public const int bloodChart = 2131230756;
 			
 			// aapt resource value: 0x7F080025
-			public const int blood_sugar_add_after_reading = 2131230757;
+			public const int blood_sugar_add_button = 2131230757;
 			
 			// aapt resource value: 0x7F080026
-			public const int blood_sugar_add_before_reading = 2131230758;
+			public const int blood_sugar_add_meal_name = 2131230758;
 			
 			// aapt resource value: 0x7F080027
-			public const int blood_sugar_add_button = 2131230759;
+			public const int blood_sugar_add_reading = 2131230759;
 			
 			// aapt resource value: 0x7F080028
-			public const int blood_sugar_add_meal_name = 2131230760;
+			public const int blood_sugar_label = 2131230760;
 			
 			// aapt resource value: 0x7F080029
-			public const int blood_sugar_label = 2131230761;
+			public const int blood_sugar_reading_type = 2131230761;
 			
 			// aapt resource value: 0x7F08002A
 			public const int bottom = 2131230762;

@@ -94,6 +94,7 @@ namespace GlucoseTrackerWeb.Controllers
         {
             //Empty Session and Redirect to Login.
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("TokenAuth");
             return RedirectToAction("Index");
         }
         #endregion

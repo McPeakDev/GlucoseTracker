@@ -75,8 +75,14 @@ namespace GlucoseTrackerWeb.Controllers
                     bloodSugar.Meal = meals.FirstOrDefault(m => m.MealId == bloodSugar.MealId);
 
                     //Add the BloodSugars Appropriately to the Dictionary 
-                    bloodSugarsBefore.Add(bloodSugar.TimeOfDay, bloodSugar.LevelBefore);
-                    bloodSugarsAfter.Add(bloodSugar.TimeOfDay, bloodSugar.LevelAfter);
+                    if (bloodSugar.ReadingType == ReadingType.Before)
+                    {
+                        bloodSugarsBefore.Add(bloodSugar.TimeOfDay, bloodSugar.Level);
+                    }
+                    else
+                    {
+                        bloodSugarsAfter.Add(bloodSugar.TimeOfDay, bloodSugar.Level);
+                    }
                 }
 
                 //For each carb.

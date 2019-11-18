@@ -4,6 +4,17 @@
     Layout = "_Layout";
     ViewData["Title"] = $"Data for {@Model.FullName}";
 
+    if (!(TempData["BadUser"] is null))
+    {
+        if ((Boolean)TempData["BadUser"])
+        {
+            <div class="alert alert-dismissible alert-danger">
+                <h4 class="alert-heading">Error!</h4>
+                <p class="mb-0">Invalid User</p>
+            </div>
+        }
+    }
+
     var bloodSugarsBefore = ViewData["BloodSugarsBefore"] as string;
     var bloodSugarsAfter = ViewData["BloodSugarsAfter"] as string;
     var exercises = ViewData["Exercises"] as string;
@@ -11,164 +22,158 @@
 
 }
 
-    <body class="bg-dark">
-        <h1>@ViewData["Title"]</h1>
+<body class="bg-dark">
+    <h1>@ViewData["Title"]</h1>
 
-        <div>
-            <input type="hidden" id="bloodSugarsBefore" value="@bloodSugarsBefore" />
-            <input type="hidden" id="bloodSugarsAfter" value="@bloodSugarsAfter" />
-            <input type="hidden" id="exercises" value="@exercises" />
-            <input type="hidden" id="carbs" value="@carbs" />
+    <div>
+        <input type="hidden" id="bloodSugarsBefore" value="@bloodSugarsBefore" />
+        <input type="hidden" id="bloodSugarsAfter" value="@bloodSugarsAfter" />
+        <input type="hidden" id="exercises" value="@exercises" />
+        <input type="hidden" id="carbs" value="@carbs" />
 
-            <div class="float-left"><a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a></div>
-            <div class="float-right"><input type="checkbox" data-onstyle="success" data-offstyle="danger" onchange="toggle()" data-toggle="toggle" data-off="Graphs Off" data-on="Graphs On" id="toggler" /></div>
-        </div>
+        <div class="float-left"><a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to Dashboard</a></div>
+        <div class="float-right"><input type="checkbox" data-onstyle="success" data-offstyle="danger" onchange="toggle()" data-toggle="toggle" data-off="Graphs Off" data-on="Graphs On" id="toggler" /></div>
+    </div>
 
-        <br />
-            <br />
-            <div id="tables">
-                @if (Model.PatientBloodSugars.Count > 0)
-                {
-                    <h2>Blood Sugars</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Date and Time
-                                </th>
-                                <th>
-                                    Level Before
-                                </th>
-                                <th>
-                                    Level After
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.PatientBloodSugars)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
-                                    </td>
-                                    <td>
-                                        @item.LevelBefore
-                                    </td>
-                                    <td>
-                                        @item.LevelAfter
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="text-center">No Blood Sugar Data</div>
-                }
-                <br />
-                @if (Model.PatientCarbohydrates.Count > 0)
-                {
-                    <h2>Carbs</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Date and Time
-                                </th>
-                                <th>
-                                    Food Carbs
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.PatientCarbohydrates)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
-                                    </td>
-                                    <td>
-                                        @item.FoodCarbs
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="text-center">No Carbohydrate Data</div>
-                }
-                <br />
-                @if (Model.PatientExercises.Count > 0)
-                {
-                    <h2>Exercises</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Date and Time
-                                </th>
-                                <th>
-                                    Hours Exercised
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.PatientExercises)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
-                                    </td>
-                                    <td>
-                                        @item.HoursExercised
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <div class="text-center">No Exercise Data</div>
-                }
-            </div>
-
-            <div id="charts" style="display: none">
-                @if (Model.PatientBloodSugars.Count > 0)
-                {
-                    <canvas id="bloodChart" width="400" style="height: 25%"></canvas>
-                }
-                else
-                {
-                    <div class="text-center">No Blood Sugar Data</div>
-                }
-                <br />
-                @if (Model.PatientCarbohydrates.Count > 0)
-                {
-                    <canvas id="carbChart" width="400" style="height: 25%"></canvas>
-                }
-                else
-                {
-                    <div class="text-center">No Carbohydrate Data</div>
-                }
-                <br />
-                @if (Model.PatientExercises.Count > 0)
-                {
-                    <canvas id="exerciseChart" width="400" style="height: 25%"></canvas>
-                }
-                else
-                {
-                    <div class="text-center">No Exercise Data</div>
-                }
-            </div>
-
-        @section Scripts
+    <br />
+    <br />
+    <div id="tables">
+        @if (Model.PatientBloodSugars.Count > 0)
         {
-            <script src="~/js/Chart.bundle.js"></script>
-            <script src="~/js/ChartBuilder.js"></script>
+            <h2>Blood Sugars</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Date and Time
+                        </th>
+                        <th>
+                            Level
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PatientBloodSugars)
+                    {
+                        <tr>
+                            <td>
+                                @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
+                            </td>
+                            <td>
+                                @item.Level
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
-    </body>
+        else
+        {
+            <div class="text-center">No Blood Sugar Data</div>
+        }
+        <br />
+        @if (Model.PatientCarbohydrates.Count > 0)
+        {
+            <h2>Carbs</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Date and Time
+                        </th>
+                        <th>
+                            Food Carbs
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PatientCarbohydrates)
+                    {
+                        <tr>
+                            <td>
+                                @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
+                            </td>
+                            <td>
+                                @item.FoodCarbs
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="text-center">No Carbohydrate Data</div>
+        }
+        <br />
+        @if (Model.PatientExercises.Count > 0)
+        {
+            <h2>Exercises</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Date and Time
+                        </th>
+                        <th>
+                            Hours Exercised
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PatientExercises)
+                    {
+                        <tr>
+                            <td>
+                                @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
+                            </td>
+                            <td>
+                                @item.HoursExercised
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="text-center">No Exercise Data</div>
+        }
+    </div>
+
+    <div id="charts" style="display: none">
+        @if (Model.PatientBloodSugars.Count > 0)
+        {
+            <canvas id="bloodChart" width="400" style="height: 25%"></canvas>
+        }
+        else
+        {
+            <div class="text-center">No Blood Sugar Data</div>
+        }
+        <br />
+        @if (Model.PatientCarbohydrates.Count > 0)
+        {
+            <canvas id="carbChart" width="400" style="height: 25%"></canvas>
+        }
+        else
+        {
+            <div class="text-center">No Carbohydrate Data</div>
+        }
+        <br />
+        @if (Model.PatientExercises.Count > 0)
+        {
+            <canvas id="exerciseChart" width="400" style="height: 25%"></canvas>
+        }
+        else
+        {
+            <div class="text-center">No Exercise Data</div>
+        }
+    </div>
+
+    @section Scripts
+        {
+        <script src="~/js/Chart.bundle.js"></script>
+        <script src="~/js/ChartBuilder.js"></script>
+    }
+</body>
 

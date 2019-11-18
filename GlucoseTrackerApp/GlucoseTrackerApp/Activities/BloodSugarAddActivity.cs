@@ -12,15 +12,16 @@ using GlucoseTrackerApp.Services;
 using Android.Widget;
 using Android.Content;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GlucoseTrackerApp
 {
     [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.Design.NoActionBar")]
     public class BloodSugarAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private AppCompatEditText LevelBefore;
-        private AppCompatEditText LevelAfter;
+        private AppCompatEditText Level;
         private AppCompatEditText MealName;
+        private AppCompatSpinner ReadingType;
         private string _token;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -30,9 +31,12 @@ namespace GlucoseTrackerApp
 
             _token = Intent.GetStringExtra("token");
 
-            LevelBefore= FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_before_reading);
-            LevelAfter = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_after_reading);
+            Level = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_reading);
             MealName = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_meal_name);
+            ReadingType = FindViewById<AppCompatSpinner>(Resource.Id.blood_sugar_reading_type);
+
+            ArrayAdapter<ReadingType> adapter = new ArrayAdapter<ReadingType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (Enum.GetValues(typeof(ReadingType)).Cast<ReadingType>().ToArray()));
+            ReadingType.Adapter = adapter;
 
             AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
 
@@ -79,9 +83,9 @@ namespace GlucoseTrackerApp
 
         public async Task<string> OnBloodSugarAddButtonPressed()
         {
-            if (!String.IsNullOrEmpty(LevelBefore.Text) && !String.IsNullOrEmpty(LevelAfter.Text) && !String.IsNullOrEmpty(MealName.Text))
+            if (!String.IsNullOrEmpty(Level.Text) && !String.IsNullOrEmpty(MealName.Text))
             {
-                if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0 && !String.IsNullOrEmpty(MealName.Text))
+                if ( float.Parse(Level.Text) <= 1000 && float.Parse(Level.Text) > 0 && !String.IsNullOrEmpty(MealName.Text))
                 {
                     DateTime timeNow = DateTime.Now;
                     RestService restAPI = new RestService(_token);
@@ -101,8 +105,8 @@ namespace GlucoseTrackerApp
                     PatientBloodSugar patientBlood = new PatientBloodSugar()
                     {
                         UserId = patient.UserId,
-                        LevelBefore = float.Parse(LevelBefore.Text),
-                        LevelAfter = float.Parse(LevelAfter.Text),
+                        Level = float.Parse(Level.Text),
+                        ReadingType = ReadingType.SelectedItem. Cast<ReadingType>(),
                         TimeOfDay = timeNow
                     };
 

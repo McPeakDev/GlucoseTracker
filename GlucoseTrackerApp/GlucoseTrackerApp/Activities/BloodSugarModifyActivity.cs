@@ -23,8 +23,8 @@ namespace GlucoseTrackerApp
     public class BloodSugarModifyActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private AppCompatSpinner Readings;
-        private AppCompatEditText LevelBefore;
-        private AppCompatEditText LevelAfter;
+        private AppCompatEditText TopField;
+        private AppCompatEditText Level;
         private AppCompatEditText MealName;
 
         RestService _restAPI;
@@ -39,20 +39,19 @@ namespace GlucoseTrackerApp
             _restAPI = new RestService(_token);
 
             Readings = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
-            LevelBefore = FindViewById<AppCompatEditText>(Resource.Id.top_field);
-            LevelAfter = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
+            TopField = FindViewById<AppCompatEditText>(Resource.Id.top_field);
+            Level = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
             MealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
 
             AppCompatButton bloodSugarEditButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
             AppCompatButton bloodSugarDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
 
 
-            LevelBefore.Hint = "Reading Before";
-            LevelAfter.Hint = "Reading After";
+            Level.Hint = "Reading";
             MealName.Hint = "Meal Name";
 
-            LevelBefore.Visibility = ViewStates.Gone;
-            LevelAfter.Visibility = ViewStates.Gone;
+            TopField.Visibility = ViewStates.Gone;
+            Level.Visibility = ViewStates.Gone;
             MealName.Visibility = ViewStates.Gone;
 
             bloodSugarEditButton.Click += async delegate
@@ -100,14 +99,12 @@ namespace GlucoseTrackerApp
 
             Readings.ItemSelected += delegate
             {
-                LevelBefore.Visibility = ViewStates.Visible;
-                LevelAfter.Visibility = ViewStates.Visible;
+                Level.Visibility = ViewStates.Visible;
                 MealName.Visibility = ViewStates.Visible;
 
                 PatientBloodSugar bs = Readings.SelectedItem.Cast<PatientBloodSugar>();
 
-                LevelBefore.Text = bs.LevelBefore.ToString();
-                LevelAfter.Text = bs.LevelAfter.ToString();
+                Level.Text = bs.Level.ToString();
                 MealName.Text = bs.Meal.FoodName;
 
             };
@@ -138,9 +135,9 @@ namespace GlucoseTrackerApp
 
         public async Task<string> OnBloodSugarEditButtonPressed()
         {
-            if (!String.IsNullOrEmpty(LevelBefore.Text) && !String.IsNullOrEmpty(LevelAfter.Text) && !String.IsNullOrEmpty(MealName.Text))
+            if (!String.IsNullOrEmpty(Level.Text) && !String.IsNullOrEmpty(MealName.Text))
             { 
-                if (float.Parse(LevelBefore.Text) <= 1000 && float.Parse(LevelAfter.Text) <= 1000 && float.Parse(LevelBefore.Text) > 0 && float.Parse(LevelAfter.Text) > 0)
+                if (float.Parse(Level.Text) <= 1000 && float.Parse(Level.Text) > 0)
                 {
                     PatientData patientData = new PatientData();
                     Patient patient = await _restAPI.ReadPatientAsync();
@@ -149,8 +146,7 @@ namespace GlucoseTrackerApp
                     {
                         BloodId = Readings.SelectedItem.Cast<PatientBloodSugar>().BloodId,
                         UserId = patient.UserId,
-                        LevelBefore = float.Parse(LevelBefore.Text),
-                        LevelAfter = float.Parse(LevelAfter.Text),
+                        Level = float.Parse(Level.Text),
                         TimeOfDay = Readings.SelectedItem.Cast<PatientBloodSugar>().TimeOfDay
                     };
 
