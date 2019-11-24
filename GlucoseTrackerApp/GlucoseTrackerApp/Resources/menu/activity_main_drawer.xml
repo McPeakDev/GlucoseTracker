@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the navigation pannel of the app used for navigating between pages -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
@@ -8,7 +9,7 @@
              android:id="@+id/gp_one">
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_assignment_black_18dp"
             android:title="Dashboard" />
         <item
               android:id="@+id/nav_token"

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Layout for the main activity which serves as
+    a login page for the app. 
+-->
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,6 +13,9 @@
 	tools:showIn="@layout/app_bar_main"
 	android:minWidth="25px"
 	android:minHeight="25px">
+    <!-- 
+        Textfields for email and password
+    -->
 	<EditText
 		android:inputType="textEmailAddress"
 		android:layout_width="fill_parent"
@@ -45,6 +52,7 @@
 		android:layout_marginTop = "10px"
 		android:layout_below="@id/auto_email"
 		android:id="@+id/login_button"/>
+
 	<Button
 		android:text="Register"
 		android:layout_width="fill_parent"

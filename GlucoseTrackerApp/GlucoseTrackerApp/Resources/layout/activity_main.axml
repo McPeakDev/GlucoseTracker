@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+    <!-- 
+        Final wrapper for main content layout
+        applies  linear layout to content and 
+        app bar declared in included files
+        and declares this as the starting 
+        page for the application
+    -->
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
