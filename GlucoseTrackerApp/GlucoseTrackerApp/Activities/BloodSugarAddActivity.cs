@@ -106,7 +106,7 @@ namespace GlucoseTrackerApp
                     {
                         UserId = patient.UserId,
                         Level = float.Parse(Level.Text),
-                        ReadingType = ReadingType.SelectedItem. Cast<ReadingType>(),
+                       // ReadingType = ReadingType.SelectedItem.Cast<ReadingType>(),    
                         TimeOfDay = timeNow
                     };
 

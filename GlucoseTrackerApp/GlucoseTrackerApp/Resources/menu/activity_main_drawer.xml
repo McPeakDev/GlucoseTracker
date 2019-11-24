@@ -9,15 +9,15 @@
              android:id="@+id/gp_one">
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@drawable/baseline_assignment_black_18dp"
+            android:icon="@drawable/baseline_timeline_black_18dp"
             android:title="Dashboard" />
         <item
               android:id="@+id/nav_token"
-              android:icon="@drawable/ic_menu_slideshow"
-              android:title="Token" />
+              android:icon="@drawable/baseline_how_to_reg_black_18dp"
+              android:title="Code For Doctor" />
         <item
               android:id="@+id/nav_logout"
-              android:icon="@drawable/ic_menu_slideshow"
+              android:icon="@drawable/baseline_exit_to_app_black_18dp"
               android:title="Logout" />
       </group>
     </menu>
@@ -28,11 +28,11 @@
              android:id="@+id/gp_two">
         <item
             android:id="@+id/nav_bloodsugar"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_opacity_black_18dp"
             android:title="Add Blood Sugar Reading" />
         <item
             android:id="@+id/nav_bloodsugar_modify"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_note_add_black_18dp"
             android:title="Modify BloodSugar Readings" />
       </group>
     </menu>
@@ -43,11 +43,11 @@
              android:id="@+id/gp_three">
         <item
             android:id="@+id/nav_exercise"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_directions_run_black_18dp"
             android:title="Add Exercise Entry" />
         <item
             android:id="@+id/nav_exercise_modify"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_note_add_black_18dp"
             android:title="Modify Exercise Entries" />
       </group>
     </menu>
@@ -58,11 +58,11 @@
              android:id="@+id/gp_four">
         <item
             android:id="@+id/nav_carbs"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_restaurant_black_18dp"
             android:title="Add Carb Reading" />
         <item
             android:id="@+id/nav_carbs_modify"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_note_add_black_18dp"
             android:title="Modify Carb Reading" />
       </group>
     </menu>
