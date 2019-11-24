@@ -1,4 +1,16 @@
-﻿using System;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
+//	File Name:         BloodSugarAddActivity.cs
+//	Description:       Methods for adding blood sugar readings for the mobile app
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+using System;
 using Android.App;
 using Android.OS;
 using Android.Support.Design.Widget;
