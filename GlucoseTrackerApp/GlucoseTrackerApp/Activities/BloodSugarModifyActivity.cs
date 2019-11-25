@@ -33,37 +33,32 @@ namespace GlucoseTrackerApp
     [Activity(Label = "BloodSugarModifyActivity")]
     public class BloodSugarModifyActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private AppCompatSpinner Readings;
-        private AppCompatEditText TopField;
-        private AppCompatEditText Level;
-        private AppCompatEditText MealName;
-
-        RestService _restAPI;
-        private string _token;
+        private readonly RestService _restService = RestService.GetRestService();
+        private AppCompatSpinner _readings;
+        private AppCompatEditText _topField;
+        private AppCompatEditText _level;
+        private AppCompatEditText _mealName;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_modify);
 
-            _token = Intent.GetStringExtra("token");
-            _restAPI = new RestService(_token);
-
-            Readings = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
-            TopField = FindViewById<AppCompatEditText>(Resource.Id.top_field);
-            Level = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
-            MealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
+            _readings = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
+            _topField = FindViewById<AppCompatEditText>(Resource.Id.top_field);
+            _level = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
+            _mealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
 
             AppCompatButton bloodSugarEditButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
             AppCompatButton bloodSugarDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
 
 
-            Level.Hint = "Reading";
-            MealName.Hint = "Meal Name";
+            _level.Hint = "Reading";
+            _mealName.Hint = "Meal Name";
 
-            TopField.Visibility = ViewStates.Gone;
-            Level.Visibility = ViewStates.Gone;
-            MealName.Visibility = ViewStates.Gone;
+            _topField.Visibility = ViewStates.Gone;
+            _level.Visibility = ViewStates.Gone;
+            _mealName.Visibility = ViewStates.Gone;
 
             bloodSugarEditButton.Click += async delegate
             {
@@ -108,15 +103,15 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            Readings.ItemSelected += delegate
+            _readings.ItemSelected += delegate
             {
-                Level.Visibility = ViewStates.Visible;
-                MealName.Visibility = ViewStates.Visible;
+                _level.Visibility = ViewStates.Visible;
+                _mealName.Visibility = ViewStates.Visible;
 
-                PatientBloodSugar bs = Readings.SelectedItem.Cast<PatientBloodSugar>();
+                PatientBloodSugar bs = _readings.SelectedItem.Cast<PatientBloodSugar>();
 
-                Level.Text = bs.Level.ToString();
-                MealName.Text = bs.Meal.FoodName;
+                _level.Text = bs.Level.ToString();
+                _mealName.Text = bs.Meal.FoodName;
 
             };
 
@@ -128,12 +123,12 @@ namespace GlucoseTrackerApp
         {
             base.OnStart();
 
-            PatientData patientData = await _restAPI.ReadPatientDataAsync();
+            PatientData patientData = await _restService.ReadPatientDataAsync();
 
             if (!(patientData is null))
             {
                 ArrayAdapter<PatientBloodSugar> adapter = new ArrayAdapter<PatientBloodSugar>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientBloodSugars.Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(bs => bs.TimeOfDay.ToLocalTime()).ToList());
-                Readings.Adapter = adapter;
+                _readings.Adapter = adapter;
             }
             else
             {
@@ -146,26 +141,26 @@ namespace GlucoseTrackerApp
 
         public async Task<string> OnBloodSugarEditButtonPressed()
         {
-            if (!String.IsNullOrEmpty(Level.Text) && !String.IsNullOrEmpty(MealName.Text))
+            if (!String.IsNullOrEmpty(_level.Text) && !String.IsNullOrEmpty(_mealName.Text))
             { 
-                if (float.Parse(Level.Text) <= 1000 && float.Parse(Level.Text) > 0)
+                if (float.Parse(_level.Text) <= 1000 && float.Parse(_level.Text) > 0)
                 {
                     PatientData patientData = new PatientData();
-                    Patient patient = await _restAPI.ReadPatientAsync();
+                    Patient patient = await _restService.ReadPatientAsync();
 
                     PatientBloodSugar patientBlood = new PatientBloodSugar()
                     {
-                        BloodId = Readings.SelectedItem.Cast<PatientBloodSugar>().BloodId,
+                        BloodId = _readings.SelectedItem.Cast<PatientBloodSugar>().BloodId,
                         UserId = patient.UserId,
-                        Level = float.Parse(Level.Text),
-                        TimeOfDay = Readings.SelectedItem.Cast<PatientBloodSugar>().TimeOfDay
+                        Level = float.Parse(_level.Text),
+                        TimeOfDay = _readings.SelectedItem.Cast<PatientBloodSugar>().TimeOfDay
                     };
 
                     MealItem mealItem;
 
                     try
                     {
-                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
 
                         if (!(mealItem is null))
                         {
@@ -173,10 +168,10 @@ namespace GlucoseTrackerApp
                         }
                         else
                         {
-                            int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
-                            int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
+                            int fdcId = await _restService.FindMealDataAsync(_mealName.Text);
+                            int carbs = (int)await _restService.ReadMealDataAsync(fdcId);
 
-                            var words = MealName.Text.Split(" ");
+                            var words = _mealName.Text.Split(" ");
 
                             string mealName;
 
@@ -195,9 +190,9 @@ namespace GlucoseTrackerApp
                                 FoodName = mealName
                             };
 
-                            await _restAPI.CreateMealItemAsync(mealItem);
+                            await _restService.CreateMealItemAsync(mealItem);
 
-                            mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                            mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
                             patientBlood.MealId = mealItem.MealId;
                         }
                     }
@@ -210,7 +205,7 @@ namespace GlucoseTrackerApp
 
                     try
                     {
-                        _restAPI.UpdatePatientDataAsync(patientData);
+                        _restService.UpdatePatientDataAsync(patientData);
                     }
                     catch (Exception)
                     {
@@ -234,13 +229,13 @@ namespace GlucoseTrackerApp
 
         public string OnBloodSugarDeleteButtonPressed()
         {
-            if(!(Readings.SelectedItem is null))
+            if(!(_readings.SelectedItem is null))
             {
                 PatientData patientData = new PatientData();
 
-                patientData.PatientBloodSugars.Add(Readings.SelectedItem.Cast<PatientBloodSugar>());
+                patientData.PatientBloodSugars.Add(_readings.SelectedItem.Cast<PatientBloodSugar>());
 
-                _restAPI.DeletePatientDataAsync(patientData);
+                _restService.DeletePatientDataAsync(patientData);
 
                 return "Success";
 
@@ -270,42 +265,36 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_exercise_modify)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs_modify)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
@@ -320,7 +309,7 @@ namespace GlucoseTrackerApp
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
+                alert.SetMessage(_restService.UserToken.Substring(_restService.UserToken.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing

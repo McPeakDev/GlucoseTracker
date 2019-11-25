@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.IO;
+using GlucoseAPI.Models.Entities;
 
 namespace GlucoseTrackerApp.Services
 {
@@ -86,9 +87,5 @@ namespace GlucoseTrackerApp.Services
             return null;
         }
 
-        public static void DeleteFile()
-        {
-            File.Delete(_filename);
-        }
     }
 }

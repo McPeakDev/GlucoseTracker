@@ -33,36 +33,32 @@ namespace GlucoseTrackerApp
     [Activity(Label = "BloodSugarModifyActivity")]
     public class CarbAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private AppCompatSpinner Carbs;
-        private AppCompatEditText FoodCarbs;
-        private AppCompatEditText MiddleField;
-        private AppCompatEditText MealName;
+        private readonly RestService _restService = RestService.GetRestService();
 
-        RestService _restAPI;
-        private string _token;
+        private AppCompatSpinner _carbs;
+        private AppCompatEditText _foodCarbs;
+        private AppCompatEditText _middleField;
+        private AppCompatEditText _mealName;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_modify);
 
-            _token = Intent.GetStringExtra("token");
-            _restAPI = new RestService(_token);
+            _carbs = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
+            _foodCarbs = FindViewById<AppCompatEditText>(Resource.Id.top_field);
+            _middleField = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
+            _mealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
 
-            Carbs = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
-            FoodCarbs = FindViewById<AppCompatEditText>(Resource.Id.top_field);
-            MiddleField = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
-            MealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
-
-            Carbs.Visibility = ViewStates.Gone;
-            MiddleField.Visibility = ViewStates.Gone;
+            _carbs.Visibility = ViewStates.Gone;
+            _middleField.Visibility = ViewStates.Gone;
 
             AppCompatButton carbCreateButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
             AppCompatButton carbDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
 
 
-            FoodCarbs.Hint = "Food Carbs";
-            MealName.Hint = "Meal Name";
+            _foodCarbs.Hint = "Food Carbs";
+            _mealName.Hint = "Meal Name";
 
             carbCreateButton.Text = "Add Carb Reading";
             carbDeleteButton.Visibility = ViewStates.Gone;
@@ -110,9 +106,9 @@ namespace GlucoseTrackerApp
 
         public async Task<string> OnCarbCreateButtonPressed()
         {
-            if(!String.IsNullOrEmpty(FoodCarbs.Text))
+            if(!String.IsNullOrEmpty(_foodCarbs.Text))
             {
-                if (int.Parse(FoodCarbs.Text) > 0 && int.Parse(FoodCarbs.Text) <= 1000)
+                if (int.Parse(_foodCarbs.Text) > 0 && int.Parse(_foodCarbs.Text) <= 1000)
                     {
                     DateTime timeNow = DateTime.Now.ToLocalTime();
 
@@ -121,7 +117,7 @@ namespace GlucoseTrackerApp
 
                     try
                     {
-                        patient = await _restAPI.ReadPatientAsync();
+                        patient = await _restService.ReadPatientAsync();
                     }
                     catch (Exception)
                     {
@@ -131,7 +127,7 @@ namespace GlucoseTrackerApp
                     PatientCarbohydrate patientCarb = new PatientCarbohydrate()
                     {
                         UserId = patient.UserId,
-                        FoodCarbs = int.Parse(FoodCarbs.Text),
+                        FoodCarbs = int.Parse(_foodCarbs.Text),
                         TimeOfDay = timeNow
                     };
 
@@ -140,7 +136,7 @@ namespace GlucoseTrackerApp
 
                     try
                     {
-                        mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
 
                         if (!(mealItem is null))
                         {
@@ -148,10 +144,10 @@ namespace GlucoseTrackerApp
                         }
                         else
                         {
-                            int fdcId = await _restAPI.FindMealDataAsync(MealName.Text);
-                            int carbs = (int)await _restAPI.ReadMealDataAsync(fdcId);
+                            int fdcId = await _restService.FindMealDataAsync(_mealName.Text);
+                            int carbs = (int)await _restService.ReadMealDataAsync(fdcId);
 
-                            var words = MealName.Text.Split(" ");
+                            var words = _mealName.Text.Split(" ");
 
                             string mealName;
 
@@ -170,9 +166,9 @@ namespace GlucoseTrackerApp
                                 FoodName = mealName
                             };
 
-                            await _restAPI.CreateMealItemAsync(mealItem);
+                            await _restService.CreateMealItemAsync(mealItem);
 
-                            mealItem = await _restAPI.ReadMealItemAsync(MealName.Text);
+                            mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
                             patientCarb.MealId = mealItem.MealId;
                         }
                     }
@@ -185,7 +181,7 @@ namespace GlucoseTrackerApp
 
                     try
                     {
-                        _restAPI.CreatePatientData(patientData);
+                        _restService.CreatePatientData(patientData);
                     }
                     catch(Exception)
                     {
@@ -215,42 +211,36 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_exercise_modify)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs_modify)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
@@ -265,7 +255,7 @@ namespace GlucoseTrackerApp
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
+                alert.SetMessage(_restService.UserToken.Substring(_restService.UserToken.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing

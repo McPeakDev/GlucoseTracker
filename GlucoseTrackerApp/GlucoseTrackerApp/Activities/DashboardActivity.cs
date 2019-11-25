@@ -38,7 +38,7 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Dashboard", Theme = "@style/Theme.Design.NoActionBar")]
     public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private RestService _restAPI;
+        private readonly RestService _restService = RestService.GetRestService();
         private string _token;
         private Android.Support.V7.Widget.Toolbar _toolbar;
         private ChartView _bloodChart;
@@ -74,9 +74,9 @@ namespace GlucoseTrackerApp
 
             _token = Intent.GetStringExtra("token");
 
-            _restAPI = new RestService(_token);
+            _restService.UserToken = _token;
 
-            Patient patient = await _restAPI.ReadPatientAsync();
+            Patient patient = await _restService.ReadPatientAsync();
 
             if (!(patient is null))
             {
@@ -118,7 +118,7 @@ namespace GlucoseTrackerApp
 
         private async Task<string> PopulateCharts()
         {
-            Patient patient = await _restAPI.ReadPatientAsync();
+            Patient patient = await _restService.ReadPatientAsync();
 
             if(patient is null)
             {

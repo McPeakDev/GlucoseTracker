@@ -33,26 +33,27 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Register Patient", Theme = "@style/Theme.Design.NoActionBar")]
     public class RegisterActivity : AppCompatActivity
     {
-        private AppCompatEditText Email { get; set; }
-        private AppCompatEditText Password { get; set; }
-        private AppCompatEditText FirstName { get; set; }
-        private AppCompatEditText MiddleName { get; set; }
-        private AppCompatEditText LastName { get; set; }
-        private AppCompatEditText PhoneNumber { get; set; }
-        private AppCompatEditText DoctorToken { get; set; }
+        private readonly RestService _restService = RestService.GetRestService();
+        private AppCompatEditText _email;
+        private AppCompatEditText _password;
+        private AppCompatEditText _firstName;
+        private AppCompatEditText _middleName;
+        private AppCompatEditText _lastName;
+        private AppCompatEditText _phoneNumber;
+        private AppCompatEditText _doctorToken; 
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_register);
 
-            Email = FindViewById<AppCompatEditText>(Resource.Id.email);
-            Password = FindViewById<AppCompatEditText>(Resource.Id.password);
-            FirstName = FindViewById<AppCompatEditText>(Resource.Id.first_name);
-            MiddleName = FindViewById<AppCompatEditText>(Resource.Id.middle_name);
-            LastName = FindViewById<AppCompatEditText>(Resource.Id.last_name);
-            PhoneNumber = FindViewById<AppCompatEditText>(Resource.Id.phone_number);
-            DoctorToken = FindViewById<AppCompatEditText>(Resource.Id.doctor_token);
+            _email = FindViewById<AppCompatEditText>(Resource.Id.email);
+            _password = FindViewById<AppCompatEditText>(Resource.Id.password);
+            _firstName = FindViewById<AppCompatEditText>(Resource.Id.first_name);
+            _middleName = FindViewById<AppCompatEditText>(Resource.Id.middle_name);
+            _lastName = FindViewById<AppCompatEditText>(Resource.Id.last_name);
+            _phoneNumber = FindViewById<AppCompatEditText>(Resource.Id.phone_number);
+            _doctorToken = FindViewById<AppCompatEditText>(Resource.Id.doctor_token);
 
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
@@ -73,63 +74,61 @@ namespace GlucoseTrackerApp
 
         public async Task<string> OnRegisterButtonPressedAsync()
         {
-            if (!String.IsNullOrEmpty(Email.Text) && !String.IsNullOrEmpty(Password.Text) && !String.IsNullOrEmpty(FirstName.Text) && !String.IsNullOrEmpty(LastName.Text) && !String.IsNullOrEmpty(PhoneNumber.Text))
+            if (!String.IsNullOrEmpty(_email.Text) && !String.IsNullOrEmpty(_password.Text) && !String.IsNullOrEmpty(_firstName.Text) && !String.IsNullOrEmpty(_lastName.Text) && !String.IsNullOrEmpty(_phoneNumber.Text))
             {
-                RestService restAPI = new RestService();
-
                 Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
                 Regex passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&]{8,}$");
                 Regex phoneRegex = new Regex(@"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$");
 
-                if (!emailRegex.IsMatch(Email.Text.Trim()))
+                if (!emailRegex.IsMatch(_email.Text.Trim()))
                 {
-                    Password.Text = String.Empty;
+                    _password.Text = String.Empty;
                     return "Must match the form of example@example.com";
 
                 }
 
-                if (!passwordRegex.IsMatch(Password.Text.Trim()))
+                if (!passwordRegex.IsMatch(_password.Text.Trim()))
                 {
-                    Password.Text = String.Empty;
+                    _password.Text = String.Empty;
                     return "Must be at least 8 characters long, 1 uppercase letter, 1 lowercase letter, 1 special character, and 1 number";
                 }
 
-                if (PhoneNumber.Text.Length != 10)
+                if (_phoneNumber.Text.Length != 10)
                 {
-                    if (!phoneRegex.IsMatch(PhoneNumber.Text.Trim()))
+                    if (!phoneRegex.IsMatch(_phoneNumber.Text.Trim()))
                     {
-                        Password.Text = String.Empty;
+                        _password.Text = String.Empty;
                         return "Invalid Phone Number";
                     }
-                    Password.Text = String.Empty;
+                    _password.Text = String.Empty;
                     return "Phone Number must be 10 digits long";
                 }
 
                 Patient patient = new Patient()
                 {
-                    Email = Email.Text.Trim(),
-                    FirstName = FirstName.Text.Trim(),
-                    LastName = LastName.Text.Trim(),
-                    PhoneNumber = PhoneNumber.Text.Trim(),
+                    Email = _email.Text.Trim(),
+                    FirstName = _firstName.Text.Trim(),
+                    LastName = _lastName.Text.Trim(),
+                    PhoneNumber = _phoneNumber.Text.Trim(),
                 };
 
-                if (!String.IsNullOrEmpty(MiddleName.Text))
+                if (!String.IsNullOrEmpty(_middleName.Text))
                 {
-                    patient.MiddleName = MiddleName.Text.Trim();
+                    patient.MiddleName = _middleName.Text.Trim();
                 }
 
                 PatientCreationBundle patientCreationBundle = new PatientCreationBundle()
                 {
-                    Password = Password.Text.Trim(),
+                    Password = _password.Text.Trim(),
                     Patient = patient
                 };
 
-                if (!String.IsNullOrEmpty(DoctorToken.Text))
+                if (!String.IsNullOrEmpty(_doctorToken.Text))
                 {
-                    patientCreationBundle.DoctorToken = DoctorToken.Text.Trim();
+                    patientCreationBundle.DoctorToken = _doctorToken.Text.Trim();
                 }
 
-                string status = await restAPI.RegisterAsync(patientCreationBundle);
+                string status = await _restService.RegisterAsync(patientCreationBundle);
 
                 if (status is null)
                 {
@@ -141,13 +140,13 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
-                    Password.Text = String.Empty;
+                    _password.Text = String.Empty;
                     return "User Already Exists or Invalid Doctor Token";
                 }
             }
             else
             {
-                Password.Text = String.Empty;
+                _password.Text = String.Empty;
                 return "Form Is Not Filled";
             }
         }

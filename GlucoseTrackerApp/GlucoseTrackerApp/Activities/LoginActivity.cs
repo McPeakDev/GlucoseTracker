@@ -25,10 +25,12 @@ namespace GlucoseTrackerApp
     [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
-        private string Token;
-        private AppCompatEditText Email;
-        private AppCompatEditText Password;
-        private AppCompatCheckBox AutoEmail;
+        //TODO: Rename Vars
+        private readonly RestService _restService = RestService.GetRestService();
+        private string _token;
+        private AppCompatEditText _email;
+        private AppCompatEditText _password;
+        private AppCompatCheckBox _autoEmail;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,16 +38,18 @@ namespace GlucoseTrackerApp
 
             SetContentView(Resource.Layout.activity_main);
 
-            Email = FindViewById<AppCompatEditText>(Resource.Id.email);
-            Password = FindViewById<AppCompatEditText>(Resource.Id.password);
-            AutoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
+            //TODO: Fix View Naming Scheme
+            _email = FindViewById<AppCompatEditText>(Resource.Id.email);
+            _password = FindViewById<AppCompatEditText>(Resource.Id.password);
+            _autoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
 
+            //TODO: Add Check File Exists
             string email = Storage.ReadEmail();
 
             if (!(email is null))
             {
-                Email.Text = email;
-                AutoEmail.Checked = true;
+                _email.Text = email;
+                _autoEmail.Checked = true;
             }
 
             AppCompatButton loginButton = FindViewById<AppCompatButton>(Resource.Id.login_button);
@@ -53,11 +57,11 @@ namespace GlucoseTrackerApp
 
             loginButton.Click += async delegate
             {
-                string status = await OnLoginPressedAsync(Email.Text, Password.Text);
+                string status = await OnLoginPressedAsync(_email.Text, _password.Text);
                 if (status == "Success")
                 {
                     Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-                    dashboardActivity.PutExtra("token", Token);
+                    dashboardActivity.PutExtra("token", _token);
                     StartActivity(dashboardActivity);
                     Finish();
                 }
@@ -94,24 +98,22 @@ namespace GlucoseTrackerApp
             }
             else
             {
-                RestService restAPI = new RestService();
-
                 Credentials loginCreds = new Credentials()
                 {
                     Email = email,
                     Password = password
                 };
 
-                Token = await restAPI.LoginAsync(loginCreds);
+                _token = await _restService.LoginAsync(loginCreds);
 
-                if (Token is null)
+                if (_token is null)
                 {
-                    Password.Text = String.Empty;
+                    _password.Text = String.Empty;
                     return "No Connection";
                 }
-                else if (Token != "Invalid Credentials")
+                else if (_token != "Invalid Credentials")
                 {
-                    if (AutoEmail.Checked)
+                    if (_autoEmail.Checked)
                     {
                         Storage.SaveEmail(email);
                     }
@@ -123,8 +125,8 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
-                    Password.Text = String.Empty;
-                    return "Email / Password Combination Was Invalid. Please Try Again";
+                    _password.Text = String.Empty;
+                    return "_email / _password Combination Was Invalid. Please Try Again";
                 }
 
             }

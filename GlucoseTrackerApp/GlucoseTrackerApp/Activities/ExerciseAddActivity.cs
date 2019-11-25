@@ -32,16 +32,13 @@ namespace GlucoseTrackerApp
     [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar")]
     public class ExerciseAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private AppCompatEditText Hours { get;  set; }
-
-        private string _token;
+        private readonly RestService _restService = RestService.GetRestService();
+        private AppCompatEditText _hours;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_exercise_add);
-
-            _token = Intent.GetStringExtra("token");
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_exercise_add);
             toolbar.Title = "Add a New Exercise Activity";
@@ -56,12 +53,12 @@ namespace GlucoseTrackerApp
             navigationView.SetNavigationItemSelectedListener(this);
 
             AppCompatButton addExerciseButton = FindViewById<AppCompatButton>(Resource.Id.add_exercise_button);
-            Hours = FindViewById<AppCompatEditText>(Resource.Id.exercise_hours);
+            _hours = FindViewById<AppCompatEditText>(Resource.Id.exercise_hours);
 
 
             addExerciseButton.Click += async delegate
             {
-                string status = await OnAddExercisePressed(_token);
+                string status = await OnAddExercisePressed();
                 if (status == "Success")
                 {
                     Finish();
@@ -81,21 +78,20 @@ namespace GlucoseTrackerApp
 
         }
 
-        public async Task<string> OnAddExercisePressed(string token)
+        public async Task<string> OnAddExercisePressed()
         {
-            if (!String.IsNullOrEmpty(Hours.Text))
+            if (!String.IsNullOrEmpty(_hours.Text))
             {
-                if (float.Parse(Hours.Text) > 0 && float.Parse(Hours.Text) <= 4)
+                if (float.Parse(_hours.Text) > 0 && float.Parse(_hours.Text) <= 4)
                 {
                     DateTime timeNow = DateTime.Now.ToLocalTime();
-                    RestService restAPI = new RestService(token);
 
                     PatientData patientData = new PatientData();
                     Patient patient;
 
                     try
                     {
-                        patient = await restAPI.ReadPatientAsync();
+                        patient = await _restService.ReadPatientAsync();
                     }
                     catch (Exception)
                     {
@@ -105,13 +101,13 @@ namespace GlucoseTrackerApp
                     PatientExercise patientExercise = new PatientExercise()
                     {
                         UserId = patient.UserId,
-                        HoursExercised = float.Parse(Hours.Text),
+                        HoursExercised = float.Parse(_hours.Text),
                         TimeOfDay = timeNow
                     };
 
                     patientData.PatientExercises.Add(patientExercise);
 
-                    restAPI.CreatePatientData(patientData);
+                    _restService.CreatePatientData(patientData);
                     
                     return "Success";
                 }
@@ -146,42 +142,36 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_exercise_modify)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
             else if (id == Resource.Id.nav_carbs_modify)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
                 Finish();
             }
@@ -196,7 +186,7 @@ namespace GlucoseTrackerApp
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
+                alert.SetMessage(_restService.UserToken.Substring(_restService.UserToken.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing

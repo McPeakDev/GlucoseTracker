@@ -21,7 +21,7 @@
         android:hint="Reading"
         android:id="@+id/blood_sugar_add_reading"/>
     <EditText
-        android:inputType="text"
+        android:inputType="textS"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft= "15px"

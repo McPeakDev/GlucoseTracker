@@ -10,8 +10,31 @@ using System.Threading;
 
 namespace GlucoseTrackerApp.Services
 {
-    public class RestService
+    public sealed class RestService
     {
+        private string _userToken;
+        public string UserToken 
+        {
+            get
+            {
+                return _userToken;
+            }
+            set
+            {
+                _userToken = value;
+
+                if (_userToken is null)
+                {
+                    _client.DefaultRequestHeaders.Remove("token");
+                }
+                else
+                {
+                    _client.DefaultRequestHeaders.Add("token", _userToken);
+                }
+
+            }
+        }
+        private static readonly RestService _restService = new RestService();
         private readonly HttpClient _client;
         private readonly string  _baseAddress;
         private HttpResponseMessage _response;
@@ -19,19 +42,20 @@ namespace GlucoseTrackerApp.Services
         private CancellationTokenSource _token;
 
         #region Constructors
-        public RestService()
+        private RestService()
         {
             _client = new HttpClient();
             _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
         }
 
-        public RestService(string token)
+        public static RestService GetRestService()
         {
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Add("token", token);
-            _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
-
+            if(!(_restService is null))
+            {
+                return _restService;
+            }
+            return null;
         }
         #endregion
 
@@ -43,7 +67,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Retrive the patients's token
                 StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
@@ -68,7 +92,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent registerContent = new StringContent(JObject.FromObject(patientCreationBundle).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "User/Create/"), registerContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
@@ -87,7 +111,7 @@ namespace GlucoseTrackerApp.Services
             try
             {
                 _token = new CancellationTokenSource();
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
@@ -107,7 +131,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent patientContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 await _client.PutAsync(new Uri(_baseAddress + "User/Update/"), patientContent, _token.Token);
             }
             catch (Exception)
@@ -122,7 +146,7 @@ namespace GlucoseTrackerApp.Services
             {
                 //Serialize the patientCreationBundle and send it to the API.
                 _token = new CancellationTokenSource();
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 await _client.DeleteAsync(new Uri(_baseAddress + "User/Delete/"),_token.Token);
             }
             catch (Exception)
@@ -142,7 +166,7 @@ namespace GlucoseTrackerApp.Services
             try
             {
                 _token = new CancellationTokenSource();
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "User/Read/"), null, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
@@ -165,7 +189,7 @@ namespace GlucoseTrackerApp.Services
 
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent createDataContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
             }
@@ -180,7 +204,7 @@ namespace GlucoseTrackerApp.Services
             try
             {
                 _token = new CancellationTokenSource();
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Read/"), null, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
@@ -200,7 +224,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
             }
@@ -217,7 +241,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent patientContent = new StringContent(JObject.FromObject(patientData).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Delete/"), patientContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
             }
@@ -234,7 +258,7 @@ namespace GlucoseTrackerApp.Services
         {
             _token = new CancellationTokenSource();
             StringContent queryContent = new StringContent("{ \"generalSearchInput\": \"" + $"{query}" + "\" }", Encoding.UTF8, "application/json");
-            _token.CancelAfter(TimeSpan.FromSeconds(5));
+            _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
             _response = await _client.PostAsync(new Uri("https://api.nal.usda.gov/fdc/v1/search?api_key=1l3ujGaRMh4QaOuxKEyqYSwNIDx0dSr9tmKycClk"), queryContent, _token.Token);
             _data = await _response.Content.ReadAsStringAsync();
 
@@ -247,7 +271,7 @@ namespace GlucoseTrackerApp.Services
         public async Task<float> ReadMealDataAsync(int fdcId)
         {
             _token = new CancellationTokenSource();
-            _token.CancelAfter(TimeSpan.FromSeconds(5));
+            _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
             _response = await _client.GetAsync(new Uri($"https://api.nal.usda.gov/fdc/v1/{fdcId}?api_key=1l3ujGaRMh4QaOuxKEyqYSwNIDx0dSr9tmKycClk"), _token.Token);
             _data = await _response.Content.ReadAsStringAsync();
 
@@ -276,7 +300,7 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
                 StringContent mealItemContent = new StringContent(JObject.FromObject(mealItem).ToString(), Encoding.UTF8, "application/json");
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Meal/Create/"), mealItemContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
                 return _data;
@@ -293,7 +317,7 @@ namespace GlucoseTrackerApp.Services
             {
                 _token = new CancellationTokenSource();
                 //Serialize the patientCreationBundle and send it to the API.
-                _token.CancelAfter(TimeSpan.FromSeconds(5));
+                _token.CancelAfter(TimeSpan.FromMilliseconds(1500));
                 _response = await _client.PostAsync(new Uri(_baseAddress + $"Meal/Read?name={query.Replace(" ", "+")}"), null, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
