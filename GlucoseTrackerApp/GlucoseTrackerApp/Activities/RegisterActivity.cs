@@ -1,4 +1,15 @@
-﻿using System;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
+//	File Name:         RegisterActivity.cs
+//	Description:       Methods for users to create a new account with GlucoseTracker
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using Android;
 using Android.App;
 using Android.OS;

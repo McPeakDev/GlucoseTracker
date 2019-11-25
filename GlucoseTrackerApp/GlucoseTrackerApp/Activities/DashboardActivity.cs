@@ -1,4 +1,15 @@
-﻿using System;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
+//	File Name:         DashboardActivity.cs
+//	Description:       creates the dashboard interface for the mobile application. populates charts 
+//	Author:            Zachery Johnson, johnsonzd@etsu.edu
+//  Copyright:         Zachery Johnson, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using Android;
 using Android.App;
 using Android.OS;

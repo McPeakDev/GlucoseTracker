@@ -1,4 +1,15 @@
-﻿using System;
+﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
+//	File Name:         LoginActivity.cs
+//	Description:       Methods for users logging into the GlucoseTrackerApp
+//	Author:            Matthew McPeak, McPeakML@etsu.edu
+//  Copyright:         Matthew McPeak, 2019
+//  Team:              Sour Patch Kids
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
