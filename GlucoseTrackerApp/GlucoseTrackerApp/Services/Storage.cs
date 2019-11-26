@@ -87,5 +87,9 @@ namespace GlucoseTrackerApp.Services
             return null;
         }
 
+        public static void DeleteFile()
+        {
+            File.Delete(_filename);
+        }
     }
 }

@@ -35,7 +35,7 @@ using System.Linq;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "Dashboard", Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity(Label = "Dashboard", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
     public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
@@ -108,9 +108,9 @@ namespace GlucoseTrackerApp
             }
         }
 
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        protected override void OnRestart()
         {
-            base.OnRestoreInstanceState(savedInstanceState);
+            base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
             StartActivity(loginActivity);
             Finish();

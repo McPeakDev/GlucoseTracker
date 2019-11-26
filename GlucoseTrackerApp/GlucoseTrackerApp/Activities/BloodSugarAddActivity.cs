@@ -28,7 +28,7 @@ using System.Linq;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
     public class BloodSugarAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
@@ -83,9 +83,9 @@ namespace GlucoseTrackerApp
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        protected override void OnRestart()
         {
-            base.OnRestoreInstanceState(savedInstanceState);
+            base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
             StartActivity(loginActivity);
             Finish();
@@ -114,8 +114,8 @@ namespace GlucoseTrackerApp
                     PatientBloodSugar patientBlood = new PatientBloodSugar()
                     {
                         UserId = patient.UserId,
-                       // ReadingType = ReadingType.SelectedItem.Cast<ReadingType>(),    
-                        Level = float.Parse(Level.Text),
+                        ReadingType = (ReadingType) (_readingType.SelectedItem as object),    
+                        Level = float.Parse(_level.Text),
                         TimeOfDay = timeNow
                     };
 

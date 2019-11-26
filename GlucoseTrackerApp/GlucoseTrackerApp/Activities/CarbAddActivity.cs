@@ -96,9 +96,9 @@ namespace GlucoseTrackerApp
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        protected override void OnRestart()
         {
-            base.OnRestoreInstanceState(savedInstanceState);
+            base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
             StartActivity(loginActivity);
             Finish();

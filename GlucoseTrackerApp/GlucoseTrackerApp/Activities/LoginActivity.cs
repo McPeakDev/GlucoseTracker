@@ -22,10 +22,9 @@ using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 { 
-    [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.Design.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "Glucose Tracker", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar", MainLauncher = true)]
     public class LoginActivity : AppCompatActivity
     {
-        //TODO: Rename Vars
         private readonly RestService _restService = RestService.GetRestService();
         private string _token;
         private AppCompatEditText _email;
@@ -38,12 +37,10 @@ namespace GlucoseTrackerApp
 
             SetContentView(Resource.Layout.activity_main);
 
-            //TODO: Fix View Naming Scheme
             _email = FindViewById<AppCompatEditText>(Resource.Id.email);
             _password = FindViewById<AppCompatEditText>(Resource.Id.password);
             _autoEmail = FindViewById<AppCompatCheckBox>(Resource.Id.auto_email);
 
-            //TODO: Add Check File Exists
             string email = Storage.ReadEmail();
 
             if (!(email is null))

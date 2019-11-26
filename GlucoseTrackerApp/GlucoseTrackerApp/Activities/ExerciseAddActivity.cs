@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity(Label = "@string/app_name", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
     public class ExerciseAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
@@ -123,9 +123,9 @@ namespace GlucoseTrackerApp
 
         }
 
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        protected override void OnRestart()
         {
-            base.OnRestoreInstanceState(savedInstanceState);
+            base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
             StartActivity(loginActivity);
             Finish();

@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "Register Patient", Theme = "@style/Theme.Design.NoActionBar")]
+    [Activity(Label = "Register Patient", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
     public class RegisterActivity : AppCompatActivity
     {
         private readonly RestService _restService = RestService.GetRestService();
