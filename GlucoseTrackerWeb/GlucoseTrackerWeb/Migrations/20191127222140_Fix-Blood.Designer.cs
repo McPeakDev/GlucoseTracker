@@ -3,14 +3,16 @@ using System;
 using GlucoseAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GlucoseTrackerWeb.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
-    partial class GlucoseTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20191127222140_Fix-Blood")]
+    partial class FixBlood
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

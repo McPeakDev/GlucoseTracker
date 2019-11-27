@@ -54,16 +54,19 @@ namespace GlucoseTrackerApp
 
             loginButton.Click += async delegate
             {
+                loginButton.Enabled = false;
+                registerButton.Enabled = false;
                 string status = await OnLoginPressedAsync(_email.Text, _password.Text);
                 if (status == "Success")
                 {
                     Intent dashboardActivity = new Intent(this, typeof(DashboardActivity));
-                    dashboardActivity.PutExtra("token", _token);
                     StartActivity(dashboardActivity);
                     Finish();
                 }
                 else
                 {
+                    loginButton.Enabled = true;
+                    registerButton.Enabled = true;
                     Toast.MakeText(this, status, ToastLength.Long).Show();
                 }
 
@@ -71,7 +74,11 @@ namespace GlucoseTrackerApp
 
             registerButton.Click += async delegate
             {
+                loginButton.Enabled = false;
+                registerButton.Enabled = false;
                 await Task.Run(OnRegisterPressed);
+                loginButton.Enabled = true;
+                registerButton.Enabled = true;
             };
 
 

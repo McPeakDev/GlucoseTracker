@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Solution/Project:  GlucoseTrackerWeb/GlucoseTrackerWeb
+//	Solution/Project:  GlucoseAPI/GlucoseAPI
 //	File Name:         MealItem.cs
 //	Description:       A Representation of a Meal Item for Glucose Tracker
 //	Author:            Matthew McPeak, McPeakML@etsu.edu
@@ -8,8 +8,6 @@
 //  Team:              Sour Patch Kids
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +21,7 @@ namespace GlucoseAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MealId { get; set; }
+        public MealType MealTime { get; set; }
         public string FoodName { get; set; }
         public int Carbs { get; set; }
     }

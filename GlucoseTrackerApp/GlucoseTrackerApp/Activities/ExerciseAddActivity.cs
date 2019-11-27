@@ -58,20 +58,15 @@ namespace GlucoseTrackerApp
 
             addExerciseButton.Click += async delegate
             {
+                addExerciseButton.Enabled = false;
                 string status = await OnAddExercisePressed();
                 if (status == "Success")
                 {
                     Finish();
                 }
-                else if(status == "No Connection")
-                {
-                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                    StartActivity(loginActivity);
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
-                    Finish();
-                }
                 else
                 {
+                    addExerciseButton.Enabled = true;
                     Toast.MakeText(this, status, ToastLength.Long).Show();
                 }
             };
@@ -127,6 +122,7 @@ namespace GlucoseTrackerApp
         {
             base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
+            _restService.UserToken = null;
             StartActivity(loginActivity);
             Finish();
         }
@@ -153,9 +149,30 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
-                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                StartActivity(bloodSugarActivity);
-                Finish();
+                var alert = new Android.App.AlertDialog.Builder(this);
+
+                alert.SetTitle("Alert");
+                alert.SetMessage("Do you want to add a food item with this?");
+                alert.SetPositiveButton("Yes", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent queryActivity = new Intent(this, typeof(QueryFoodActivity));
+                    queryActivity.PutExtra("BloodSugar", true);
+                    StartActivity(queryActivity);
+                    Finish();
+                });
+
+                alert.SetNegativeButton("No", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
+                    StartActivity(bloodSugarActivity);
+                    Finish();
+                });
+
+                alert.Show();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
@@ -165,7 +182,7 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_carbs)
             {
-                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
+                Intent carbActivity = new Intent(this, typeof(QueryFoodActivity));
                 StartActivity(carbActivity);
                 Finish();
             }
@@ -178,6 +195,7 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_logout)
             {
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                _restService.UserToken = null;
                 StartActivity(loginActivity);
                 Finish();
             }

@@ -1,95 +1,56 @@
 ﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
-//	File Name:         CarbAddActivity.cs
-//	Description:       Methods for creating new carbs for the carb graph
+//	File Name:         BloodSugarAddActivity.cs
+//	Description:       Methods for adding blood sugar readings for the mobile app
 //	Author:            Matthew McPeak, McPeakML@etsu.edu
 //  Copyright:         Matthew McPeak, 2019
 //  Team:              Sour Patch Kids
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Android.Widget;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
+using Android.Widget;
+using Android.Content;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "BloodSugarModifyActivity")]
-    public class CarbAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
+    public class QueryFoodActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
-
-        private AppCompatSpinner _carbs;
-        private AppCompatEditText _foodCarbs;
-        private AppCompatEditText _middleField;
         private AppCompatEditText _mealName;
-        private AppCompatSpinner _mealType;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_modify);
+            SetContentView(Resource.Layout.activity_query_food);
 
-            _carbs = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
-            _foodCarbs = FindViewById<AppCompatEditText>(Resource.Id.top_field);
-            _middleField = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
-            _mealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
-            _mealType = FindViewById<AppCompatSpinner>(Resource.Id.mealtype_spinner);
+            _mealName = FindViewById<AppCompatEditText>(Resource.Id.food_name);
+            AppCompatButton queryFoodButton = FindViewById<AppCompatButton>(Resource.Id.query_food_button);
 
-
-            _foodCarbs.Text = Intent.GetStringExtra("Carbs");
-            _mealName.Text = Intent.GetStringExtra("MealName");
-
-            _carbs.Visibility = ViewStates.Gone;
-            _middleField.Visibility = ViewStates.Gone;
-
-            AppCompatButton carbCreateButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
-            AppCompatButton carbDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
-
-
-            _foodCarbs.Hint = "Food Carbs";
-            _mealName.Hint = "Meal Name";
-
-            carbCreateButton.Text = "Add Carb Reading";
-            carbDeleteButton.Visibility = ViewStates.Gone;
-
-            ArrayAdapter<MealType> adapter = new ArrayAdapter<MealType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (MealType[])Enum.GetValues(typeof(MealType)));
-            _mealType.Adapter = adapter;
-
-
-            carbCreateButton.Click += async delegate
+            queryFoodButton.Click += delegate
             {
-                carbCreateButton.Enabled = false;
-                string status = await OnCarbCreateButtonPressed();
-                if (status == "Success")
-                {
-                    Finish();
-                }
-                else
-                {
-                    carbCreateButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
-                }
+                queryFoodButton.Enabled = false;
+                OnQueryFoodButtonPressed();
+
             };
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
-            toolbar.Title = "Add A Carb Reading";
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_query_food);
+            toolbar.Title = "Find a Food";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -97,7 +58,7 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_modify);
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_query_food);
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
@@ -110,78 +71,73 @@ namespace GlucoseTrackerApp
             Finish();
         }
 
-        public async Task<string> OnCarbCreateButtonPressed()
+        public void OnQueryFoodButtonPressed()
         {
-            if(!String.IsNullOrEmpty(_foodCarbs.Text))
+            var words = _mealName.Text.Split(" ");
+
+            string mealName;
+
+            for (int i = 0; i < words.Length; i++)
             {
-                if (int.Parse(_foodCarbs.Text) > 0 && int.Parse(_foodCarbs.Text) <= 1000)
-                {
-                    DateTime timeNow = DateTime.Now;
+                string word = words[i];
 
-                    PatientData patientData = new PatientData();
-                    Patient patient;
-
-                    try
-                    {
-                        patient = await _restService.ReadPatientAsync();
-                    }
-                    catch (Exception)
-                    {
-                        return "No Connection";
-                    }
-
-                    MealItem mealItem;
-
-                    try
-                    {
-                        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-
-
-                        if (!(mealItem is null))
-                        {
-                        }
-                        else
-                        {
-                            mealItem = new MealItem
-                            {
-                                FoodName = _mealName.Text,
-                                Carbs = Int32.Parse(_foodCarbs.Text),
-                                MealTime = (MealType)Enum.Parse(typeof(MealType), _mealType.SelectedItem.ToString())
-
-                            };
-                            await _restService.CreateMealItemAsync(mealItem);
-                            mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        return "Invalid Food Name";
-                    }
-
-                    PatientCarbohydrate patientCarbohydrate = new PatientCarbohydrate()
-                    {
-                        UserId = patient.UserId,
-                        MealId = mealItem.MealId,
-                        Patient = patient,
-                        TimeOfDay = timeNow,
-                        FoodCarbs = mealItem.Carbs
-                    };
-
-                    patientData.PatientCarbohydrates.Add(patientCarbohydrate);
-
-                    _restService.CreatePatientData(patientData);
-
-                    return "Success";
-                }
-                else
-                {
-                    return "Invalid Range";
-                }
+                words[i] = (word.Substring(0, 1).ToUpper() + word.Substring(1, word.Length - 1).ToLower());
             }
-            else
-            {
-                return "Form Is Not Filled Out";
-            }
+
+            mealName = String.Join(" ", words);
+
+            Intent listActivity = new Intent(this, typeof(FoodListActivity));
+            listActivity.PutExtra("MealName", mealName);
+            listActivity.PutExtra("BloodSugar", Intent.GetBooleanExtra("BloodSugar", false));
+            StartActivity(listActivity);
+            Finish();
+            //MealItem mealItem;
+
+            //try
+            //{
+            //    mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
+
+
+            //    if (!(mealItem is null))
+            //    {
+            //        return mealItem;
+            //    }
+            //    else
+            //    {
+            //        var words = _mealName.Text.Split(" ");
+
+            //        string mealName;
+
+            //        for (int i = 0; i < words.Length; i++)
+            //        {
+            //            string word = words[i];
+
+            //            words[i] = (word.Substring(0, 1).ToUpper() + word.Substring(1, word.Length - 1).ToLower());
+            //        }
+
+            //        mealName = String.Join(" ", words);
+
+            //        var values = await _restService.FindMealDataAsync(mealName);
+
+
+            //        mealItem = new MealItem()
+            //        {
+            //            Carbs = carbs,
+            //            FoodName = mealName
+            //        };
+
+            //        await _restService.CreateMealItemAsync(mealItem);
+
+            //        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    return "Invalid Food Name";
+            //}
+
+
+
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)

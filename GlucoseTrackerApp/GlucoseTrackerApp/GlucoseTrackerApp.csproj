@@ -113,6 +113,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\FoodListActivity.cs" />
+    <Compile Include="Activities\QueryFoodActivity.cs" />
+    <Compile Include="Activities\BloodSugarAddWithFoodActivity.cs" />
     <Compile Include="Activities\CarbAddActivity.cs" />
     <Compile Include="Activities\CarbModifyActivity.cs" />
     <Compile Include="Activities\ExerciseModifyActivity.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Models\Entities\RelatedData\PatientCarbohydrate.cs" />
     <Compile Include="Models\Entities\RelatedData\PatientData.cs" />
     <Compile Include="Models\Entities\RelatedData\PatientExercise.cs" />
+    <Compile Include="Models\Entities\RelatedData\MealType.cs" />
     <Compile Include="Models\Entities\RelatedData\ReadingType.cs" />
     <Compile Include="Models\Entities\Users\Doctor.cs" />
     <Compile Include="Models\Entities\Users\Patient.cs" />
@@ -274,9 +278,6 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\content_blood_sugar_add.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\baseline_assignment_black_18dp.png" />
@@ -454,6 +455,36 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\content_list.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\content_query.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\app_bar_query_food.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_query_food.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\app_bar_list.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_list.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

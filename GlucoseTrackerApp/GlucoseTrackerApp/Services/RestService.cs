@@ -7,6 +7,7 @@ using GlucoseAPI.Models.Entities;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace GlucoseTrackerApp.Services
 {
@@ -45,13 +46,14 @@ namespace GlucoseTrackerApp.Services
         private RestService()
         {
             _client = new HttpClient();
-            _client.Timeout = TimeSpan.FromMilliseconds(1000);
+            _client.Timeout = TimeSpan.FromMilliseconds(3000);
             _baseAddress = "http://glucosetracker.duckdns.org:8080/api/";
 
         }
 
         public static RestService GetRestService()
         {
+
             if(!(_restService is null))
             {
                 return _restService;
@@ -65,13 +67,14 @@ namespace GlucoseTrackerApp.Services
         {
             try
             {
+                await _client.GetAsync(new Uri(_baseAddress) + "Auth/");
                 _token = new CancellationTokenSource();
                 //Retrive the patients's token
                 StringContent loginContent = new StringContent(JObject.FromObject(creds).ToString(), Encoding.UTF8, "application/json");
                 _response = await _client.PostAsync(new Uri(_baseAddress) + "Auth/", loginContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
 
-                _client.DefaultRequestHeaders.Add("token", _data);
+                UserToken = _data;
 
                 //Return the Token
                 return _data;
@@ -256,7 +259,7 @@ namespace GlucoseTrackerApp.Services
         #endregion
 
         #region Query USDA
-        public async Task<int> FindMealDataAsync(string query)
+        public async Task<List<MealItem>> FindMealDataAsync(string query)
         {
             _token = new CancellationTokenSource();
             StringContent queryContent = new StringContent("{ \"generalSearchInput\": \"" + $"{query}" + "\" }", Encoding.UTF8, "application/json");
@@ -264,10 +267,26 @@ namespace GlucoseTrackerApp.Services
             _response = await _client.PostAsync(new Uri("https://api.nal.usda.gov/fdc/v1/search?api_key=1l3ujGaRMh4QaOuxKEyqYSwNIDx0dSr9tmKycClk"), queryContent, _token.Token);
             _data = await _response.Content.ReadAsStringAsync();
 
-            JObject jObject = JObject.Parse(_data);
 
-            int fdcId = (int) jObject.SelectToken("foods[0].fdcId");
-            return fdcId;
+            JObject jObject = JObject.Parse(_data);
+            JArray jArray = jObject.SelectToken("foods") as JArray;
+
+            List<MealItem> meals = new List<MealItem>(jArray.Count);
+
+            foreach (var item in jArray)
+            {
+                var value = await ReadMealDataAsync((int)item.SelectToken("fdcId"));
+                if (value != 0)
+                {
+                    meals.Add(new MealItem
+                    {
+                        FoodName = query,
+                        Carbs = (int)value
+                    });
+                }
+            }
+
+            return meals;
         }
 
         public async Task<float> ReadMealDataAsync(int fdcId)
@@ -281,16 +300,23 @@ namespace GlucoseTrackerApp.Services
 
             JArray nutrients = jObject.SelectToken("foodNutrients") as JArray;
 
-            foreach (var nutrient in nutrients)
+            try
             {
-                string nutrientName = (string)(nutrient.SelectToken("nutrient.name"));
-                if (nutrientName.Contains("Carbohydrate"))
+                foreach (var nutrient in nutrients)
                 {
-                    return ((float)nutrient.SelectToken("amount"));
+                    string nutrientName = (string)(nutrient.SelectToken("nutrient.name"));
+                    if (nutrientName.Contains("Carbohydrate"))
+                    {
+                        return ((float)nutrient.SelectToken("amount"));
+                    }
                 }
-            }
+                return 0.00F;
 
-            return 0.00F;
+            }
+            catch (Exception)
+            {
+                return 0.00F;
+            }
         }
         #endregion
 

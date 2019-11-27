@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using SkiaSharp;
 using Android.Graphics;
 using System.Linq;
+using System.Timers;
 
 namespace GlucoseTrackerApp
 {
@@ -39,12 +40,13 @@ namespace GlucoseTrackerApp
     public class DashboardActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
-        private string _token;
         private Android.Support.V7.Widget.Toolbar _toolbar;
         private ChartView _bloodChart;
         private ChartView _exerciseChart;
         private ChartView _carbChart;
-
+        private TextView _bloodLabel;
+        private TextView _exerciseLabel;
+        private TextView _carbLabel;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -55,6 +57,10 @@ namespace GlucoseTrackerApp
             _bloodChart = FindViewById<ChartView>(Resource.Id.bloodChart);
             _exerciseChart = FindViewById<ChartView>(Resource.Id.exerciseChart);
             _carbChart = FindViewById<ChartView>(Resource.Id.carbChart);
+
+            _bloodLabel = FindViewById<TextView>(Resource.Id.blood_sugar_label);
+            _exerciseLabel = FindViewById<TextView>(Resource.Id.exercise_label);
+            _carbLabel = FindViewById<TextView>(Resource.Id.carb_label);
 
             _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_dashboard);
             SetSupportActionBar(_toolbar);
@@ -72,75 +78,46 @@ namespace GlucoseTrackerApp
         {
             base.OnStart();
 
-            _token = Intent.GetStringExtra("token");
-
-            _restService.UserToken = _token;
-
             Patient patient = await _restService.ReadPatientAsync();
 
             if (!(patient is null))
             {
-                _toolbar.Title = $"Welcome, {patient.LastName}, {patient.FirstName}";
+                _toolbar.Title = $"Welcome, {patient.FirstName} {patient.LastName}";
 
-                string status = await PopulateCharts();
-
-                if (status == "No Connection")
-                {
-                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                    StartActivity(loginActivity);
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
-                    Finish();
-                }
+                PopulateCharts(patient);
             }
         }
 
-        protected async override void OnResume()
+        private string PopulateCharts(Patient patient)
         {
-            base.OnResume();
-            string status = await PopulateCharts();
-            
-            if (status == "No Connection")
-            {
-                Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                StartActivity(loginActivity);
-                Toast.MakeText(this, status, ToastLength.Long).Show();
-                Finish();
-            }
-        }
-
-        protected override void OnRestart()
-        {
-            base.OnRestart();
-            Intent loginActivity = new Intent(this, typeof(LoginActivity));
-            StartActivity(loginActivity);
-            Finish();
-        }
-
-        private async Task<string> PopulateCharts()
-        {
-            Patient patient = await _restService.ReadPatientAsync();
-
-            if(patient is null)
-            {
-                return "No Connection";
-            }
-
             var bloodEntries = new List<ChartEntry>();
             var exerciseEntries = new List<ChartEntry>();
             var carbEntries = new List<ChartEntry>();
 
-            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay.ToLocalTime()).Where(bs => bs.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
-            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay.ToLocalTime()).Where(pc => pc.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
-            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay.ToLocalTime()).Where(pe => pe.TimeOfDay.ToLocalTime().Date == DateTime.Today).ToList();
+            patient.PatientBloodSugars = patient.PatientBloodSugars.OrderBy(bs => bs.TimeOfDay.ToLocalTime()).Where(bs => bs.TimeOfDay.ToLocalTime().Date <= DateTime.Today && bs.TimeOfDay.ToLocalTime().Date >= DateTime.Today.AddDays(-2)).ToList();
+            patient.PatientCarbs = patient.PatientCarbs.OrderBy(pc => pc.TimeOfDay.ToLocalTime()).Where(pc => pc.TimeOfDay.ToLocalTime().Date <= DateTime.Today && pc.TimeOfDay.ToLocalTime().Date >= DateTime.Today.AddDays(-2)).ToList();
+            patient.PatientExercises = patient.PatientExercises.OrderBy(pe => pe.TimeOfDay.ToLocalTime()).Where(pe => pe.TimeOfDay.ToLocalTime().Date <= DateTime.Today && pe.TimeOfDay.ToLocalTime().Date >= DateTime.Today.AddDays(-2)).ToList();
 
             foreach (var bloodSugar in patient.PatientBloodSugars)
             {
-                bloodEntries.Add(new ChartEntry(bloodSugar.Level)
+                if (bloodSugar.Meal != null)
                 {
-                    Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + " " + bloodSugar.TimeOfDay.ToLocalTime().ToShortTimeString(),
-                    ValueLabel = (bloodSugar.Level).ToString(),
-                    Color = SKColors.Maroon
-                });
+                    bloodEntries.Add(new ChartEntry(bloodSugar.Level)
+                    {
+                        Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + $", {bloodSugar.TimeOfDay.ToLocalTime().Day} " + bloodSugar.ReadingType.ToString() + " " + bloodSugar.Meal.MealTime,
+                        ValueLabel = (bloodSugar.Level).ToString(),
+                        Color = SKColors.Maroon
+                    });
+                }
+                else
+                {
+                    bloodEntries.Add(new ChartEntry(bloodSugar.Level)
+                    {
+                        Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + $", {bloodSugar.TimeOfDay.ToLocalTime().Day} " + bloodSugar.ReadingType.ToString(),
+                        ValueLabel = (bloodSugar.Level).ToString(),
+                        Color = SKColors.Maroon
+                    });
+                }
             }
 
             foreach (var exercise in patient.PatientExercises)
@@ -157,44 +134,72 @@ namespace GlucoseTrackerApp
             {
                 carbEntries.Add(new ChartEntry(carb.FoodCarbs)
                 {
-                    Label = carb.TimeOfDay.ToLocalTime().ToShortTimeString(),
+                    Label = carb.TimeOfDay.ToLocalTime().DayOfWeek + $", {carb.TimeOfDay.ToLocalTime().Day} " +  carb.Meal.MealTime.ToString(),
                     ValueLabel = carb.FoodCarbs.ToString(),
-                    Color = SKColors.Yellow
+                    Color = SKColors.Blue
                 });
             }
 
-            var bloodChart = new LineChart()
+            if (bloodEntries.Count > 0)
             {
-                Entries = bloodEntries,
-                BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 30,
-                LabelOrientation = Microcharts.Orientation.Horizontal,
-                ValueLabelOrientation = Microcharts.Orientation.Horizontal,
+                var bloodChart = new LineChart()
+                {
+                    Entries = bloodEntries,
+                    BackgroundColor = SKColors.Transparent,
+                    LabelTextSize = 30,
+                    LabelOrientation = Microcharts.Orientation.Horizontal,
+                    ValueLabelOrientation = Microcharts.Orientation.Horizontal,
 
-            };
+                };
+                _bloodChart.Chart = bloodChart;
 
-            var exerciseChart = new LineChart()
+            }
+            else
             {
-                Entries = exerciseEntries,
-                BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 30,
-                LabelOrientation = Microcharts.Orientation.Horizontal,
-                ValueLabelOrientation = Microcharts.Orientation.Horizontal
+                _bloodLabel.Text = "No Blood Sugar Data";
+                _bloodChart.Visibility = ViewStates.Gone;
+            }
 
-            };
-
-            var carbChart = new LineChart()
+            if (exerciseEntries.Count > 0)
             {
-                Entries = carbEntries,
-                BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 30,
-                LabelOrientation = Microcharts.Orientation.Horizontal,
-                ValueLabelOrientation = Microcharts.Orientation.Horizontal
-            };
+                var exerciseChart = new LineChart()
+                {
+                    Entries = exerciseEntries,
+                    BackgroundColor = SKColors.Transparent,
+                    LabelTextSize = 30,
+                    LabelOrientation = Microcharts.Orientation.Horizontal,
+                    ValueLabelOrientation = Microcharts.Orientation.Horizontal
 
-            _bloodChart.Chart = bloodChart;
-            _exerciseChart.Chart = exerciseChart;
-            _carbChart.Chart = carbChart;
+                };
+                _exerciseChart.Chart = exerciseChart;
+
+            }
+            else
+            {
+                _exerciseLabel.Text = "No Exercise Data";
+                _exerciseChart.Visibility = ViewStates.Gone;
+            }
+
+            if (carbEntries.Count > 0)
+            {
+                var carbChart = new LineChart()
+                {
+                    Entries = carbEntries,
+                    BackgroundColor = SKColors.Transparent,
+                    LabelTextSize = 30,
+                    LabelOrientation = Microcharts.Orientation.Horizontal,
+                    ValueLabelOrientation = Microcharts.Orientation.Horizontal
+                };
+                _carbChart.Chart = carbChart;
+
+            }
+            else
+            {
+                _carbLabel.Text = "No Carb Data";
+                _carbChart.Visibility = ViewStates.Gone;
+            }
+
+
             return "Success";
         }
 
@@ -205,42 +210,57 @@ namespace GlucoseTrackerApp
             if (id == Resource.Id.nav_exercise)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseAddActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
             }
             else if (id == Resource.Id.nav_exercise_modify)
             {
                 Intent exerciseActivity = new Intent(this, typeof(ExerciseModifyActivity));
-                exerciseActivity.PutExtra("token", _token);
                 StartActivity(exerciseActivity);
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
-                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                bloodSugarActivity.PutExtra("token", _token);
-                StartActivity(bloodSugarActivity);
+                var alert = new Android.App.AlertDialog.Builder(this);
+
+                alert.SetTitle("Alert");
+                alert.SetMessage("Do you want to add a food item with this?");
+                alert.SetPositiveButton("Yes", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent queryActivity = new Intent(this, typeof(QueryFoodActivity));
+                    queryActivity.PutExtra("BloodSugar", true);
+                    StartActivity(queryActivity);
+                });
+
+                alert.SetNegativeButton("No", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
+                    StartActivity(bloodSugarActivity);
+                });
+
+                alert.Show();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
                 Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarModifyActivity));
-                bloodSugarActivity.PutExtra("token", _token);
                 StartActivity(bloodSugarActivity);
             }
             else if (id == Resource.Id.nav_carbs)
             {
-                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
-                carbActivity.PutExtra("token", _token);
+                Intent carbActivity = new Intent(this, typeof(QueryFoodActivity));
                 StartActivity(carbActivity);
             }
             else if (id == Resource.Id.nav_carbs_modify)
             {
                 Intent carbActivity = new Intent(this, typeof(CarbModifyActivity));
-                carbActivity.PutExtra("token", _token);
                 StartActivity(carbActivity);
             }
             else if (id == Resource.Id.nav_logout)
             {
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                _restService.UserToken = null;
                 StartActivity(loginActivity);
                 Finish();
             }
@@ -249,7 +269,7 @@ namespace GlucoseTrackerApp
                 var alert = new Android.App.AlertDialog.Builder(this);
 
                 alert.SetTitle("Patient Token");
-                alert.SetMessage(_token.Substring(_token.Length - 6, 6));
+                alert.SetMessage(_restService.UserToken.Substring(_restService.UserToken.Length - 6, 6));
                 alert.SetPositiveButton("Ok", (c, ev) =>
                 {
                     //Do nothing
@@ -258,7 +278,6 @@ namespace GlucoseTrackerApp
                 alert.Show();
                 alert.Dispose();
             }
-
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
             return true;

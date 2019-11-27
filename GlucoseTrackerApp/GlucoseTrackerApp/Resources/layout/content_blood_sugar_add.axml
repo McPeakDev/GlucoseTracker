@@ -21,7 +21,7 @@
         android:hint="Reading"
         android:id="@+id/blood_sugar_add_reading"/>
     <EditText
-        android:inputType="textS"
+        android:inputType="text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft= "15px"
@@ -29,6 +29,15 @@
         android:layout_marginTop = "10px"
         android:hint="Meal Name"
         android:id="@+id/blood_sugar_add_meal_name"/>
+    <EditText
+        android:inputType="number"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft= "15px"
+        android:layout_marginRight= "15px"
+        android:layout_marginTop = "10px"
+        android:hint="Carbs"
+        android:id="@+id/blood_sugar_add_carbs"/>
     <Spinner
         android:layout_width="fill_parent"
         android:layout_height="45dp"
@@ -36,6 +45,13 @@
         android:layout_marginRight= "15px"
         android:layout_marginTop = "10px"
         android:id="@+id/blood_sugar_reading_type" />
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:layout_marginLeft= "15px"
+        android:layout_marginRight= "15px"
+        android:layout_marginTop = "10px"
+        android:id="@+id/meal_type" />
     <Button
         android:text="Add Blood Sugar Reading"
         android:layout_width="match_parent"

@@ -44,6 +44,13 @@
 		android:layout_marginTop = "10px"
 		android:hint="Bottom"
 		android:id="@+id/bottom_field"/>
+     <Spinner
+        android:layout_width="match_parent"
+        android:layout_marginLeft= "15px"
+		android:layout_marginRight= "15px"
+		android:layout_marginTop = "10px"
+        android:layout_height="45dp"
+        android:id="@+id/mealtype_spinner" />
 	<Button
 		android:text="Edit"
 		android:layout_width="match_parent"

@@ -30,7 +30,7 @@ namespace GlucoseAPI.Models.Entities
 
         public override string ToString()
         {
-            return $"Time: {TimeOfDay.ToLocalTime().ToShortTimeString()}, Hours Exercised: {HoursExercised}";
+            return $"Time: {TimeOfDay.ToLocalTime().ToShortDateString()}, Hours Exercised: {HoursExercised}";
         }
     }
 }

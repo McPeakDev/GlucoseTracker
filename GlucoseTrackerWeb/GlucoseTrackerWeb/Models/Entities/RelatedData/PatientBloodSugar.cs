@@ -26,7 +26,7 @@ namespace GlucoseAPI.Models.Entities
         [ForeignKey("Patient")]
         public int UserId { get; set; }
         [ForeignKey("MealItem")]
-        public int MealId { get; set; }
+        public int? MealId { get; set; }
         public float Level { get; set; }
         public ReadingType ReadingType { get; set; }
         public DateTime TimeOfDay { get; set; }

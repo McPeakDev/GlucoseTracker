@@ -49,88 +49,94 @@ function toggle() {
 function createCharts(levelsBefore, levelsAfter, exercises, carbs) {
     let bloodCtx = document.getElementById('bloodChart').getContext('2d');
     let carbCtx = document.getElementById('carbChart').getContext('2d');
-    let exerciseCtx = document.getElementById('exerciseChart').getContext('2d');
+    let exerciseCtx = document.getElementById('exerciseChart');
 
-    let bloodChart = new Chart(bloodCtx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Blood Sugar Readings Before',
-                borderColor: window.chartColors.red,
-                data: levelsBefore
-            },
+    if (bloodCtx != null) {
+        let bloodChart = new Chart(bloodCtx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Blood Sugar Readings Before',
+                    borderColor: window.chartColors.red,
+                    data: levelsBefore
+                },
                 {
                     label: 'Blood Sugar Readings After',
                     borderColor: window.chartColors.blue,
                     data: levelsAfter
                 }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    distribution: 'series',
-                    position: 'bottom',
-                    time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'MMM D h:mm a'
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        distribution: 'series',
+                        position: 'bottom',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM D h:mm a'
+                            }
                         }
-                    }
-                }]
+                    }]
+                }
             }
-        }
-    })
+        })
+    }
 
-    let exerciseChart = new Chart(exerciseCtx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Exercise Times',
-                borderColor: window.chartColors.green,
-                data: exercises
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    distribution: 'series',
-                    position: 'bottom',
-                    time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'MMM D h:mm a'
-                        }
-                    }
+    if (exerciseCtx != null) {
+        let exerciseChart = new Chart(exerciseCtx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Exercise Times',
+                    borderColor: window.chartColors.green,
+                    data: exercises
                 }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        distribution: 'series',
+                        position: 'bottom',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM D h:mm a'
+                            }
+                        }
+                    }]
+                }
             }
-        }
-    })
+        })
+    }
 
-    let carbChart = new Chart(carbCtx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: 'Carb Measurements',
-                borderColor: window.chartColors.yellow,
-                data: carbs
-            }]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    distribution: 'series',
-                    position: 'bottom',
-                    time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'MMM D h:mm a'
-                        }
-                    }
+    if (carbCtx != null) {
+        let carbChart = new Chart(carbCtx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Carb Measurements',
+                    borderColor: window.chartColors.yellow,
+                    data: carbs
                 }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        distribution: 'series',
+                        position: 'bottom',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM D h:mm a'
+                            }
+                        }
+                    }]
+                }
             }
-        }
-    })
+        })
+    }
 }

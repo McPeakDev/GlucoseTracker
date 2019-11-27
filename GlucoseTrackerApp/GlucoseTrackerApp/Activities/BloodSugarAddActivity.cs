@@ -35,6 +35,8 @@ namespace GlucoseTrackerApp
         private AppCompatEditText _level;
         private AppCompatEditText _mealName;
         private AppCompatSpinner _readingType;
+        private AppCompatSpinner _mealType;
+        private AppCompatEditText _carbs;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -44,28 +46,30 @@ namespace GlucoseTrackerApp
             _level = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_reading);
             _mealName = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_meal_name);
             _readingType = FindViewById<AppCompatSpinner>(Resource.Id.blood_sugar_reading_type);
+            _mealType = FindViewById<AppCompatSpinner>(Resource.Id.meal_type);
+            _carbs = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_carbs);
 
-            ArrayAdapter<ReadingType> adapter = new ArrayAdapter<ReadingType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (Enum.GetValues(typeof(ReadingType)).Cast<ReadingType>().ToArray()));
+            _carbs.Visibility = ViewStates.Gone;
+            _mealName.Visibility = ViewStates.Gone;
+            _mealType.Visibility = ViewStates.Gone;
+
+            ArrayAdapter<ReadingType> adapter = new ArrayAdapter<ReadingType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (ReadingType[])Enum.GetValues(typeof(ReadingType)));
             _readingType.Adapter = adapter;
 
             AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
 
             bloodSugarAddButton.Click += async delegate
             {
+                bloodSugarAddButton.Enabled = false;
+
                 string status = await OnBloodSugarAddButtonPressed();
                 if (status == "Success")
                 {
                     Finish();
                 }
-                else if (status == "No Connection")
-                {
-                    Intent loginActivity = new Intent(this, typeof(LoginActivity));
-                    StartActivity(loginActivity);
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
-                    Finish();
-                }
                 else
                 {
+                    bloodSugarAddButton.Enabled = true;
                     Toast.MakeText(this, status, ToastLength.Long).Show();
                 }
             };
@@ -87,112 +91,49 @@ namespace GlucoseTrackerApp
         {
             base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
+            _restService.UserToken = null;
             StartActivity(loginActivity);
             Finish();
         }
 
         public async Task<string> OnBloodSugarAddButtonPressed()
         {
-            if (!String.IsNullOrEmpty(_level.Text) && !String.IsNullOrEmpty(_mealName.Text))
+            #region old code
+            if (float.Parse(_level.Text) <= 1000 && float.Parse(_level.Text) > 0)
             {
-                if ( float.Parse(_level.Text) <= 1000 && float.Parse(_level.Text) > 0 && !String.IsNullOrEmpty(_mealName.Text))
+                DateTime timeNow = DateTime.Now;
+
+                PatientData patientData = new PatientData();
+                Patient patient;
+
+                try
                 {
-                    DateTime timeNow = DateTime.Now;
-
-                    PatientData patientData = new PatientData();
-                    Patient patient;
-
-                    try
-                    {
-                        patient = await _restService.ReadPatientAsync();
-                    }
-                    catch (Exception)
-                    {
-                        return "No Connection";
-                    }
-
-                    PatientBloodSugar patientBlood = new PatientBloodSugar()
-                    {
-                        UserId = patient.UserId,
-                        ReadingType = (ReadingType) (_readingType.SelectedItem as object),    
-                        Level = float.Parse(_level.Text),
-                        TimeOfDay = timeNow
-                    };
-
-                    patientBlood.ReadingType = (ReadingType)(Enum.GetValues(typeof(ReadingType)).GetValue(_readingType.SelectedItemPosition));
-
-
-                    MealItem mealItem;
-
-                    try
-                    {
-                        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-
-
-                        if (!(mealItem is null))
-                        {
-                            patientBlood.MealId = mealItem.MealId;
-                        }
-                        else
-                        {
-                            int fdcId = await _restService.FindMealDataAsync(_mealName.Text);
-                            int carbs = (int) await _restService.ReadMealDataAsync(fdcId);
-
-                            var words = _mealName.Text.Split(" ");
-
-                            string mealName;
-
-                            for (int i = 0; i < words.Length; i++)
-                            {
-                                string word = words[i];
-
-                                words[i] = (word.Substring(0, 1).ToUpper() + word.Substring(1, word.Length - 1).ToLower());
-                            }
-
-                            mealName = String.Join(" ", words);
-
-                            mealItem = new MealItem()
-                            {
-                                Carbs = carbs,
-                                FoodName = mealName
-                            };
-
-                            await _restService.CreateMealItemAsync(mealItem);
-
-                            mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-                            patientBlood.MealId = mealItem.MealId;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        return "Invalid Food Name";
-                    }
-
-                    PatientCarbohydrate patientCarbohydrate = new PatientCarbohydrate()
-                    {
-                        UserId = patient.UserId,
-                        MealId = mealItem.MealId,
-                        Patient = patient,
-                        TimeOfDay = timeNow,
-                        FoodCarbs = mealItem.Carbs
-                    };
-
-                    patientData.PatientCarbohydrates.Add(patientCarbohydrate);
-                    patientData.PatientBloodSugars.Add(patientBlood);
-
-                    _restService.CreatePatientData(patientData);
-                    
-                    return "Success";
+                    patient = await _restService.ReadPatientAsync();
                 }
-                else
+                catch (Exception)
                 {
-                    return "Invalid Range";
+                    return "No Connection";
                 }
+
+                PatientBloodSugar patientBlood = new PatientBloodSugar()
+                {
+                    UserId = patient.UserId,
+                    ReadingType = (ReadingType)Enum.Parse(typeof(ReadingType), _readingType.SelectedItem.ToString()),
+                    Level = float.Parse(_level.Text),
+                    TimeOfDay = timeNow
+                };
+
+                patientData.PatientBloodSugars.Add(patientBlood);
+
+                _restService.CreatePatientData(patientData);
+
+                return "Success";
             }
             else
             {
-                return "Form Is Not Filled Out";
+                return "Invalid Range";
             }
+            #endregion
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
@@ -217,8 +158,30 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
-                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                StartActivity(bloodSugarActivity);
+                var alert = new Android.App.AlertDialog.Builder(this);
+
+                alert.SetTitle("Alert");
+                alert.SetMessage("Do you want to add a food item with this?");
+                alert.SetPositiveButton("Yes", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent queryActivity = new Intent(this, typeof(QueryFoodActivity));
+                    queryActivity.PutExtra("BloodSugar", true);
+                    StartActivity(queryActivity);
+                    Finish();
+                });
+
+                alert.SetNegativeButton("No", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
+                    StartActivity(bloodSugarActivity);
+                    Finish();
+                });
+
+                alert.Show();
                 Finish();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
@@ -229,7 +192,7 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_carbs)
             {
-                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
+                Intent carbActivity = new Intent(this, typeof(QueryFoodActivity));
                 StartActivity(carbActivity);
                 Finish();
             }

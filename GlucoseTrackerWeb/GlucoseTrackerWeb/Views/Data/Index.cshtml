@@ -50,19 +50,25 @@
                         <th>
                             Level
                         </th>
+                        <th>
+                            Reading Time
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.PatientBloodSugars)
                     {
-                        <tr>
-                            <td>
-                                @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
-                            </td>
-                            <td>
-                                @item.Level
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
+                        </td>
+                        <td>
+                            @item.Level
+                        </td>
+                        <td>
+                            @item.ReadingType.ToString()
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -84,19 +90,25 @@
                         <th>
                             Food Carbs
                         </th>
+                        <th>
+                            Meal Time
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.PatientCarbohydrates)
                     {
-                        <tr>
-                            <td>
-                                @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
-                            </td>
-                            <td>
-                                @item.FoodCarbs
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @($"{item.TimeOfDay.ToLocalTime().ToShortDateString()}, {item.TimeOfDay.ToLocalTime().ToShortTimeString()} ")
+                        </td>
+                        <td>
+                            @item.FoodCarbs
+                        </td>
+                        <td>
+                            @item.Meal.MealTime.ToString()
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

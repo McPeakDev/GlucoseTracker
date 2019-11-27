@@ -38,6 +38,8 @@ namespace GlucoseTrackerApp
         private AppCompatEditText _hours;
         private AppCompatEditText _middleField;
         private AppCompatEditText _bottomField;
+        private AppCompatSpinner _mealType;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -48,6 +50,8 @@ namespace GlucoseTrackerApp
             _hours = FindViewById<AppCompatEditText>(Resource.Id.top_field);
             _middleField = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
             _bottomField = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
+            _mealType = FindViewById<AppCompatSpinner>(Resource.Id.mealtype_spinner);
+
 
             _hours.InputType = Android.Text.InputTypes.NumberFlagDecimal;
 
@@ -61,10 +65,12 @@ namespace GlucoseTrackerApp
             _hours.Hint = "Hours Exercised";
 
             _hours.Visibility = ViewStates.Gone;
-
+            _mealType.Visibility = ViewStates.Gone;
 
             bloodSugarEditButton.Click += async delegate
             {
+                bloodSugarDeleteButton.Enabled = false;
+                bloodSugarEditButton.Enabled = false;
                 string status = await OnExerciseEditButtonPressed();
                 if (status == "Success")
                 {
@@ -72,12 +78,17 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
+                    bloodSugarDeleteButton.Enabled = true;
+                    bloodSugarEditButton.Enabled = true;
                     Toast.MakeText(this, status, ToastLength.Long).Show();
                 }
             };
 
             bloodSugarDeleteButton.Click += async delegate
             {
+                bloodSugarDeleteButton.Enabled = false;
+                bloodSugarEditButton.Enabled = false;
+
                 string status = await Task.Run(() => OnExerciseDeleteButtonPressed());
                 if (status == "Success")
                 {
@@ -85,6 +96,8 @@ namespace GlucoseTrackerApp
                 }
                 else
                 {
+                    bloodSugarDeleteButton.Enabled = true;
+                    bloodSugarEditButton.Enabled = true;
                     Toast.MakeText(this, status, ToastLength.Long).Show();
                 }
             };
@@ -119,7 +132,7 @@ namespace GlucoseTrackerApp
 
             if (!(patientData is null))
             {
-                ArrayAdapter<PatientExercise> adapter = new ArrayAdapter<PatientExercise>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientExercises.Where(pe => pe.TimeOfDay.ToLocalTime().Date == DateTime.Now.ToLocalTime().Date).OrderBy(pe => pe.TimeOfDay.ToLocalTime()).ToList());
+                ArrayAdapter<PatientExercise> adapter = new ArrayAdapter<PatientExercise>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, patientData.PatientExercises.Where(pe => pe.TimeOfDay.ToLocalTime().Date <= DateTime.Now.ToLocalTime().Date && pe.TimeOfDay.ToLocalTime().Date >= DateTime.Now.ToLocalTime().Date.AddDays(-3)).OrderBy(pe => pe.TimeOfDay.ToLocalTime()).ToList());
                 _entries.Adapter = adapter;
             }
             else
@@ -196,6 +209,7 @@ namespace GlucoseTrackerApp
         {
             base.OnRestart();
             Intent loginActivity = new Intent(this, typeof(LoginActivity));
+            _restService.UserToken = null;
             StartActivity(loginActivity);
             Finish();
         }
@@ -222,9 +236,30 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_bloodsugar)
             {
-                Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
-                StartActivity(bloodSugarActivity);
-                Finish();
+                var alert = new Android.App.AlertDialog.Builder(this);
+
+                alert.SetTitle("Alert");
+                alert.SetMessage("Do you want to add a food item with this?");
+                alert.SetPositiveButton("Yes", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent queryActivity = new Intent(this, typeof(QueryFoodActivity));
+                    queryActivity.PutExtra("BloodSugar", true);
+                    StartActivity(queryActivity);
+                    Finish();
+                });
+
+                alert.SetNegativeButton("No", (c, ev) =>
+                {
+                    alert.Dispose();
+
+                    Intent bloodSugarActivity = new Intent(this, typeof(BloodSugarAddActivity));
+                    StartActivity(bloodSugarActivity);
+                    Finish();
+                });
+
+                alert.Show();
             }
             else if (id == Resource.Id.nav_bloodsugar_modify)
             {
@@ -234,7 +269,7 @@ namespace GlucoseTrackerApp
             }
             else if (id == Resource.Id.nav_carbs)
             {
-                Intent carbActivity = new Intent(this, typeof(CarbAddActivity));
+                Intent carbActivity = new Intent(this, typeof(QueryFoodActivity));
                 StartActivity(carbActivity);
                 Finish();
             }
@@ -247,6 +282,7 @@ namespace GlucoseTrackerApp
             else if (id == Resource.Id.nav_logout)
             {
                 Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                _restService.UserToken = null;
                 StartActivity(loginActivity);
                 Finish();
             }

@@ -3,14 +3,16 @@ using System;
 using GlucoseAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GlucoseTrackerWeb.Migrations
 {
     [DbContext(typeof(GlucoseTrackerContext))]
-    partial class GlucoseTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20191127005642_PatientData-Fixes")]
+    partial class PatientDataFixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +60,7 @@ namespace GlucoseTrackerWeb.Migrations
 
                     b.Property<float>("Level");
 
-                    b.Property<int?>("MealId");
+                    b.Property<int>("MealId");
 
                     b.Property<int>("ReadingType");
 
@@ -194,7 +196,8 @@ namespace GlucoseTrackerWeb.Migrations
                 {
                     b.HasOne("GlucoseAPI.Models.Entities.MealItem", "Meal")
                         .WithMany()
-                        .HasForeignKey("MealId");
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GlucoseAPI.Models.Entities.Patient", "Patient")
                         .WithMany("PatientBloodSugars")

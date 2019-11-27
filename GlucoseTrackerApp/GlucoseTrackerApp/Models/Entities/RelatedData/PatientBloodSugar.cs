@@ -26,13 +26,25 @@ namespace GlucoseAPI.Models.Entities
         [ForeignKey("Patient")]
         public int UserId { get; set; }
         [ForeignKey("MealItem")]
-        public int MealId { get; set; }
+        public int? MealId { get; set; }
         public float Level { get; set; }
         public ReadingType ReadingType { get; set; }
         public DateTime TimeOfDay { get; set; }
 
         public virtual Patient Patient { get; set; }
         public virtual MealItem Meal { get; set; }
+
+        public override string ToString()
+        {
+            if (Meal is null)
+            {
+                return $"{TimeOfDay.ToLocalTime().ToShortDateString()}, {ReadingType.ToString()} Meal";
+            }
+            else
+            {
+                return $"{TimeOfDay.ToLocalTime().ToShortDateString()}, {Meal.FoodName}, {ReadingType.ToString()} {Meal.MealTime}";
+            }
+        }
 
     }
 }

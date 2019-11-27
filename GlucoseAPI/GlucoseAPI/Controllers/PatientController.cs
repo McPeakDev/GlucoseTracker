@@ -63,6 +63,10 @@ namespace GlucoseAPI.Controllers
                 //If the patient was found then return the patient
                 if (!(user is null))
                 {
+                    foreach (var carb in (user as Patient).PatientCarbs)
+                    {
+                        carb.Meal = _carbRepo.Read(c => c.CarbId == carb.CarbId, c => c.Meal).Meal;
+                    }
                     return user;
                 }
                 //Otherwise.. the user is a doctor

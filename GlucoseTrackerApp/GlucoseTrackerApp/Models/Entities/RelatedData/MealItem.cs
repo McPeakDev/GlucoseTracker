@@ -21,7 +21,12 @@ namespace GlucoseAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MealId { get; set; }
+        public MealType MealTime { get; set; }
         public string FoodName { get; set; }
         public int Carbs { get; set; }
+        public override string ToString()
+        {
+            return $"{FoodName}, Carbs: {Carbs}";
+        }
     }
 }

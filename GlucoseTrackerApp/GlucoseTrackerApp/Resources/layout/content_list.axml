@@ -9,4 +9,10 @@
     tools:showIn="@layout/app_bar_main"
     android:minWidth="25px"
     android:minHeight="25px">
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/meal_list" />
 </RelativeLayout>

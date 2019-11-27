@@ -34,7 +34,7 @@ namespace GlucoseAPI.Models.Entities
 
         public override string ToString()
         {
-            return $"Time: {TimeOfDay.ToLocalTime().ToShortTimeString()}, FoodCarbs: {FoodCarbs}, Meal: {Meal.FoodName}";
+            return $"Time: {TimeOfDay.ToLocalTime().ToShortTimeString()}, Carbs: {FoodCarbs}, Meal: {Meal.FoodName}";
         }
     }
 }

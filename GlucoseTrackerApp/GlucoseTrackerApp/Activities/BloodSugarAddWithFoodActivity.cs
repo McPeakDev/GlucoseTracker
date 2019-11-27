@@ -1,95 +1,76 @@
 ﻿///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Solution/Project:  GlucoseTrackerApp/GlucoseTrackerApp
-//	File Name:         CarbAddActivity.cs
-//	Description:       Methods for creating new carbs for the carb graph
+//	File Name:         BloodSugarAddActivity.cs
+//	Description:       Methods for adding blood sugar readings for the mobile app
 //	Author:            Matthew McPeak, McPeakML@etsu.edu
 //  Copyright:         Matthew McPeak, 2019
 //  Team:              Sour Patch Kids
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Android.Widget;
 using GlucoseAPI.Models.Entities;
 using GlucoseTrackerApp.Services;
+using Android.Widget;
+using Android.Content;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GlucoseTrackerApp
 {
-    [Activity(Label = "BloodSugarModifyActivity")]
-    public class CarbAddActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    [Activity(Label = "Add A Blood Sugar Reading", Theme = "@style/Theme.MaterialComponents.Light.NoActionBar")]
+    public class BloodSugarAddWithFoodActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private readonly RestService _restService = RestService.GetRestService();
-
-        private AppCompatSpinner _carbs;
-        private AppCompatEditText _foodCarbs;
-        private AppCompatEditText _middleField;
+        private AppCompatEditText _level;
         private AppCompatEditText _mealName;
+        private AppCompatSpinner _readingType;
         private AppCompatSpinner _mealType;
+        private AppCompatEditText _carbs;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_modify);
+            SetContentView(Resource.Layout.activity_blood_sugar_add);
 
-            _carbs = FindViewById<AppCompatSpinner>(Resource.Id.spinner);
-            _foodCarbs = FindViewById<AppCompatEditText>(Resource.Id.top_field);
-            _middleField = FindViewById<AppCompatEditText>(Resource.Id.middle_field);
-            _mealName = FindViewById<AppCompatEditText>(Resource.Id.bottom_field);
-            _mealType = FindViewById<AppCompatSpinner>(Resource.Id.mealtype_spinner);
+            _level = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_reading);
+            _mealName = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_meal_name);
+            _readingType = FindViewById<AppCompatSpinner>(Resource.Id.blood_sugar_reading_type);
+            _mealType = FindViewById<AppCompatSpinner>(Resource.Id.meal_type);
+            _carbs = FindViewById<AppCompatEditText>(Resource.Id.blood_sugar_add_carbs);
 
-
-            _foodCarbs.Text = Intent.GetStringExtra("Carbs");
+            //Assign Passed Values
+            _carbs.Text = Intent.GetStringExtra("Carbs");
             _mealName.Text = Intent.GetStringExtra("MealName");
 
-            _carbs.Visibility = ViewStates.Gone;
-            _middleField.Visibility = ViewStates.Gone;
+            ArrayAdapter<ReadingType> adapter = new ArrayAdapter<ReadingType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (ReadingType[])Enum.GetValues(typeof(ReadingType)));
+            _readingType.Adapter = adapter;
+            ArrayAdapter<MealType> adapter2 = new ArrayAdapter<MealType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (MealType[])Enum.GetValues(typeof(MealType)));
+            _mealType.Adapter = adapter2;
 
-            AppCompatButton carbCreateButton = FindViewById<AppCompatButton>(Resource.Id.submit_button);
-            AppCompatButton carbDeleteButton = FindViewById<AppCompatButton>(Resource.Id.delete_button);
+            AppCompatButton bloodSugarAddButton = FindViewById<AppCompatButton>(Resource.Id.blood_sugar_add_button);
 
-
-            _foodCarbs.Hint = "Food Carbs";
-            _mealName.Hint = "Meal Name";
-
-            carbCreateButton.Text = "Add Carb Reading";
-            carbDeleteButton.Visibility = ViewStates.Gone;
-
-            ArrayAdapter<MealType> adapter = new ArrayAdapter<MealType>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, (MealType[])Enum.GetValues(typeof(MealType)));
-            _mealType.Adapter = adapter;
-
-
-            carbCreateButton.Click += async delegate
+            bloodSugarAddButton.Click += async delegate
             {
-                carbCreateButton.Enabled = false;
-                string status = await OnCarbCreateButtonPressed();
-                if (status == "Success")
-                {
-                    Finish();
-                }
-                else
-                {
-                    carbCreateButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
-                }
+                bloodSugarAddButton.Enabled = false;
+
+                await OnBloodSugarAddButtonPressed();
+                Finish();
             };
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_modify);
-            toolbar.Title = "Add A Carb Reading";
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar_blood_sugar_add);
+            toolbar.Title = "Add A Blood Sugar Reading";
             SetSupportActionBar(toolbar);
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -97,7 +78,7 @@ namespace GlucoseTrackerApp
             drawer.AddDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_modify);
+            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view_blood_sugar_add);
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
@@ -110,11 +91,11 @@ namespace GlucoseTrackerApp
             Finish();
         }
 
-        public async Task<string> OnCarbCreateButtonPressed()
+        public async Task<string> OnBloodSugarAddButtonPressed()
         {
-            if(!String.IsNullOrEmpty(_foodCarbs.Text))
+            if (!String.IsNullOrEmpty(_level.Text) && !String.IsNullOrEmpty(_mealName.Text))
             {
-                if (int.Parse(_foodCarbs.Text) > 0 && int.Parse(_foodCarbs.Text) <= 1000)
+                if ( float.Parse(_level.Text) <= 1000 && float.Parse(_level.Text) > 0 && !String.IsNullOrEmpty(_mealName.Text))
                 {
                     DateTime timeNow = DateTime.Now;
 
@@ -130,6 +111,14 @@ namespace GlucoseTrackerApp
                         return "No Connection";
                     }
 
+                    PatientBloodSugar patientBlood = new PatientBloodSugar()
+                    {
+                        UserId = patient.UserId,
+                        ReadingType = (ReadingType)Enum.Parse(typeof(ReadingType),_readingType.SelectedItem.ToString()),
+                        Level = float.Parse(_level.Text),
+                        TimeOfDay = timeNow
+                    };
+
                     MealItem mealItem;
 
                     try
@@ -139,18 +128,19 @@ namespace GlucoseTrackerApp
 
                         if (!(mealItem is null))
                         {
+                            patientBlood.MealId = mealItem.MealId;
                         }
                         else
                         {
                             mealItem = new MealItem
                             {
                                 FoodName = _mealName.Text,
-                                Carbs = Int32.Parse(_foodCarbs.Text),
+                                Carbs = Int32.Parse(_carbs.Text),
                                 MealTime = (MealType)Enum.Parse(typeof(MealType), _mealType.SelectedItem.ToString())
-
                             };
                             await _restService.CreateMealItemAsync(mealItem);
                             mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
+                            patientBlood.MealId = mealItem.MealId;
                         }
                     }
                     catch (Exception)
@@ -168,9 +158,10 @@ namespace GlucoseTrackerApp
                     };
 
                     patientData.PatientCarbohydrates.Add(patientCarbohydrate);
+                    patientData.PatientBloodSugars.Add(patientBlood);
 
                     _restService.CreatePatientData(patientData);
-
+                    
                     return "Success";
                 }
                 else
