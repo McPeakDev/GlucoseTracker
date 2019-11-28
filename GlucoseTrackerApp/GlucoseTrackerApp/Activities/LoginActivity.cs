@@ -115,7 +115,7 @@ namespace GlucoseTrackerApp
                     _password.Text = String.Empty;
                     return "No Connection";
                 }
-                else if (_token != "Invalid Credentials")
+                else if (_token != "")
                 {
                     if (_autoEmail.Checked)
                     {
@@ -130,7 +130,7 @@ namespace GlucoseTrackerApp
                 else
                 {
                     _password.Text = String.Empty;
-                    return "_email / _password Combination Was Invalid. Please Try Again";
+                    return "Email / Password Combination Was Invalid. Please Try Again";
                 }
 
             }
