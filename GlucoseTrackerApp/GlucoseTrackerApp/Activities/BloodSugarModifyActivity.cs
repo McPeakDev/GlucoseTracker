@@ -81,7 +81,10 @@ namespace GlucoseTrackerApp
                 {
                     bloodSugarEditButton.Enabled = true;
                     bloodSugarDeleteButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
             };
 
@@ -98,7 +101,10 @@ namespace GlucoseTrackerApp
                 {
                     bloodSugarEditButton.Enabled = true;
                     bloodSugarDeleteButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
 
             };

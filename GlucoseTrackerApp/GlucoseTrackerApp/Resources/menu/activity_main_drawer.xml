@@ -33,7 +33,7 @@
         <item
             android:id="@+id/nav_bloodsugar_modify"
             android:icon="@drawable/baseline_note_add_black_18dp"
-            android:title="Modify BloodSugar Readings" />
+            android:title="Modify Blood Sugar Readings" />
       </group>
     </menu>
   </item>

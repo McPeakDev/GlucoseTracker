@@ -61,8 +61,11 @@ namespace GlucoseTrackerApp
             {
                 registerButton.Enabled = false;
                 string status = await OnRegisterButtonPressedAsync();
-                Toast.MakeText(this, status, ToastLength.Long).Show();
-                if(status == "Registered!")
+                RunOnUiThread(() =>
+                {
+                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                });
+                if (status == "Registered!")
                 {
                     Finish();
                 }

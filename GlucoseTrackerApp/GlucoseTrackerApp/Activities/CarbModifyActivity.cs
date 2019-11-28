@@ -80,7 +80,10 @@ namespace GlucoseTrackerApp
                 {
                     carbEditButton.Enabled = true;
                     carbDeleteButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
             };
 
@@ -98,7 +101,10 @@ namespace GlucoseTrackerApp
                 {
                     carbEditButton.Enabled = true;
                     carbDeleteButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
             };
 
@@ -120,6 +126,7 @@ namespace GlucoseTrackerApp
 
                 _foodCarbs.Text = pc.FoodCarbs.ToString();
                 _mealName.Text = pc.Meal.FoodName;
+                _mealType.SetSelection((Enum.GetValues(typeof(MealType)).Cast<MealType>()).ToList().IndexOf(pc.Meal.MealTime));
 
             };
 
@@ -170,9 +177,11 @@ namespace GlucoseTrackerApp
                         CarbId = _carbs.SelectedItem.Cast<PatientCarbohydrate>().CarbId,
                         UserId = patient.UserId,
                         FoodCarbs = int.Parse(_foodCarbs.Text),
-                        TimeOfDay = _carbs.SelectedItem.Cast<PatientCarbohydrate>().TimeOfDay
+                        TimeOfDay = _carbs.SelectedItem.Cast<PatientCarbohydrate>().TimeOfDay,
+                        Meal = _carbs.SelectedItem.Cast<PatientCarbohydrate>().Meal
                     };
 
+                    patientCarb.Meal.MealTime = (MealType)Enum.Parse(typeof(MealType), _mealType.SelectedItem.ToString());
 
                     MealItem mealItem;
 

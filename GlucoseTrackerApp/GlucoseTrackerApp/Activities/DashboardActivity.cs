@@ -124,7 +124,7 @@ namespace GlucoseTrackerApp
             {
                 exerciseEntries.Add(new ChartEntry(exercise.HoursExercised)
                 {
-                    Label = exercise.TimeOfDay.ToLocalTime().ToShortTimeString(),
+                    Label = $"{exercise.TimeOfDay.ToLocalTime().DayOfWeek} {exercise.TimeOfDay.ToLocalTime().Day}, {exercise.TimeOfDay.ToLocalTime().ToShortTimeString()}",
                     ValueLabel = exercise.HoursExercised.ToString(),
                     Color = SKColors.DarkGreen
                 });

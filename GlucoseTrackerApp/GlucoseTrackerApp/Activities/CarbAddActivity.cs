@@ -84,7 +84,10 @@ namespace GlucoseTrackerApp
                 else
                 {
                     carbCreateButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
             };
 
@@ -137,10 +140,7 @@ namespace GlucoseTrackerApp
                         mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
 
 
-                        if (!(mealItem is null))
-                        {
-                        }
-                        else
+                        if (mealItem is null)
                         {
                             mealItem = new MealItem
                             {

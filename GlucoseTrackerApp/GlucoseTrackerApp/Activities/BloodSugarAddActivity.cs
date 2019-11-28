@@ -70,7 +70,10 @@ namespace GlucoseTrackerApp
                 else
                 {
                     bloodSugarAddButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show();
+                    });
                 }
             };
 

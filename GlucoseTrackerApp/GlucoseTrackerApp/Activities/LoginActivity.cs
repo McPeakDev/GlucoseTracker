@@ -52,6 +52,7 @@ namespace GlucoseTrackerApp
             AppCompatButton loginButton = FindViewById<AppCompatButton>(Resource.Id.login_button);
             AppCompatButton registerButton = FindViewById<AppCompatButton>(Resource.Id.register_button);
 
+
             loginButton.Click += async delegate
             {
                 loginButton.Enabled = false;
@@ -67,7 +68,10 @@ namespace GlucoseTrackerApp
                 {
                     loginButton.Enabled = true;
                     registerButton.Enabled = true;
-                    Toast.MakeText(this, status, ToastLength.Long).Show();
+                    RunOnUiThread(() => 
+                    {
+                        Toast.MakeText(this, status, ToastLength.Long).Show(); 
+                    });  
                 }
 
             };
@@ -115,7 +119,7 @@ namespace GlucoseTrackerApp
                     _password.Text = String.Empty;
                     return "No Connection";
                 }
-                else if (_token != "")
+                else if (_token != "Invalid Credentials" && _token != "")
                 {
                     if (_autoEmail.Checked)
                     {

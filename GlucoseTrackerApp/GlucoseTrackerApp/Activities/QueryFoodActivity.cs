@@ -87,57 +87,10 @@ namespace GlucoseTrackerApp
             mealName = String.Join(" ", words);
 
             Intent listActivity = new Intent(this, typeof(FoodListActivity));
-            listActivity.PutExtra("MealName", mealName);
+            listActivity.PutExtra("MealName", mealName.Replace("&", "and"));
             listActivity.PutExtra("BloodSugar", Intent.GetBooleanExtra("BloodSugar", false));
             StartActivity(listActivity);
             Finish();
-            //MealItem mealItem;
-
-            //try
-            //{
-            //    mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-
-
-            //    if (!(mealItem is null))
-            //    {
-            //        return mealItem;
-            //    }
-            //    else
-            //    {
-            //        var words = _mealName.Text.Split(" ");
-
-            //        string mealName;
-
-            //        for (int i = 0; i < words.Length; i++)
-            //        {
-            //            string word = words[i];
-
-            //            words[i] = (word.Substring(0, 1).ToUpper() + word.Substring(1, word.Length - 1).ToLower());
-            //        }
-
-            //        mealName = String.Join(" ", words);
-
-            //        var values = await _restService.FindMealDataAsync(mealName);
-
-
-            //        mealItem = new MealItem()
-            //        {
-            //            Carbs = carbs,
-            //            FoodName = mealName
-            //        };
-
-            //        await _restService.CreateMealItemAsync(mealItem);
-
-            //        mealItem = await _restService.ReadMealItemAsync(_mealName.Text);
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    return "Invalid Food Name";
-            //}
-
-
-
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)

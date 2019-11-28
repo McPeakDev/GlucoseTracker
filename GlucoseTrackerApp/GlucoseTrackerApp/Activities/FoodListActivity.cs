@@ -99,8 +99,18 @@ namespace GlucoseTrackerApp
         {
             base.OnStart();
             var list = await _restService.FindMealDataAsync(Intent.GetStringExtra("MealName"));
-            ArrayAdapter<MealItem> adapter = new ArrayAdapter<MealItem>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, list);
-            _mealList.Adapter = adapter;
+            if (list is null)
+            {
+                RunOnUiThread(() =>
+                {
+                    Toast.MakeText(this, "No Data for this entry", ToastLength.Long).Show();
+                });
+            }
+            else
+            {
+                ArrayAdapter<MealItem> adapter = new ArrayAdapter<MealItem>(this, Android.Resource.Layout.SimpleSpinnerDropDownItem, list);
+                _mealList.Adapter = adapter;
+            }
         }
 
         protected override void OnRestart()
