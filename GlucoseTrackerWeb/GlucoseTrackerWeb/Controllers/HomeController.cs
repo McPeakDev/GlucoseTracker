@@ -167,6 +167,10 @@ namespace GlucoseTrackerWeb.Controllers
                 }
                 catch (Exception)
                 {
+                    if(_doctorRepo.ReadAll().ToList().Any(d => d.Email == doctorCreationBundle.Doctor.Email))
+                    {
+                        TempData["UserExists"] = true;
+                    }
                     //Otherwise... Return the Create view.
                     return View(doctorCreationBundle);
                 }

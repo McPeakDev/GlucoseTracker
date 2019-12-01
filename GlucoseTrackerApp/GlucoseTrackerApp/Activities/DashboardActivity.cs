@@ -77,7 +77,19 @@ namespace GlucoseTrackerApp
         protected async override void OnStart()
         {
             base.OnStart();
+            Patient patient = await _restService.ReadPatientAsync();
 
+            if (!(patient is null))
+            {
+                _toolbar.Title = $"Welcome, {patient.FirstName} {patient.LastName}";
+
+                PopulateCharts(patient);
+            }
+        }
+
+        protected async override void OnResume()
+        {
+            base.OnResume();
             Patient patient = await _restService.ReadPatientAsync();
 
             if (!(patient is null))

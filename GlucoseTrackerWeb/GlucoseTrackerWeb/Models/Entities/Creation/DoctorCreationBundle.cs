@@ -18,7 +18,7 @@ namespace GlucoseAPI.Models.Entities
     /// </summary>
     public class DoctorCreationBundle
     {
-        [Required]
+        [Required(ErrorMessage = "User Already Exists")]
         public Doctor Doctor { get; set; }
 
         private string _password;

@@ -2,10 +2,27 @@
 
 @{
     ViewData["Title"] = "Create a New Doctor";
+
+    //Assign the TempData BadLogin var.
+    var existStatus = TempData["UserExists"];
+
+    //Verify this is set.
+    if (!(existStatus is null))
+    {
+        //If it was a bad login attemmpt show an error.
+        if ((Boolean)existStatus)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <h4 class="alert-heading">Error!</h4>
+                <p class="mb-0">User Exists</p>
+            </div>
+        }
+    }
 }
 
 <h1>@ViewData["Title"]</h1>
-<br/>
+<br />
 <body class="bg-dark">
     <div class="row">
         <div class="col-md-4">
