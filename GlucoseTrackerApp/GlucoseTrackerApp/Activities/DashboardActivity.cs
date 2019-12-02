@@ -47,6 +47,7 @@ namespace GlucoseTrackerApp
         private TextView _bloodLabel;
         private TextView _exerciseLabel;
         private TextView _carbLabel;
+        private DateTime _stopTimeStamp;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -74,19 +75,6 @@ namespace GlucoseTrackerApp
             navigationView.SetNavigationItemSelectedListener(this);
         }
 
-        protected async override void OnStart()
-        {
-            base.OnStart();
-            Patient patient = await _restService.ReadPatientAsync();
-
-            if (!(patient is null))
-            {
-                _toolbar.Title = $"Welcome, {patient.FirstName} {patient.LastName}";
-
-                PopulateCharts(patient);
-            }
-        }
-
         protected async override void OnResume()
         {
             base.OnResume();
@@ -98,6 +86,35 @@ namespace GlucoseTrackerApp
 
                 PopulateCharts(patient);
             }
+        }
+
+        protected async override void OnRestart()
+        {
+            base.OnRestart();
+            if (DateTime.Now > _stopTimeStamp.AddMinutes(5))
+            {
+                Intent loginActivity = new Intent(this, typeof(LoginActivity));
+                _restService.UserToken = null;
+                StartActivity(loginActivity);
+                Finish();
+            }
+            else 
+            { 
+                Patient patient = await _restService.ReadPatientAsync();
+
+                if (!(patient is null))
+                {
+                    _toolbar.Title = $"Welcome, {patient.FirstName} {patient.LastName}";
+
+                    PopulateCharts(patient);
+                }
+            }
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            _stopTimeStamp = DateTime.Now;
         }
 
         private string PopulateCharts(Patient patient)
@@ -125,7 +142,7 @@ namespace GlucoseTrackerApp
                 {
                     bloodEntries.Add(new ChartEntry(bloodSugar.Level)
                     {
-                        Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + $", {bloodSugar.TimeOfDay.ToLocalTime().Day} " + bloodSugar.ReadingType.ToString(),
+                        Label = bloodSugar.TimeOfDay.ToLocalTime().DayOfWeek + $", {bloodSugar.TimeOfDay.ToLocalTime().Day} " + $"{bloodSugar.ReadingType.ToString()} Meal",
                         ValueLabel = (bloodSugar.Level).ToString(),
                         Color = SKColors.Maroon
                     });
@@ -146,7 +163,7 @@ namespace GlucoseTrackerApp
             {
                 carbEntries.Add(new ChartEntry(carb.FoodCarbs)
                 {
-                    Label = carb.TimeOfDay.ToLocalTime().DayOfWeek + $", {carb.TimeOfDay.ToLocalTime().Day} " +  carb.Meal.MealTime.ToString(),
+                    Label = $"{carb.Meal.MealTime.ToString()}: {carb.TimeOfDay.ToLocalTime().DayOfWeek} "+ $", {carb.TimeOfDay.ToLocalTime().Day} ",
                     ValueLabel = carb.FoodCarbs.ToString(),
                     Color = SKColors.Blue
                 });
@@ -164,6 +181,8 @@ namespace GlucoseTrackerApp
 
                 };
                 _bloodChart.Chart = bloodChart;
+                _bloodLabel.Text = "Blood Sugars";
+                _bloodChart.Visibility = ViewStates.Visible;
 
             }
             else
@@ -184,6 +203,8 @@ namespace GlucoseTrackerApp
 
                 };
                 _exerciseChart.Chart = exerciseChart;
+                _exerciseLabel.Text = "Exercise Hours";
+                _exerciseChart.Visibility = ViewStates.Visible;
 
             }
             else
@@ -203,6 +224,8 @@ namespace GlucoseTrackerApp
                     ValueLabelOrientation = Microcharts.Orientation.Horizontal
                 };
                 _carbChart.Chart = carbChart;
+                _carbLabel.Text = "Carb Intake";
+                _carbChart.Visibility = ViewStates.Visible;
 
             }
             else

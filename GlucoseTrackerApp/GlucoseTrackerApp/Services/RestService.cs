@@ -131,7 +131,7 @@ namespace GlucoseTrackerApp.Services
             }
         }
 
-        public async void UpdatePatientAsync(Patient patient)
+        public async Task<string> UpdatePatientAsync(Patient patient)
         {
             try
             {
@@ -141,14 +141,16 @@ namespace GlucoseTrackerApp.Services
                 StringContent patientContent = new StringContent(JObject.FromObject(patient).ToString(), Encoding.UTF8, "application/json");
 
                 await _client.PutAsync(new Uri(_baseAddress + "User/Update/"), patientContent, _token.Token);
+                return "Success";
             }
             catch (Exception)
             {
                 _token.Cancel();
+                return "Failure";
             }
         }
 
-        public async void DeletePatientAsync()
+        public async Task<string> DeletePatientAsync()
         {
             try
             {
@@ -157,10 +159,12 @@ namespace GlucoseTrackerApp.Services
                 _token = new CancellationTokenSource();
 
                 await _client.DeleteAsync(new Uri(_baseAddress + "User/Delete/"),_token.Token);
+                return "Success";
             }
             catch (Exception)
             {
                 _token.Cancel();
+                return "Failure";
             }
         }
         #endregion
@@ -191,7 +195,7 @@ namespace GlucoseTrackerApp.Services
         #endregion
 
         #region Create, Read, Update, and Delete Patient Data
-        public async void CreatePatientData(PatientData patientData)
+        public async Task<string> CreatePatientData(PatientData patientData)
         {
             try
             {
@@ -203,10 +207,11 @@ namespace GlucoseTrackerApp.Services
 
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Create/"), createDataContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
+                return "Success";
             }
             catch (Exception)
             {
-                _token.Cancel();
+                return "Failure";
             }
         }
 
@@ -229,7 +234,7 @@ namespace GlucoseTrackerApp.Services
             }
         }
 
-        public async void UpdatePatientDataAsync(PatientData patientData)
+        public async Task<string> UpdatePatientDataAsync(PatientData patientData)
         {
             try
             {
@@ -241,14 +246,15 @@ namespace GlucoseTrackerApp.Services
 
                 _response = await _client.PutAsync(new Uri(_baseAddress + "Data/Update/"), patientContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
+                return "Success";
             }
             catch (Exception)
             {
-                return;
+                return "Failure";
             }
         }
 
-        public async void DeletePatientDataAsync(PatientData patientData)
+        public async Task<string> DeletePatientDataAsync(PatientData patientData)
         {
             try
             {
@@ -259,10 +265,11 @@ namespace GlucoseTrackerApp.Services
 
                 _response = await _client.PostAsync(new Uri(_baseAddress + "Data/Delete/"), patientContent, _token.Token);
                 _data = await _response.Content.ReadAsStringAsync();
+                return "Success";
             }
             catch (Exception)
             {
-                return;
+                return "Failure";
             }
 
         }

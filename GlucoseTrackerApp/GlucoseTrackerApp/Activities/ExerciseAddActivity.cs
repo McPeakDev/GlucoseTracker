@@ -105,7 +105,7 @@ namespace GlucoseTrackerApp
 
                     patientData.PatientExercises.Add(patientExercise);
 
-                    _restService.CreatePatientData(patientData);
+                    await _restService.CreatePatientData(patientData);
                     
                     return "Success";
                 }

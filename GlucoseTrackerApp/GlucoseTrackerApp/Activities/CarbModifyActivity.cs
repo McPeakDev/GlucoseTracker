@@ -230,7 +230,7 @@ namespace GlucoseTrackerApp
 
                     try
                     {
-                        _restService.UpdatePatientDataAsync(patientData);
+                        await _restService.UpdatePatientDataAsync(patientData);
                     }
                     catch (Exception)
                     {
@@ -251,7 +251,7 @@ namespace GlucoseTrackerApp
             }
         }
 
-        public string OnCarbDeleteButtonPressed()
+        public async Task<string> OnCarbDeleteButtonPressed()
         {
             if (!(_carbs.SelectedItem is null))
             {
@@ -259,7 +259,7 @@ namespace GlucoseTrackerApp
 
                 patientData.PatientCarbohydrates.Add(_carbs.SelectedItem.Cast<PatientCarbohydrate>());
 
-                _restService.DeletePatientDataAsync(patientData);
+                await _restService.DeletePatientDataAsync(patientData);
 
                 return "Success";
             }

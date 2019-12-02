@@ -128,7 +128,7 @@ namespace GlucoseTrackerApp
 
                 patientData.PatientBloodSugars.Add(patientBlood);
 
-                _restService.CreatePatientData(patientData);
+                await _restService.CreatePatientData(patientData);
 
                 return "Success";
             }
